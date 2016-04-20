@@ -1,0 +1,40 @@
+package PluginDB1;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl50,
+  Vclx50;
+
+contains
+  uMenu in '..\src\uMenu.pas',
+  uConstantes in '..\src\uConstantes.pas',
+  uFuncoes in '..\src\uFuncoes.pas',
+  uAguarde in '..\src\uAguarde.pas' {fAguarde},
+  uToolsAPIUtils in '..\src\uToolsAPIUtils.pas';
+
+end.
+
+
