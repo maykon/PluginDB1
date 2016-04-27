@@ -21,11 +21,12 @@ const
   sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Dados.xml';
   sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Filtro.txt';
   sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
+  sPATH_ARQUIVO_LISTA    = 'C:\PluginDB1\StringList.txt';
   sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';             
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
-  nBORDA_DBGRID = 10;
-  sMENU_DB1 = 'DB1';
+  nBORDA_DBGRID = 12;
+  sMENU_DB1 = 'DB&1';
   sSEPARADOR = '-';
   sINDEX_ASC = '_ASC';
   sINDEX_DESC = '_DESC';
@@ -33,6 +34,7 @@ const
   sNOME_SG5 = 'SG';
   sNOME_PJ = 'PJ';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
+  sURL_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
 
 implementation
 

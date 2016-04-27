@@ -27,11 +27,14 @@ type
     // Setter
     procedure SetTipoSistema(Value: TTipoSistema);
 
-    // ferramentas externas
+    // ferramentas internas
     procedure AbrirServidor(Sender: TObject);
     procedure AbrirAplicacao(Sender: TObject);
     procedure AbrirDiretorioBin(Sender: TObject);
     procedure AbrirSPCfg(Sender: TObject);
+    procedure AbrirItemRTC(Sender: TObject);
+
+    // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
     procedure AbrirSPMonitor(Sender: TObject);
     procedure AbrirSPMonitor3(Sender: TObject);
@@ -39,10 +42,11 @@ type
     procedure AbrirSqlDbx(Sender: TObject);
     procedure AbrirWinSpy(Sender: TObject);
 
-    // operações com DataSet
+    // operações com DataSet e StringList
     procedure AvaliarDataSet(Sender: TObject);
     procedure ProcessarDataSet(const psNomeDataSet: string);
     procedure VisualizarDataSet(Sender: TObject);
+    procedure LerStringList(Sender: TObject);
     procedure GravarSistemaArquivoINI;
 
     property TipoSistema: TTipoSistema read FenTipoSistema write SetTipoSistema;
@@ -51,7 +55,7 @@ type
 implementation
 
 uses
-  SysUtils, ShellAPI, Windows, Dialogs, uConstantes, Forms, IniFiles, TypInfo;
+  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes, uStringList;
 
 { TFuncoes }
 
@@ -154,7 +158,7 @@ var
 begin
   sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, sPATH_ARQUIVO_DADOS]);
   oRetorno := FoToolsAPIUtils.ExecutarEvaluate(poThread, sExpressao, sResultado);
-  result := (oRetorno = erDeferred) or (oRetorno = erOK);
+  result := oRetorno in [erOK, erDeferred];
 end;
 
 procedure TFuncoes.SalvarFiltroDataSet(const psNomeDataSet: string; poThread: IOTAThread);
@@ -324,6 +328,54 @@ procedure TFuncoes.SetTipoSistema(Value: TTipoSistema);
 begin
   FenTipoSistema := Value;
   GravarSistemaArquivoINI;
+end;
+
+procedure TFuncoes.LerStringList(Sender: TObject);
+var
+  sExpressao: string;
+  sResultado: string;
+  fStringList: TfStringList;
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  if not Assigned(oThread) then
+  begin
+    Exit;
+  end;
+
+  sExpressao := Format('%s.SaveToFile(''%s'')', [FoToolsAPIUtils.PegarTextoSelecionado,
+    sPATH_ARQUIVO_LISTA]);
+  oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+
+  if not (oRetorno in [erOK, erDeferred]) then
+  begin
+    Exit;
+  end;
+
+  fStringList := TfStringList.Create(nil);
+  try
+    fStringList.ShowModal;
+  finally
+    FreeAndNil(fStringList);
+  end;
+end;
+
+procedure TFuncoes.AbrirItemRTC(Sender: TObject);
+var
+  sItem: string;
+  sURL: string;
+begin
+  sItem := FoToolsAPIUtils.PegarTextoSelecionado;
+  sItem := InputBox('Digite o item do RTC', 'Item do RTC:', sItem);
+
+  if Trim(sItem) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sURL := Format(sURL_RTC, [sItem]);
+  ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
 end;
 
 end.

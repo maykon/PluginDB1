@@ -215,6 +215,7 @@ begin
   CriarMenu('Abrir Aplicação', FoFuncoes.AbrirAplicacao, VK_NUMPAD2);
   CriarMenu('Abrir Diretório Bin', FoFuncoes.AbrirDiretorioBin);
   CriarMenu('Abrir spCfg.ini', FoFuncoes.AbrirSPCfg, VK_NUMPAD3);
+  CriarMenu('Abrir Item no RTC', FoFuncoes.AbrirItemRTC, VK_NUMPAD4);
   CriarMenu(sSEPARADOR, nil);
   CriarMenu('Abrir VisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
   CriarMenu('Abrir spMonitor', FoFuncoes.AbrirSPMonitor);
@@ -225,6 +226,7 @@ begin
   CriarMenu(sSEPARADOR, nil);
   CriarMenu('Visualizar DataSet', FoFuncoes.VisualizarDataSet, VK_NUMPAD5);
   CriarMenu('Avaliar DataSet', FoFuncoes.AvaliarDataSet);
+  CriarMenu('Ler StringList', FoFuncoes.LerStringList);
   CriarMenu(sSEPARADOR, nil);
   CriarMenu(sNOME_PG5, SelecionarSistemaPG);
   CriarMenu(sNOME_SG5, SelecionarSistemaSG);

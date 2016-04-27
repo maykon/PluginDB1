@@ -16,7 +16,8 @@ uses
   SysUtils,
   Classes,
   uMenu in '..\src\uMenu.pas',
-  uAguarde in '..\src\uAguarde.pas' {fAguarde};
+  uAguarde in '..\src\uAguarde.pas' {fAguarde},
+  uStringList in '..\src\uStringList.pas' {fStringList};
 
 {$R *.RES}
 
