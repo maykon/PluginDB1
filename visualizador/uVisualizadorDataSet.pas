@@ -220,7 +220,7 @@ end;
 
 procedure TfVisualizadorDataSet.ContarRegistros;
 begin
-  lbQuantidade.Caption := Format('%d registros', [ClientDataSet.RecordCount]);
+  lbQuantidade.Caption := Format('%d registro(s)', [ClientDataSet.RecordCount]);
 end;
 
 procedure TfVisualizadorDataSet.edtFiltroChange(Sender: TObject);
