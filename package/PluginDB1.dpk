@@ -33,7 +33,8 @@ contains
   uConstantes in '..\src\uConstantes.pas',
   uFuncoes in '..\src\uFuncoes.pas',
   uAguarde in '..\src\uAguarde.pas' {fAguarde},
-  uToolsAPIUtils in '..\src\uToolsAPIUtils.pas';
+  uToolsAPIUtils in '..\src\uToolsAPIUtils.pas',
+  uStringList in '..\src\uStringList.pas' {fStringList};
 
 end.
 
