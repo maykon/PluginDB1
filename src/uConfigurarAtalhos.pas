@@ -63,6 +63,17 @@ uses
 
 { TfPersonalizarAtalhos }
 
+procedure TfConfigurarAtalhos.FormCreate(Sender: TObject);
+begin
+  FoArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI); //PC_OK
+  CarregarAtalhos;
+end;
+
+procedure TfConfigurarAtalhos.FormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FoArquivoINI); //PC_OK
+end;
+
 procedure TfConfigurarAtalhos.CarregarAtalhos;
 begin
   hkServidor.HotKey := PegarAtalho('AbrirServidor');
@@ -79,27 +90,6 @@ begin
   hkVisualizarDataSet.HotKey := PegarAtalho('VisualizarDataSet');
   hkAvaliarDataSet.HotKey := PegarAtalho('AvaliarDataSet');
   hkLerTStringList.HotKey := PegarAtalho('LerTStringList');
-end;
-
-procedure TfConfigurarAtalhos.SalvarAtalho(const psNomeChave: string; const poAtalho: TShortCut);
-begin
-  FoArquivoINI.WriteString('Atalhos', psNomeChave, ShortCutToText(poAtalho));
-end;
-
-procedure TfConfigurarAtalhos.FormCreate(Sender: TObject);
-begin
-  FoArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI); //PC_OK
-  CarregarAtalhos;
-end;
-
-procedure TfConfigurarAtalhos.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(FoArquivoINI); //PC_OK
-end;
-
-function TfConfigurarAtalhos.PegarAtalho(const psNomeChave: string): TShortCut;
-begin
-  result := TextToShortCut(FoArquivoINI.ReadString('Atalhos', psNomeChave, EmptyStr));
 end;
 
 procedure TfConfigurarAtalhos.btnOKClick(Sender: TObject);
@@ -120,6 +110,16 @@ begin
   SalvarAtalho('LerTStringList', hkLerTStringList.HotKey);
 
   Close;
+end;
+
+procedure TfConfigurarAtalhos.SalvarAtalho(const psNomeChave: string; const poAtalho: TShortCut);
+begin
+  FoArquivoINI.WriteString(sSECAO_ATALHOS, psNomeChave, ShortCutToText(poAtalho));
+end;
+
+function TfConfigurarAtalhos.PegarAtalho(const psNomeChave: string): TShortCut;
+begin
+  result := TextToShortCut(FoArquivoINI.ReadString(sSECAO_ATALHOS, psNomeChave, EmptyStr));
 end;
 
 end.

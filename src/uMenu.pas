@@ -273,7 +273,7 @@ var
 begin
   oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
   try
-    oArquivoINI.ReadSectionValues('Atalhos', FslAtalhos);
+    oArquivoINI.ReadSectionValues(sSECAO_ATALHOS, FslAtalhos);
   finally
     FreeAndNil(oArquivoINI);
   end;

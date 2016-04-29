@@ -18,6 +18,7 @@ type
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivosTemporarios;
+    procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string; poThread: IOTAThread);
   public
@@ -63,23 +64,19 @@ uses
 
 { TFuncoes }
 
-procedure TFuncoes.AbrirServidor(Sender: TObject);
-var
-  sNomeServidor: string;
+constructor TFuncoes.Create;
 begin
-  case FenTipoSistema of
-    tsPG: sNomeServidor := sNOME_SERVIDOR_PG5;
-    tsSG: sNomeServidor := sNOME_SERVIDOR_SG5;
-    tsPJ: sNomeServidor := sNOME_SERVIDOR_PJ;
-  end;
+  inherited;
 
-  if not VerificarArquivoExisteNoDiretorioBin(sNomeServidor) then
-  begin
-    MessageDlg(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [sNomeServidor]), mtWarning, [mbOK], 0);
-    Exit;
-  end;
+  FoToolsAPIUtils := TToolsAPIUtils.Create; //PC_OK
+  PegarSistemaPadrao;
+end;
 
-  FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeServidor);
+destructor TFuncoes.Destroy;
+begin
+  FreeAndNil(FoToolsAPIUtils); //PC_OK
+
+  inherited;
 end;
 
 function TFuncoes.PegarDiretorioBin: string;
@@ -94,33 +91,6 @@ begin
   result := StringReplace(sDiretorio, sParteDiretorioSRC, 'bin\', [rfReplaceAll]);
 end;
 
-procedure TFuncoes.AbrirSPCfg(Sender: TObject);
-var
-  sArquivo: string;
-begin
-  sArquivo := Format('%s%s', [PegarDiretorioBin, sNOME_ARQUIVO_CONFIG]);
-  ShellExecute(0, 'open', PChar(sArquivo), '', '', SW_SHOWNORMAL);
-end;
-
-procedure TFuncoes.AbrirAplicacao(Sender: TObject);
-var
-  sNomeAplicacao: string;
-begin
-  case FenTipoSistema of
-    tsPG: sNomeAplicacao := sNOME_APLICACAO_PG5;
-    tsSG: sNomeAplicacao := sNOME_APLICACAO_SG5;
-    tsPJ: sNomeAplicacao := sNOME_APLICACAO_PJ;
-  end;
-
-  if not (VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao)) then
-  begin
-    MessageDlg(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [sNomeAplicacao]), mtWarning, [mbOK], 0);
-    Exit;
-  end;
-
-  FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeAplicacao);
-end;
-
 procedure TFuncoes.VisualizarDataSet(Sender: TObject);
 var
   sNomeDataSet: string;
@@ -131,15 +101,8 @@ end;
 
 procedure TFuncoes.ExcluirArquivosTemporarios;
 begin
-  DeleteFile(sPATH_ARQUIVO_DADOS);
-  repeat
-    Sleep(150);
-  until not FileExists(sPATH_ARQUIVO_DADOS);
-
-  DeleteFile(sPATH_ARQUIVO_FILTRO);
-  repeat
-    Sleep(150);
-  until not FileExists(sPATH_ARQUIVO_FILTRO);
+  ExcluirArquivo(sPATH_ARQUIVO_DADOS);
+  ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
 end;
 
 procedure TFuncoes.CarregarArquivoDataSet;
@@ -194,36 +157,6 @@ begin
   end;
 end;
 
-procedure TFuncoes.AbrirSPMonitor3(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_SP_MONITOR3, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirVisualizaDTS(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZA_DTS, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirSqlDbx(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_SQLDBX, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirWinSpy(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_WINSPY, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirSPMonitor(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_SP_MONITOR, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirDiretorioBin(Sender: TObject);
-begin
-  ShellExecute(0, nil, PChar(PegarDiretorioBin), '', '', SW_SHOW);
-end;
-
 procedure TFuncoes.AvaliarDataSet(Sender: TObject);
 var
   sNomeDataSet: string;
@@ -231,14 +164,6 @@ begin
   sNomeDataSet := InputBox('Informar o DataSet', 'Informe o nome do DataSet:',
     'Ex: fpgProcessoParte.esajParte');
   ProcessarDataSet(sNomeDataSet);
-end;
-
-constructor TFuncoes.Create;
-begin
-  inherited;
-
-  FoToolsAPIUtils := TToolsAPIUtils.Create; //PC_OK
-  PegarSistemaPadrao;
 end;
 
 procedure TFuncoes.GravarSistemaArquivoINI;
@@ -280,18 +205,11 @@ end;
 function TFuncoes.VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
 begin
   result := FileExists(Format('%s%s', [PegarDiretorioBin, psNomeArquivo]));
-end;
 
-destructor TFuncoes.Destroy;
-begin
-  FreeAndNil(FoToolsAPIUtils); //PC_OK
-
-  inherited;
-end;
-
-procedure TFuncoes.AbrirSelectSQL(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_SELECT_SQL, EmptyStr);
+  if not result then
+  begin
+    MessageDlg(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [psNomeArquivo]), mtWarning, [mbOK], 0);
+  end;
 end;
 
 procedure TFuncoes.ProcessarDataSet(const psNomeDataSet: string);
@@ -371,6 +289,80 @@ begin
   end;
 end;
 
+procedure TFuncoes.ConfigurarAtalhos;
+var
+  fConfigurarAtalhos: TfConfigurarAtalhos;
+begin
+  fConfigurarAtalhos := TfConfigurarAtalhos.Create(nil);
+  try
+    fConfigurarAtalhos.ShowModal;
+  finally
+    FreeAndNil(fConfigurarAtalhos);
+  end;
+end;
+
+procedure TFuncoes.ExcluirArquivo(const psNomeArquivo: string);
+begin
+  if not DeleteFile(sPATH_ARQUIVO_DADOS) then
+  begin
+    MessageDlg('Ocorreu um erro ao excluir os arquivos antigos :(', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  repeat
+    Sleep(150);
+  until not FileExists(psNomeArquivo);
+end;
+
+procedure TFuncoes.AbrirServidor(Sender: TObject);
+var
+  sNomeServidor: string;
+begin
+  case FenTipoSistema of
+    tsPG: sNomeServidor := sNOME_SERVIDOR_PG;
+    tsSG: sNomeServidor := sNOME_SERVIDOR_SG;
+    tsPJ: sNomeServidor := sNOME_SERVIDOR_PJ;
+  end;
+
+  if not VerificarArquivoExisteNoDiretorioBin(sNomeServidor) then
+  begin
+    Exit;
+  end;
+
+  FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeServidor);
+end;
+
+procedure TFuncoes.AbrirAplicacao(Sender: TObject);
+var
+  sNomeAplicacao: string;
+begin
+  case FenTipoSistema of
+    tsPG: sNomeAplicacao := sNOME_APLICACAO_PG;
+    tsSG: sNomeAplicacao := sNOME_APLICACAO_SG;
+    tsPJ: sNomeAplicacao := sNOME_APLICACAO_PJ;
+  end;
+
+  if not (VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao)) then
+  begin
+    Exit;
+  end;
+
+  FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeAplicacao);
+end;
+
+procedure TFuncoes.AbrirDiretorioBin(Sender: TObject);
+begin
+  ShellExecute(0, nil, PChar(PegarDiretorioBin), '', '', SW_SHOW);
+end;
+
+procedure TFuncoes.AbrirSPCfg(Sender: TObject);
+var
+  sArquivo: string;
+begin
+  sArquivo := Format('%s%s', [PegarDiretorioBin, sNOME_ARQUIVO_CONFIG]);
+  ShellExecute(0, 'open', PChar(sArquivo), '', '', SW_SHOWNORMAL);
+end;
+
 procedure TFuncoes.AbrirItemRTC(Sender: TObject);
 var
   sItem: string;
@@ -388,16 +380,34 @@ begin
   ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
 end;
 
-procedure TFuncoes.ConfigurarAtalhos;
-var
-  fConfigurarAtalhos: TfConfigurarAtalhos;
+procedure TFuncoes.AbrirVisualizaDTS(Sender: TObject);
 begin
-  fConfigurarAtalhos := TfConfigurarAtalhos.Create(nil);
-  try
-    fConfigurarAtalhos.ShowModal;
-  finally
-    FreeAndNil(fConfigurarAtalhos);
-  end;
+  FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZA_DTS, EmptyStr);
+end;
+
+procedure TFuncoes.AbrirSPMonitor(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_SP_MONITOR, EmptyStr);
+end;
+
+procedure TFuncoes.AbrirSPMonitor3(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_SP_MONITOR3, EmptyStr);
+end;
+
+procedure TFuncoes.AbrirSelectSQL(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_SELECT_SQL, EmptyStr);
+end;
+
+procedure TFuncoes.AbrirSqlDbx(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_SQLDBX, EmptyStr);
+end;
+
+procedure TFuncoes.AbrirWinSpy(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_WINSPY, EmptyStr);
 end;
 
 end.

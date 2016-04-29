@@ -5,11 +5,11 @@ unit uConstantes;
 interface
 
 const
-  sNOME_SERVIDOR_PG5     = 'pg5Servidor.exe';
-  sNOME_SERVIDOR_SG5     = 'sg5Servidor.exe';
+  sNOME_SERVIDOR_PG      = 'pg5Servidor.exe';
+  sNOME_SERVIDOR_SG      = 'sg5Servidor.exe';
   sNOME_SERVIDOR_PJ      = 'spjServidor.exe';
-  sNOME_APLICACAO_PG5    = 'sajpg5app.exe';
-  sNOME_APLICACAO_SG5    = 'sajsg5app.exe';
+  sNOME_APLICACAO_PG     = 'sajpg5app.exe';
+  sNOME_APLICACAO_SG     = 'sajsg5app.exe';
   sNOME_APLICACAO_PJ     = 'spjClienteApp';
   sNOME_ARQUIVO_CONFIG   = 'spCfg.ini';
   sPATH_VISUALIZA_DTS    = 'C:\PluginDB1\Tools\VisualizaDTS\VisualizaDTS.exe';
@@ -33,6 +33,7 @@ const
   sNOME_PG = 'PG';
   sNOME_SG = 'SG';
   sNOME_PJ = 'PJ';
+  sSECAO_ATALHOS = 'Atalhos';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
   sURL_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
 
