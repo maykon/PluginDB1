@@ -13,16 +13,17 @@ type
     FoTimerAtalhos: TTimer;
     FoMenuDB1: TMenuItem;
 
-    function CriarMenu(const psCaption: string; poEvento: TNotifyEvent;
-      const pnVirtualKey: integer = 0): TMenuItem;
+    function CriarMenu(const psCaption, psIdentificador: string; poEvento: TNotifyEvent): TMenuItem;
     procedure CriarMenuDB1;
     procedure CriarTemporizadorAtalhos;
     procedure AdicionarAcoes;
+    procedure CarregarAtalhos;
     procedure AtribuirAtalhos(Sender: TObject);
     procedure MarcarMenu;
     procedure SelecionarSistemaPG(Sender: TObject);
     procedure SelecionarSistemaSG(Sender: TObject);
     procedure SelecionarSistemaPJ(Sender: TObject);
+    procedure ConfigurarAtalhos(Sender: TObject);
   public
     constructor Create;
 
@@ -47,11 +48,12 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, uFuncoes, uConstantes;
+  SysUtils, Forms, Windows, IniFiles, uFuncoes, uConstantes;
 
 var
   FoFuncoes: TFuncoes;
   FActions: TObjectList;
+  FslAtalhos: TStringList;
   nIDWizard: integer = 0;
 
 function InitialiseWizard(BIDES: IBorlandIDEServices): TWizard;
@@ -77,32 +79,24 @@ end;
 
 { TWizard }
 
-function TWizard.CriarMenu(const psCaption: string; poEvento: TNotifyEvent;
-  const pnVirtualKey: integer = 0): TMenuItem;
+function TWizard.CriarMenu(const psCaption, psIdentificador: string; poEvento: TNotifyEvent): TMenuItem;
 var
   oNTAS: INTAServices;
   oAction: TAction;
-  sNome: string;
 begin
   oAction := nil;
   oNTAS := (BorlandIDEServices as INTAServices);
   result := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
-  sNome := Format('DB1_%d', [FoMenuDB1.Count + 1]);
-  
+
   if Assigned(poEvento) then
   begin
     oAction := TAction.Create(oNTAS.ActionList); //PC_OK
     oAction.ActionList := oNTAS.ActionList;
-    oAction.Name := 'act' + sNome;
+    oAction.Name := psIdentificador;
     oAction.Caption := psCaption;
     oAction.OnExecute := poEvento;
     oAction.Category := 'PluginDB1';
-
-    if pnVirtualKey > 0 then
-    begin
-      oAction.ShortCut := ShortCut(pnVirtualKey, [ssCtrl]);
-      oAction.Tag := ShortCut(pnVirtualKey, [ssCtrl]);
-    end;
+    oAction.ShortCut := TextToShortCut(FslAtalhos.Values[psIdentificador]);
 
     FActions.Add(oAction);
   end;
@@ -113,13 +107,14 @@ begin
     result.Caption := psCaption;
 
   result.Action := oAction;
-  result.Name := 'im' + sNome;
+  result.Name := 'im' + psIdentificador;
   FoMenuDB1.Add(result);
 end;
 
 constructor TWizard.Create;
 begin
   CriarMenuDB1;
+  CarregarAtalhos;
   AdicionarAcoes;
   MarcarMenu;
   CriarTemporizadorAtalhos;
@@ -143,7 +138,7 @@ begin
   for nCont := 0 to FActions.Count - 1 do
   begin
     oAction := FActions[nCont] as TAction;
-    oAction.ShortCut := oAction.Tag;
+    oAction.ShortCut := TextToShortCut(FslAtalhos.Values[oAction.Name]);
   end;
 
   if Assigned(FoTimerAtalhos) then
@@ -190,8 +185,8 @@ var
   sNomeMenu: string;
 begin
   case FoFuncoes.TipoSistema of
-    tsPG: sNomeMenu := sNOME_PG5;
-    tsSG: sNomeMenu := sNOME_SG5;
+    tsPG: sNomeMenu := sNOME_PG;
+    tsSG: sNomeMenu := sNOME_SG;
     tsPJ: sNomeMenu := sNOME_PJ;
   end;
 
@@ -211,26 +206,28 @@ end;
 
 procedure TWizard.AdicionarAcoes;
 begin
-  CriarMenu('Abrir Servidor', FoFuncoes.AbrirServidor, VK_NUMPAD1);
-  CriarMenu('Abrir Aplicação', FoFuncoes.AbrirAplicacao, VK_NUMPAD2);
-  CriarMenu('Abrir Diretório Bin', FoFuncoes.AbrirDiretorioBin);
-  CriarMenu('Abrir spCfg.ini', FoFuncoes.AbrirSPCfg, VK_NUMPAD3);
-  CriarMenu('Abrir Item no RTC', FoFuncoes.AbrirItemRTC, VK_NUMPAD4);
-  CriarMenu(sSEPARADOR, nil);
-  CriarMenu('Abrir VisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
-  CriarMenu('Abrir spMonitor', FoFuncoes.AbrirSPMonitor);
-  CriarMenu('Abrir spMonitor3', FoFuncoes.AbrirSPMonitor3);
-  CriarMenu('Abrir SelectSQL', FoFuncoes.AbrirSelectSQL);
-  CriarMenu('Abrir SqlDbx', FoFuncoes.AbrirSqlDbx);
-  CriarMenu('Abrir WinSpy', FoFuncoes.AbrirWinSpy);
-  CriarMenu(sSEPARADOR, nil);
-  CriarMenu('Visualizar DataSet', FoFuncoes.VisualizarDataSet, VK_NUMPAD5);
-  CriarMenu('Avaliar DataSet', FoFuncoes.AvaliarDataSet);
-  CriarMenu('Ler StringList', FoFuncoes.LerStringList);
-  CriarMenu(sSEPARADOR, nil);
-  CriarMenu(sNOME_PG5, SelecionarSistemaPG);
-  CriarMenu(sNOME_SG5, SelecionarSistemaSG);
-  CriarMenu(sNOME_PJ, SelecionarSistemaPJ);
+  CriarMenu('Abrir Servidor', 'AbrirServidor', FoFuncoes.AbrirServidor);
+  CriarMenu('Abrir Aplicação', 'AbrirAplicacao', FoFuncoes.AbrirAplicacao);
+  CriarMenu('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
+  CriarMenu('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
+  CriarMenu('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
+  CriarMenu(sSEPARADOR, 'Separador1', nil);
+  CriarMenu('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
+  CriarMenu('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
+  CriarMenu('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
+  CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
+  CriarMenu('Abrir SqlDbx', 'AbrirSqlDbx', FoFuncoes.AbrirSqlDbx);
+  CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
+  CriarMenu(sSEPARADOR, 'Separador2', nil);
+  CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
+  CriarMenu('Avaliar DataSet', 'AvaliarDataSet', FoFuncoes.AvaliarDataSet);
+  CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
+  CriarMenu(sSEPARADOR, 'Separador3', nil);
+  CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
+  CriarMenu(sSEPARADOR, 'Separador4', nil);
+  CriarMenu(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
+  CriarMenu(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
+  CriarMenu(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
 end;
 
 function TWizard.GetState: TWizardState;
@@ -263,14 +260,36 @@ begin
 
 end;
 
+procedure TWizard.ConfigurarAtalhos(Sender: TObject);
+begin
+  FoFuncoes.ConfigurarAtalhos;
+  CarregarAtalhos;
+  AtribuirAtalhos(Sender);
+end;
+
+procedure TWizard.CarregarAtalhos;
+var
+  oArquivoINI: TIniFile;
+  sValor: string;
+begin
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  try
+    oArquivoINI.ReadSectionValues('Atalhos', FslAtalhos);
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
 initialization
   FoFuncoes := TFuncoes.Create; //PC_OK
   FActions := TObjectList.Create(True); //PC_OK
+  FslAtalhos := TStringList.Create; //PC_OK
 
 finalization
   FreeAndNil(FoFuncoes);
   FreeAndNil(FActions);
-
+  FreeAndNil(FslAtalhos);
+  
   if nIDWizard > 0 then
   begin
     (BorlandIDEServices as IOTAWizardServices).RemoveWizard(nIDWizard);

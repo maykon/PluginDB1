@@ -49,13 +49,17 @@ type
     procedure LerStringList(Sender: TObject);
     procedure GravarSistemaArquivoINI;
 
+    // atalhos
+    procedure ConfigurarAtalhos;
+
     property TipoSistema: TTipoSistema read FenTipoSistema write SetTipoSistema;
   end;
 
 implementation
 
 uses
-  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes, uStringList;
+  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
+  uStringList, uConfigurarAtalhos;
 
 { TFuncoes }
 
@@ -334,6 +338,7 @@ procedure TFuncoes.LerStringList(Sender: TObject);
 var
   sExpressao: string;
   sResultado: string;
+  sTextoSelecionado: string;
   fStringList: TfStringList;
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
@@ -344,8 +349,13 @@ begin
     Exit;
   end;
 
-  sExpressao := Format('%s.SaveToFile(''%s'')', [FoToolsAPIUtils.PegarTextoSelecionado,
-    sPATH_ARQUIVO_LISTA]);
+  sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
+  if Trim(sTextoSelecionado) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sExpressao := Format('%s.SaveToFile(''%s'')', [sTextoSelecionado, sPATH_ARQUIVO_LISTA]);
   oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
   if not (oRetorno in [erOK, erDeferred]) then
@@ -376,6 +386,18 @@ begin
 
   sURL := Format(sURL_RTC, [sItem]);
   ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
+end;
+
+procedure TFuncoes.ConfigurarAtalhos;
+var
+  fConfigurarAtalhos: TfConfigurarAtalhos;
+begin
+  fConfigurarAtalhos := TfConfigurarAtalhos.Create(nil);
+  try
+    fConfigurarAtalhos.ShowModal;
+  finally
+    FreeAndNil(fConfigurarAtalhos);
+  end;
 end;
 
 end.

@@ -34,7 +34,8 @@ contains
   uFuncoes in '..\src\uFuncoes.pas',
   uAguarde in '..\src\uAguarde.pas' {fAguarde},
   uToolsAPIUtils in '..\src\uToolsAPIUtils.pas',
-  uStringList in '..\src\uStringList.pas' {fStringList};
+  uStringList in '..\src\uStringList.pas' {fStringList},
+  uConfigurarAtalhos in '..\src\uConfigurarAtalhos.pas' {fConfigurarAtalhos};
 
 end.
 

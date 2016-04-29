@@ -9,13 +9,10 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = PluginDB1.bpl PluginDB1.dll Visualizador.exe
+PROJECTS = PluginDB1.dll Visualizador.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
-
-PluginDB1.bpl: package\PluginDB1.dpk
-  $(DCC)
 
 PluginDB1.dll: dll\PluginDB1.dpr
   $(DCC)

@@ -30,8 +30,8 @@ const
   sSEPARADOR = '-';
   sINDEX_ASC = '_ASC';
   sINDEX_DESC = '_DESC';
-  sNOME_PG5 = 'PG';
-  sNOME_SG5 = 'SG';
+  sNOME_PG = 'PG';
+  sNOME_SG = 'SG';
   sNOME_PJ = 'PJ';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
   sURL_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
