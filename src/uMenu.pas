@@ -270,7 +270,6 @@ end;
 procedure TWizard.CarregarAtalhos;
 var
   oArquivoINI: TIniFile;
-  sValor: string;
 begin
   oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
   try
