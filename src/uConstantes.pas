@@ -18,14 +18,15 @@ const
   sPATH_SELECT_SQL       = 'C:\PluginDB1\Tools\SelectSQL\SelectSQL.exe';
   sPATH_SQLDBX           = 'C:\PluginDB1\Tools\SqlDbx\SqlDbx.exe';
   sPATH_WINSPY           = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
-  sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Dados.xml';
-  sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Filtro.txt';
+  sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Output\Dados.xml';
+  sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Output\Filtro.txt';
+  sPATH_ARQUIVO_LISTA    = 'C:\PluginDB1\Output\StringList.txt';
   sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
-  sPATH_ARQUIVO_LISTA    = 'C:\PluginDB1\StringList.txt';
-  sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';             
+  sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
   nBORDA_DBGRID = 12;
+  nTAMANHO_MAXIMO_ITEM_RTC = 6;
   sMENU_DB1 = 'DB&1';
   sSEPARADOR = '-';
   sINDEX_ASC = '_ASC';
