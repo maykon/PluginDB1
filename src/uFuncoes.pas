@@ -16,8 +16,8 @@ type
     function PegarDiretorioBin: string;
     function SalvarArquivoDataSet(const psNomeDataSet: string; poThread: IOTAThread): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
+    function ValidarTextoSelecionado(const psTexto: string): boolean;
     procedure CarregarArquivoDataSet;
-    procedure ExcluirArquivosTemporarios;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string; poThread: IOTAThread);
@@ -97,12 +97,6 @@ var
 begin
   sNomeDataSet := FoToolsAPIUtils.PegarTextoSelecionado;
   ProcessarDataSet(sNomeDataSet);
-end;
-
-procedure TFuncoes.ExcluirArquivosTemporarios;
-begin
-  ExcluirArquivo(sPATH_ARQUIVO_DADOS);
-  ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
 end;
 
 procedure TFuncoes.CarregarArquivoDataSet;
@@ -233,7 +227,8 @@ begin
       Exit;
     end;
 
-    ExcluirArquivosTemporarios;
+    ExcluirArquivo(sPATH_ARQUIVO_DADOS);
+    ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
     SalvarFiltroDataSet(psNomeDataSet, oThread);
     if SalvarArquivoDataSet(psNomeDataSet, oThread) then
     begin
@@ -273,6 +268,7 @@ begin
     Exit;
   end;
 
+  ExcluirArquivo(sPATH_ARQUIVO_LISTA);
   sExpressao := Format('%s.SaveToFile(''%s'')', [sTextoSelecionado, sPATH_ARQUIVO_LISTA]);
   oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
@@ -365,18 +361,27 @@ end;
 
 procedure TFuncoes.AbrirItemRTC(Sender: TObject);
 var
-  sItem: string;
+  sTexto: string;
   sURL: string;
 begin
-  sItem := FoToolsAPIUtils.PegarTextoSelecionado;
-  sItem := InputBox('Digite o item do RTC', 'Item do RTC:', sItem);
+  sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
 
-  if Trim(sItem) = EmptyStr then
+  if not ValidarTextoSelecionado(sTexto) then
+  begin
+    sTexto := EmptyStr;
+  end;
+
+  if not InputQuery('Digite o item do RTC', 'Item do RTC:', sTexto) then
   begin
     Exit;
   end;
 
-  sURL := Format(sURL_RTC, [sItem]);
+  if Trim(sTexto) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sURL := Format(sURL_RTC, [sTexto]);
   ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
 end;
 
@@ -408,6 +413,26 @@ end;
 procedure TFuncoes.AbrirWinSpy(Sender: TObject);
 begin
   FoToolsAPIUtils.AbrirArquivo(sPATH_WINSPY, EmptyStr);
+end;
+
+function TFuncoes.ValidarTextoSelecionado(const psTexto: string): boolean;
+var
+  nNumero: integer;
+begin
+  result := False;
+
+  if Length(psTexto) > nTAMANHO_MAXIMO_ITEM_RTC then
+  begin
+    Exit;
+  end;
+
+  nNumero := StrToIntDef(psTexto, 0);
+  if nNumero = 0 then
+  begin
+    Exit;
+  end;
+
+  result := True;
 end;
 
 end.

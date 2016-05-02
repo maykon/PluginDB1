@@ -16,6 +16,7 @@ type
     function CriarMenu(const psCaption, psIdentificador: string; poEvento: TNotifyEvent): TMenuItem;
     procedure CriarMenuDB1;
     procedure CriarTemporizadorAtalhos;
+    procedure CriarPastaOutput;
     procedure AdicionarAcoes;
     procedure CarregarAtalhos;
     procedure AtribuirAtalhos(Sender: TObject);
@@ -48,7 +49,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, IniFiles, uFuncoes, uConstantes;
+  SysUtils, Forms, Windows, IniFiles, FileCtrl, uFuncoes, uConstantes;
 
 var
   FoFuncoes: TFuncoes;
@@ -118,6 +119,7 @@ begin
   AdicionarAcoes;
   MarcarMenu;
   CriarTemporizadorAtalhos;
+  CriarPastaOutput;
 end;
 
 function TWizard.GetIDString: string;
@@ -276,6 +278,14 @@ begin
     oArquivoINI.ReadSectionValues(sSECAO_ATALHOS, FslAtalhos);
   finally
     FreeAndNil(oArquivoINI);
+  end;
+end;
+
+procedure TWizard.CriarPastaOutput;
+begin
+  if not DirectoryExists('C:\PluginDB1\Output') then
+  begin
+    ForceDirectories('C:\PluginDB1\Output');
   end;
 end;
 
