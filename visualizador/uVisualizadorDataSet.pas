@@ -124,14 +124,21 @@ begin
 
   if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
   begin
-    MessageDlg('Erro ao carregar os dados. Tente novamente!', mtWarning, [mbOK], 0);
+    MessageDlg('Não foi possível carregar os dados. Tente novamente!', mtWarning, [mbOK], 0);
     Application.Terminate;
     Exit;
   end;
 
-  ClientDataSet.LoadFromFile(sPATH_ARQUIVO_DADOS);
-  ClientDataSet.First;
-  ContarRegistros;
+  try
+    ClientDataSet.LoadFromFile(sPATH_ARQUIVO_DADOS);
+    ClientDataSet.First;
+    ContarRegistros;
+  except
+    MessageDlg('Não foi possível carregar os dados.' + #13 +
+      'Verifique se o DataSet selecionado está aberto e se não está em modo de inserção.',
+      mtWarning, [mbOK], 0);
+    Application.Terminate;
+  end;
 end;
 
 procedure TfVisualizadorDataSet.CarregarCampos;

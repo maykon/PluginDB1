@@ -18,7 +18,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   TextHeight = 13
   object lbQuantidade: TLabel
     Left = 13
-    Top = 555
+    Top = 550
     Width = 511
     Height = 16
     Anchors = [akLeft, akBottom]
@@ -41,7 +41,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Left = 12
     Top = 31
     Width = 820
-    Height = 520
+    Height = 516
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource
     PopupMenu = PopupMenu
@@ -73,10 +73,10 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClick = chkFiltroAtivadoClick
   end
   object clCampos: TCheckListBox
-    Left = 847
+    Left = 845
     Top = 31
     Width = 168
-    Height = 520
+    Height = 516
     OnClickCheck = clCamposClickCheck
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
