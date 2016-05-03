@@ -25,6 +25,7 @@ type
     procedure SelecionarSistemaSG(Sender: TObject);
     procedure SelecionarSistemaPJ(Sender: TObject);
     procedure ConfigurarAtalhos(Sender: TObject);
+    procedure ExcluirArquivosAntigos;
   public
     constructor Create;
 
@@ -120,6 +121,7 @@ begin
   MarcarMenu;
   CriarTemporizadorAtalhos;
   CriarPastaOutput;
+  ExcluirArquivosAntigos;
 end;
 
 function TWizard.GetIDString: string;
@@ -222,7 +224,7 @@ begin
   CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
   CriarMenu(sSEPARADOR, 'Separador2', nil);
   CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
-  CriarMenu('Avaliar DataSet', 'AvaliarDataSet', FoFuncoes.AvaliarDataSet);
+  CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
   CriarMenu(sSEPARADOR, 'Separador3', nil);
   CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
@@ -287,6 +289,15 @@ begin
   begin
     ForceDirectories('C:\PluginDB1\Output');
   end;
+end;
+
+procedure TWizard.ExcluirArquivosAntigos;
+begin
+  DeleteFile('C:\PluginDB1\Dados.xml');
+  DeleteFile('C:\PluginDB1\Filtro.txt');
+  DeleteFile('C:\PluginDB1\StringList.txt');
+  DeleteFile('C:\PluginDB1\unins000.exe');
+  DeleteFile('C:\PluginDB1\unins000.dat');
 end;
 
 initialization

@@ -44,9 +44,9 @@ type
     procedure AbrirWinSpy(Sender: TObject);
 
     // operações com DataSet e StringList
-    procedure AvaliarDataSet(Sender: TObject);
     procedure ProcessarDataSet(const psNomeDataSet: string);
     procedure VisualizarDataSet(Sender: TObject);
+    procedure VisualizarDataSetManual(Sender: TObject);
     procedure LerStringList(Sender: TObject);
     procedure GravarSistemaArquivoINI;
 
@@ -137,7 +137,7 @@ begin
     Exit;
   end;
 
-  if Trim(sResultado) = '''' then
+  if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
   begin
     Exit;
   end;
@@ -151,12 +151,17 @@ begin
   end;
 end;
 
-procedure TFuncoes.AvaliarDataSet(Sender: TObject);
+procedure TFuncoes.VisualizarDataSetManual(Sender: TObject);
 var
   sNomeDataSet: string;
 begin
-  sNomeDataSet := InputBox('Informar o DataSet', 'Informe o nome do DataSet:',
-    'Ex: fpgProcessoParte.esajParte');
+  sNomeDataSet := 'Ex: fpgProcessoParte.esajParte';
+
+  if not InputQuery('Informar o DataSet', 'Informe o nome do DataSet:', sNomeDataSet) then
+  begin
+    Exit;
+  end;
+
   ProcessarDataSet(sNomeDataSet);
 end;
 
@@ -299,7 +304,12 @@ end;
 
 procedure TFuncoes.ExcluirArquivo(const psNomeArquivo: string);
 begin
-  if not DeleteFile(sPATH_ARQUIVO_DADOS) then
+  if not FileExists(psNomeArquivo) then
+  begin
+    Exit;
+  end;
+
+  if not DeleteFile(PChar(psNomeArquivo)) then
   begin
     MessageDlg('Ocorreu um erro ao excluir os arquivos antigos :(', mtWarning, [mbOK], 0);
     Exit;
