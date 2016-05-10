@@ -19,7 +19,7 @@ type
 implementation
 
 uses
-  SysUtils, Windows;
+  SysUtils, Windows, Forms;
 
 { TToolsAPIUtils }
 
@@ -47,6 +47,7 @@ var
 begin
   result := poThread.Evaluate(psExpressao, @sResultado, Length(sResultado),
     bCanModify, True, '', nEndereco, nTamanho, nValor);
+  Application.ProcessMessages;
   psResultado := sResultado;
 end;
 

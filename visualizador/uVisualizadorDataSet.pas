@@ -134,8 +134,9 @@ begin
     ClientDataSet.First;
     ContarRegistros;
   except
+    ClientDataSet.Close;
     MessageDlg('Não foi possível carregar os dados.' + #13 +
-      'Verifique se o DataSet selecionado está aberto e se não está em modo de inserção.',
+      'Verifique se o DataSet selecionado está aberto e não está em modo de inserção.',
       mtWarning, [mbOK], 0);
     Application.Terminate;
   end;

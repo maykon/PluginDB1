@@ -34,10 +34,10 @@ type
     bvl1: TBevel;
     Bevel1: TBevel;
     lbVisualizarDataSet: TLabel;
-    lbAvaliarDataSet: TLabel;
+    lblVisualizarDataSetManual: TLabel;
     lbLerTStringList: TLabel;
     hkVisualizarDataSet: THotKey;
-    hkAvaliarDataSet: THotKey;
+    hkVisualizarDataSetManual: THotKey;
     hkLerTStringList: THotKey;
     btnOK: TBitBtn;
     procedure FormCreate(Sender: TObject);
@@ -88,7 +88,7 @@ begin
   hkSqlDbx.HotKey := PegarAtalho('AbrirSqlDbx');
   hkWinSpy.HotKey := PegarAtalho('AbrirWinSpy');
   hkVisualizarDataSet.HotKey := PegarAtalho('VisualizarDataSet');
-  hkAvaliarDataSet.HotKey := PegarAtalho('AvaliarDataSet');
+  hkVisualizarDataSetManual.HotKey := PegarAtalho('VisualizarDataSetManual');
   hkLerTStringList.HotKey := PegarAtalho('LerTStringList');
 end;
 
@@ -106,7 +106,7 @@ begin
   SalvarAtalho('AbrirSqlDbx', hkSqlDbx.HotKey);
   SalvarAtalho('AbrirWinSpy', hkWinSpy.HotKey);
   SalvarAtalho('VisualizarDataSet', hkVisualizarDataSet.HotKey);
-  SalvarAtalho('AvaliarDataSet', hkAvaliarDataSet.HotKey);
+  SalvarAtalho('VisualizarDataSetManual', hkVisualizarDataSetManual.HotKey);
   SalvarAtalho('LerTStringList', hkLerTStringList.HotKey);
 
   Close;
