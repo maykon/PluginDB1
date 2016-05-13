@@ -483,8 +483,6 @@ begin
 
   sParteAposSRC := Copy(sDiretorio, nPosicaoPastaSRC, Length(sDiretorio));
   sDiretorio := StringReplace(sDiretorio, sParteAposSRC, 'src', [rfReplaceAll]);
-  ShowMessage(Format(sCOMANDO_RANSACK, [sTextoSelecionado, sDiretorio]));
-  //Exit;
   FoToolsAPIUtils.AbrirArquivo(Format(sCOMANDO_RANSACK, [sTextoSelecionado, sDiretorio]),
     EmptyStr);
 end;
