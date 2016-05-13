@@ -1,10 +1,10 @@
 object fConfigurarAtalhos: TfConfigurarAtalhos
   Left = 195
-  Top = 116
+  Top = 125
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = 'Personalizar Atalhos'
-  ClientHeight = 381
+  Caption = 'Configurar Atalhos'
+  ClientHeight = 394
   ClientWidth = 287
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     Left = 3
     Top = 2
     Width = 281
-    Height = 345
+    Height = 362
     Caption = ' Atalhos '
     TabOrder = 0
     object lbAbrirServidor: TLabel
@@ -104,38 +104,45 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     end
     object bvl1: TBevel
       Left = 10
-      Top = 124
+      Top = 126
       Width = 250
       Height = 11
       Shape = bsTopLine
     end
     object Bevel1: TBevel
-      Left = 10
-      Top = 264
+      Left = 12
+      Top = 286
       Width = 250
       Height = 11
       Shape = bsTopLine
     end
     object lbVisualizarDataSet: TLabel
       Left = 44
-      Top = 280
+      Top = 297
       Width = 90
       Height = 13
       Caption = 'Visualizar DataSet:'
     end
     object lblVisualizarDataSetManual: TLabel
       Left = 7
-      Top = 300
+      Top = 317
       Width = 127
       Height = 13
       Caption = 'Visualizar DataSet Manual:'
     end
     object lbLerTStringList: TLabel
       Left = 62
-      Top = 320
+      Top = 337
       Width = 72
       Height = 13
       Caption = 'Ler TStringList:'
+    end
+    object lbConsultarNoRansack: TLabel
+      Left = 26
+      Top = 260
+      Width = 108
+      Height = 13
+      Caption = 'Consultar no Ransack:'
     end
     object hkServidor: THotKey
       Left = 138
@@ -249,7 +256,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     end
     object hkVisualizarDataSet: THotKey
       Left = 138
-      Top = 278
+      Top = 297
       Width = 110
       Height = 19
       HotKey = 0
@@ -259,7 +266,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     end
     object hkVisualizarDataSetManual: THotKey
       Left = 138
-      Top = 298
+      Top = 315
       Width = 110
       Height = 19
       HotKey = 0
@@ -269,7 +276,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     end
     object hkLerTStringList: THotKey
       Left = 138
-      Top = 318
+      Top = 335
       Width = 110
       Height = 19
       HotKey = 0
@@ -277,10 +284,20 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 13
     end
+    object hkConsultarNoRansack: THotKey
+      Left = 138
+      Top = 258
+      Width = 110
+      Height = 19
+      HotKey = 0
+      InvalidKeys = [hcNone, hcShift]
+      Modifiers = []
+      TabOrder = 14
+    end
   end
   object btnOK: TBitBtn
     Left = 93
-    Top = 351
+    Top = 366
     Width = 100
     Height = 25
     Caption = 'OK'
