@@ -14,13 +14,13 @@ type
     FenTipoSistema: TTipoSistema;
 
     function PegarDiretorioBin: string;
-    function SalvarArquivoDataSet(const psNomeDataSet: string; poThread: IOTAThread): boolean;
+    function SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     function ValidarTextoSelecionado(const psTexto: string): boolean;
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
-    procedure SalvarFiltroDataSet(const psNomeDataSet: string; poThread: IOTAThread);
+    procedure SalvarFiltroDataSet(const psNomeDataSet: string);
   public
     constructor Create;
     destructor Destroy; override;
@@ -42,6 +42,7 @@ type
     procedure AbrirSelectSQL(Sender: TObject);
     procedure AbrirSqlDbx(Sender: TObject);
     procedure AbrirWinSpy(Sender: TObject);
+    procedure ConsultarRansack(Sender: TObject);
 
     // operações com DataSet e StringList
     procedure ProcessarDataSet(const psNomeDataSet: string);
@@ -111,26 +112,48 @@ begin
   FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZADOR, EmptyStr);
 end;
 
-function TFuncoes.SalvarArquivoDataSet(const psNomeDataSet: string; poThread: IOTAThread): boolean;
+function TFuncoes.SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
 var
   sExpressao: string;
   sResultado: string;
+  oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
 begin
-  sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, sPATH_ARQUIVO_DADOS]);
-  oRetorno := FoToolsAPIUtils.ExecutarEvaluate(poThread, sExpressao, sResultado);
-  result := oRetorno in [erOK, erDeferred];
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  try
+    if not Assigned(oThread) then
+    begin
+      Exit;
+    end;
+    sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, sPATH_ARQUIVO_DADOS]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+    result := oRetorno in [erOK, erDeferred];
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
 end;
 
-procedure TFuncoes.SalvarFiltroDataSet(const psNomeDataSet: string; poThread: IOTAThread);
+procedure TFuncoes.SalvarFiltroDataSet(const psNomeDataSet: string);
 var
-  sExpressao: string;
+  oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
+  sExpressao: string;
   sResultado: string;
   slFiltro: TStringList;
 begin
-  sExpressao := Format('%s.Filter', [psNomeDataSet]);
-  oRetorno := FoToolsAPIUtils.ExecutarEvaluate(poThread, sExpressao, sResultado);
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  sResultado := EmptyStr;
+  try
+    if not Assigned(oThread) then
+    begin
+      Exit;
+    end;
+
+    sExpressao := Format('%s.Filter', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
 
   if oRetorno = erError then
   begin
@@ -213,7 +236,6 @@ end;
 
 procedure TFuncoes.ProcessarDataSet(const psNomeDataSet: string);
 var
-  oThread: IOTAThread;
   oFormAguarde: TfAguarde;
 begin
   if Trim(psNomeDataSet) = EmptyStr then
@@ -226,22 +248,15 @@ begin
   Application.ProcessMessages;
 
   try
-    oThread := FoToolsAPIUtils.PegarThreadAtual;
-    if not Assigned(oThread) then
-    begin
-      Exit;
-    end;
-
     ExcluirArquivo(sPATH_ARQUIVO_DADOS);
     ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
-    SalvarFiltroDataSet(psNomeDataSet, oThread);
-    if SalvarArquivoDataSet(psNomeDataSet, oThread) then
+    SalvarFiltroDataSet(psNomeDataSet);
+    if SalvarArquivoDataSet(psNomeDataSet) then
     begin
       CarregarArquivoDataSet;
     end;
   finally
     oFormAguarde.Close;
-    FreeAndNil(oThread); //PC_OK
     FreeAndNil(oFormAguarde);
   end;
 end;
@@ -443,6 +458,35 @@ begin
   end;
 
   result := True;
+end;
+
+procedure TFuncoes.ConsultarRansack(Sender: TObject);
+var
+  sDiretorio: string;
+  nPosicaoPastaSRC: integer;
+  sParteAposSRC: string;
+  sTextoSelecionado: string;
+begin
+  sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
+  if Trim(sTextoSelecionado) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sDiretorio := FoToolsAPIUtils.PegarDiretorioProjetoAtivo;
+  nPosicaoPastaSRC := Pos('src', sDiretorio);
+
+  if nPosicaoPastaSRC <= 0 then
+  begin
+    Exit;
+  end;
+
+  sParteAposSRC := Copy(sDiretorio, nPosicaoPastaSRC, Length(sDiretorio));
+  sDiretorio := StringReplace(sDiretorio, sParteAposSRC, 'src', [rfReplaceAll]);
+  ShowMessage(Format(sCOMANDO_RANSACK, [sTextoSelecionado, sDiretorio]));
+  //Exit;
+  FoToolsAPIUtils.AbrirArquivo(Format(sCOMANDO_RANSACK, [sTextoSelecionado, sDiretorio]),
+    EmptyStr);
 end;
 
 end.

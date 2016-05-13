@@ -4,7 +4,7 @@ unit uConstantes;
 
 interface
 
-const
+const                                                                        
   sNOME_SERVIDOR_PG      = 'pg5Servidor.exe';
   sNOME_SERVIDOR_SG      = 'sg5Servidor.exe';
   sNOME_SERVIDOR_PJ      = 'spjServidor.exe';
@@ -37,6 +37,7 @@ const
   sSECAO_ATALHOS = 'Atalhos';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
   sURL_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
+  sCOMANDO_RANSACK = '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
 
 implementation
 
