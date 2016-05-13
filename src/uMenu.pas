@@ -222,7 +222,7 @@ begin
   CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
   CriarMenu('Abrir SqlDbx', 'AbrirSqlDbx', FoFuncoes.AbrirSqlDbx);
   CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
-  CriarMenu('Consultar pelo Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
+  CriarMenu('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
   CriarMenu(sSEPARADOR, 'Separador2', nil);
   CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
