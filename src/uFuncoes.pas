@@ -282,26 +282,30 @@ begin
     Exit;
   end;
 
-  sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
-  if Trim(sTextoSelecionado) = EmptyStr then
-  begin
-    Exit;
-  end;
-
-  ExcluirArquivo(sPATH_ARQUIVO_LISTA);
-  sExpressao := Format('%s.SaveToFile(''%s'')', [sTextoSelecionado, sPATH_ARQUIVO_LISTA]);
-  oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
-
-  if not (oRetorno in [erOK, erDeferred]) then
-  begin
-    Exit;
-  end;
-
-  fStringList := TfStringList.Create(nil);
   try
-    fStringList.ShowModal;
+    sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
+    if Trim(sTextoSelecionado) = EmptyStr then
+    begin
+      Exit;
+    end;
+
+    ExcluirArquivo(sPATH_ARQUIVO_LISTA);
+    sExpressao := Format('%s.SaveToFile(''%s'')', [sTextoSelecionado, sPATH_ARQUIVO_LISTA]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+
+    if not (oRetorno in [erOK, erDeferred]) then
+    begin
+      Exit;
+    end;
+
+    fStringList := TfStringList.Create(nil);
+    try
+      fStringList.ShowModal;
+    finally
+      FreeAndNil(fStringList);
+    end;
   finally
-    FreeAndNil(fStringList);
+    FreeAndNil(oThread); //PC_OK
   end;
 end;
 
