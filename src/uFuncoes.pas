@@ -40,7 +40,6 @@ type
     procedure AbrirSPMonitor(Sender: TObject);
     procedure AbrirSPMonitor3(Sender: TObject);
     procedure AbrirSelectSQL(Sender: TObject);
-    procedure AbrirSqlDbx(Sender: TObject);
     procedure AbrirWinSpy(Sender: TObject);
     procedure ConsultarRansack(Sender: TObject);
 
@@ -119,6 +118,7 @@ var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
 begin
+  result := False;
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
     if not Assigned(oThread) then
@@ -432,11 +432,6 @@ end;
 procedure TFuncoes.AbrirSelectSQL(Sender: TObject);
 begin
   FoToolsAPIUtils.AbrirArquivo(sPATH_SELECT_SQL, EmptyStr);
-end;
-
-procedure TFuncoes.AbrirSqlDbx(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_SQLDBX, EmptyStr);
 end;
 
 procedure TFuncoes.AbrirWinSpy(Sender: TObject);

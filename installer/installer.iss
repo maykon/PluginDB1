@@ -25,7 +25,6 @@ Source: "C:\Git\PluginDB1\bin\Visualizador.exe"; DestDir: "{app}"; Flags: ignore
 Source: "C:\OneDrive\DevTools\DevTools\spMonitor\*.*"; DestDir: "{app}\Tools\spMonitor"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\spMonitor3\*.*"; DestDir: "{app}\Tools\spMonitor3"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\SelectSQL\*.*"; DestDir: "{app}\Tools\SelectSQL"; Flags: ignoreversion
-Source: "C:\OneDrive\DevTools\DevTools\SqlDbx\*.*"; DestDir: "{app}\Tools\SqlDbx"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\VisualizaDTS\*.*"; DestDir: "{app}\Tools\VisualizaDTS"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\WinSpy\*.*"; DestDir: "{app}\Tools\WinSpy"; Flags: ignoreversion
 

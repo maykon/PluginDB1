@@ -16,7 +16,6 @@ const
   sPATH_SP_MONITOR       = 'C:\PluginDB1\Tools\spMonitor\spMonitor.exe';
   sPATH_SP_MONITOR3      = 'C:\PluginDB1\Tools\spMonitor3\spMonitor3.exe';
   sPATH_SELECT_SQL       = 'C:\PluginDB1\Tools\SelectSQL\SelectSQL.exe';
-  sPATH_SQLDBX           = 'C:\PluginDB1\Tools\SqlDbx\SqlDbx.exe';
   sPATH_WINSPY           = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
   sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Output\Dados.xml';
   sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Output\Filtro.txt';

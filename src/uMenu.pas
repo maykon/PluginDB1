@@ -220,7 +220,6 @@ begin
   CriarMenu('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
   CriarMenu('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
   CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
-  CriarMenu('Abrir SqlDbx', 'AbrirSqlDbx', FoFuncoes.AbrirSqlDbx);
   CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
   CriarMenu('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
   CriarMenu(sSEPARADOR, 'Separador2', nil);
