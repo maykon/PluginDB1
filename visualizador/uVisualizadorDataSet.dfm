@@ -56,7 +56,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   object edtFiltro: TEdit
     Left = 46
     Top = 5
-    Width = 361
+    Width = 713
     Height = 21
     MaxLength = 200
     TabOrder = 1
@@ -64,7 +64,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnKeyPress = edtFiltroKeyPress
   end
   object chkFiltroAtivado: TCheckBox
-    Left = 416
+    Left = 766
     Top = 8
     Width = 66
     Height = 17
