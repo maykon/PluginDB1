@@ -1,7 +1,7 @@
 [Setup]
 AppId={{6A95085C-DFD6-48C7-99E7-01F7AB007FE1}
 AppName=Plugin DB1
-AppVersion=1.1
+AppVersion=1.4
 AppPublisher=DB1 Global Software
 AppPublisherURL=http://www.db1.com.br/
 AppSupportURL=http://www.db1.com.br/
