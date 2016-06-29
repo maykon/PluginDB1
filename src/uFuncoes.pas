@@ -17,6 +17,9 @@ type
     function SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     function ValidarTextoSelecionado(const psTexto: string): boolean;
+    function VerificarDataSetEstaAssigned(const psNomeDataSet: string): boolean;
+    function VerificarDataSetEstaAtivo(const psNomeDataSet: string): boolean;
+    function VerificarExisteThreadProcesso: boolean;
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
@@ -101,13 +104,6 @@ end;
 
 procedure TFuncoes.CarregarArquivoDataSet;
 begin
-  if not FileExists(sPATH_VISUALIZADOR) then
-  begin
-    MessageDlg(Format('O visualizador de DataSets não está disponível no caminho: %s',
-      [ExtractFilePath(sPATH_VISUALIZADOR)]), mtWarning, [mbOK], 0);
-    Exit;
-  end;
-
   FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZADOR, EmptyStr);
 end;
 
@@ -118,13 +114,8 @@ var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
 begin
-  result := False;
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
-    if not Assigned(oThread) then
-    begin
-      Exit;
-    end;
     sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, sPATH_ARQUIVO_DADOS]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
     result := oRetorno in [erOK, erDeferred];
@@ -144,11 +135,6 @@ begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   sResultado := EmptyStr;
   try
-    if not Assigned(oThread) then
-    begin
-      Exit;
-    end;
-
     sExpressao := Format('%s.Filter', [psNomeDataSet]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
   finally
@@ -243,13 +229,31 @@ begin
     Exit;
   end;
 
-  oFormAguarde := TfAguarde.Create(nil);
-  oFormAguarde.Show;
-  Application.ProcessMessages;
+  if not VerificarExisteThreadProcesso then
+  begin
+    Exit;
+  end;
 
+  oFormAguarde := TfAguarde.Create(nil);
   try
     ExcluirArquivo(sPATH_ARQUIVO_DADOS);
     ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
+
+    if not VerificarDataSetEstaAssigned(psNomeDataSet) then
+    begin
+      MessageDlg('O DataSet está nil.', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+
+    if not VerificarDataSetEstaAtivo(psNomeDataSet) then
+    begin
+      MessageDlg('O DataSet não está ativo.', mtInformation, [mbOK], 0);
+      Exit;
+    end;
+
+    oFormAguarde.Show;
+    Application.ProcessMessages;
+
     SalvarFiltroDataSet(psNomeDataSet);
     if SalvarArquivoDataSet(psNomeDataSet) then
     begin
@@ -276,12 +280,12 @@ var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
 begin
-  oThread := FoToolsAPIUtils.PegarThreadAtual;
-  if not Assigned(oThread) then
+  if not VerificarExisteThreadProcesso then
   begin
     Exit;
   end;
 
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
     sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
     if Trim(sTextoSelecionado) = EmptyStr then
@@ -333,10 +337,6 @@ begin
     MessageDlg('Ocorreu um erro ao excluir os arquivos antigos :(', mtWarning, [mbOK], 0);
     Exit;
   end;
-
-  repeat
-    Sleep(150);
-  until not FileExists(psNomeArquivo);
 end;
 
 procedure TFuncoes.AbrirServidor(Sender: TObject);
@@ -410,7 +410,12 @@ begin
     Exit;
   end;
 
-  sURL := Format(sURL_RTC, [sTexto]);
+  if Pos('/', sTexto) > 0 then
+    sURL := Format(sURL_SALT_RTC, [sTexto])
+  else
+    sURL := Format(sURL_ITEM_RTC, [sTexto]);
+
+  sTexto := StringReplace(sTexto, '/', '%2F', [rfReplaceAll]);
   ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
 end;
 
@@ -440,23 +445,8 @@ begin
 end;
 
 function TFuncoes.ValidarTextoSelecionado(const psTexto: string): boolean;
-var
-  nNumero: integer;
 begin
-  result := False;
-
-  if Length(psTexto) > nTAMANHO_MAXIMO_ITEM_RTC then
-  begin
-    Exit;
-  end;
-
-  nNumero := StrToIntDef(psTexto, 0);
-  if nNumero = 0 then
-  begin
-    Exit;
-  end;
-
-  result := True;
+  result := Length(psTexto) <= nTAMANHO_MAXIMO_ITEM_RTC;
 end;
 
 procedure TFuncoes.ConsultarRansack(Sender: TObject);
@@ -484,6 +474,48 @@ begin
   sDiretorio := StringReplace(sDiretorio, sParteAposSRC, 'src', [rfReplaceAll]);
   FoToolsAPIUtils.AbrirArquivo(Format(sCOMANDO_RANSACK, [sTextoSelecionado, sDiretorio]),
     EmptyStr);
+end;
+
+function TFuncoes.VerificarDataSetEstaAssigned(const psNomeDataSet: string): boolean;
+var
+  sExpressao: string;
+  sResultado: string;
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  try
+    sExpressao := Format('Assigned(%s)', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+    result := (oRetorno = erOK) and (sResultado = 'True');
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
+end;
+
+function TFuncoes.VerificarDataSetEstaAtivo(const psNomeDataSet: string): boolean;
+var
+  sExpressao: string;
+  sResultado: string;
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  try
+    sExpressao := Format('%s.Active', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+    result := (oRetorno = erOK) and (sResultado = 'True');
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
+end;
+
+function TFuncoes.VerificarExisteThreadProcesso: boolean;
+var
+  oThread: IOTAThread;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  result := Assigned(oThread);
 end;
 
 end.
