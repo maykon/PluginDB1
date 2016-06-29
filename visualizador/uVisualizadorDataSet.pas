@@ -116,6 +116,7 @@ procedure TfVisualizadorDataSet.CarregarArquivoDados;
 var
   nTentativas: smallint;
 begin
+  //jcf:format=off
   nTentativas := 0;
   repeat
     Sleep(150);
@@ -135,11 +136,14 @@ begin
     ContarRegistros;
   except
     ClientDataSet.Close;
-    MessageDlg('Não foi possível carregar os dados.' + #13 +
-      'Verifique se o DataSet selecionado está aberto e não está em modo de inserção.',
+    MessageDlg('Não foi possível carregar os dados. Possíveis causas:' + #13 + #13 +
+      '- O DataSet está nil;' + #13 +
+      '- O DataSet está fechado;' + #13 +
+      '- O DataSet selecionado está em modo de inserção/edição.',
       mtWarning, [mbOK], 0);
     Application.Terminate;
   end;
+  //jcf:format=on
 end;
 
 procedure TfVisualizadorDataSet.CarregarCampos;

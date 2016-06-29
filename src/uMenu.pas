@@ -103,10 +103,12 @@ begin
     FActions.Add(oAction);
   end;
 
+  result.Caption := psCaption;
   if psCaption = sSEPARADOR then
-    result.Caption := sSEPARADOR
-  else
-    result.Caption := psCaption;
+  begin
+    result.Caption := sSEPARADOR;
+  end;
+
 
   result.Action := oAction;
   result.Name := 'im' + psIdentificador;
