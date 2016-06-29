@@ -4,7 +4,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Configurar Atalhos'
-  ClientHeight = 394
+  ClientHeight = 374
   ClientWidth = 287
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,7 +22,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     Left = 3
     Top = 2
     Width = 281
-    Height = 362
+    Height = 338
     Caption = ' Atalhos '
     TabOrder = 0
     object lbAbrirServidor: TLabel
@@ -88,16 +88,9 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Height = 13
       Caption = 'Abrir SelectSQL:'
     end
-    object lbSqlDbx: TLabel
-      Left = 71
-      Top = 220
-      Width = 63
-      Height = 13
-      Caption = 'Abrir SqlDbx:'
-    end
     object lbWinSpy: TLabel
       Left = 68
-      Top = 240
+      Top = 220
       Width = 66
       Height = 13
       Caption = 'Abrir WinSpy:'
@@ -111,35 +104,35 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
     end
     object Bevel1: TBevel
       Left = 12
-      Top = 286
+      Top = 266
       Width = 250
       Height = 11
       Shape = bsTopLine
     end
     object lbVisualizarDataSet: TLabel
       Left = 44
-      Top = 297
+      Top = 277
       Width = 90
       Height = 13
       Caption = 'Visualizar DataSet:'
     end
     object lblVisualizarDataSetManual: TLabel
       Left = 7
-      Top = 317
+      Top = 297
       Width = 127
       Height = 13
       Caption = 'Visualizar DataSet Manual:'
     end
     object lbLerTStringList: TLabel
       Left = 62
-      Top = 337
+      Top = 317
       Width = 72
       Height = 13
       Caption = 'Ler TStringList:'
     end
     object lbConsultarNoRansack: TLabel
       Left = 26
-      Top = 260
+      Top = 240
       Width = 108
       Height = 13
       Caption = 'Consultar no Ransack:'
@@ -234,7 +227,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 8
     end
-    object hkSqlDbx: THotKey
+    object hkWinSpy: THotKey
       Left = 138
       Top = 218
       Width = 110
@@ -244,9 +237,9 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 9
     end
-    object hkWinSpy: THotKey
+    object hkVisualizarDataSet: THotKey
       Left = 138
-      Top = 238
+      Top = 277
       Width = 110
       Height = 19
       HotKey = 0
@@ -254,9 +247,9 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 10
     end
-    object hkVisualizarDataSet: THotKey
+    object hkVisualizarDataSetManual: THotKey
       Left = 138
-      Top = 297
+      Top = 295
       Width = 110
       Height = 19
       HotKey = 0
@@ -264,7 +257,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 11
     end
-    object hkVisualizarDataSetManual: THotKey
+    object hkLerTStringList: THotKey
       Left = 138
       Top = 315
       Width = 110
@@ -274,9 +267,9 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 12
     end
-    object hkLerTStringList: THotKey
+    object hkConsultarNoRansack: THotKey
       Left = 138
-      Top = 335
+      Top = 238
       Width = 110
       Height = 19
       HotKey = 0
@@ -284,20 +277,10 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Modifiers = []
       TabOrder = 13
     end
-    object hkConsultarNoRansack: THotKey
-      Left = 138
-      Top = 258
-      Width = 110
-      Height = 19
-      HotKey = 0
-      InvalidKeys = [hcNone, hcShift]
-      Modifiers = []
-      TabOrder = 14
-    end
   end
   object btnOK: TBitBtn
     Left = 93
-    Top = 366
+    Top = 343
     Width = 100
     Height = 25
     Caption = 'OK'

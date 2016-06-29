@@ -24,12 +24,10 @@ type
     lbSpMonitor: TLabel;
     lbSpMonitor3: TLabel;
     lbSelectSQL: TLabel;
-    lbSqlDbx: TLabel;
     lbWinSpy: TLabel;
     hkSpMonitor: THotKey;
     hkSpMonitor3: THotKey;
     hkSelectSQL: THotKey;
-    hkSqlDbx: THotKey;
     hkWinSpy: THotKey;
     bvl1: TBevel;
     Bevel1: TBevel;
@@ -87,7 +85,6 @@ begin
   hkSpMonitor.HotKey := PegarAtalho('AbrirSpMonitor');
   hkSpMonitor3.HotKey := PegarAtalho('AbrirSpMonitor3');
   hkSelectSQL.HotKey := PegarAtalho('AbrirSelectSQL');
-  hkSqlDbx.HotKey := PegarAtalho('AbrirSqlDbx');
   hkWinSpy.HotKey := PegarAtalho('AbrirWinSpy');
   hkConsultarNoRansack.HotKey := PegarAtalho('ConsultarRansack');
   hkVisualizarDataSet.HotKey := PegarAtalho('VisualizarDataSet');
@@ -106,7 +103,6 @@ begin
   SalvarAtalho('AbrirSpMonitor', hkSpMonitor.HotKey);
   SalvarAtalho('AbrirSpMonitor3', hkSpMonitor3.HotKey);
   SalvarAtalho('AbrirSelectSQL', hkSelectSQL.HotKey);
-  SalvarAtalho('AbrirSqlDbx', hkSqlDbx.HotKey);
   SalvarAtalho('AbrirWinSpy', hkWinSpy.HotKey);
   SalvarAtalho('ConsultarRansack', hkConsultarNoRansack.HotKey);
   SalvarAtalho('VisualizarDataSet', hkVisualizarDataSet.HotKey);
