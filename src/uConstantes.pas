@@ -25,7 +25,7 @@ const
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
   nBORDA_DBGRID = 12;
-  nTAMANHO_MAXIMO_ITEM_RTC = 6;
+  nTAMANHO_MAXIMO_ITEM_RTC = 8;
   sMENU_DB1 = 'DB&1';
   sSEPARADOR = '-';
   sINDEX_ASC = '_ASC';
@@ -35,7 +35,8 @@ const
   sNOME_PJ = 'PJ';
   sSECAO_ATALHOS = 'Atalhos';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
-  sURL_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
+  sURL_ITEM_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
+  sURL_SALT_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.search&q=%s';
   sCOMANDO_RANSACK = '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
 
 implementation
