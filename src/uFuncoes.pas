@@ -77,7 +77,10 @@ end;
 
 destructor TFuncoes.Destroy;
 begin
-  FreeAndNil(FoToolsAPIUtils); //PC_OK
+  if Assigned(FoToolsAPIUtils) then
+  begin
+    FreeAndNil(FoToolsAPIUtils); //PC_OK
+  end;
 
   inherited;
 end;
@@ -197,7 +200,7 @@ begin
   try
     sNomeSistema := oArquivoINI.ReadString('Parametros', 'Sistema', EmptyStr);
 
-    if sNomeSistema = EmptyStr then
+    if Trim(sNomeSistema) = EmptyStr then
     begin
       FenTipoSistema := tsPG;
       GravarSistemaArquivoINI;
@@ -334,8 +337,7 @@ begin
 
   if not DeleteFile(PChar(psNomeArquivo)) then
   begin
-    MessageDlg('Ocorreu um erro ao excluir os arquivos antigos :(', mtWarning, [mbOK], 0);
-    Exit;
+    MessageDlg('Ocorreu um erro ao manipular os arquivos :(', mtWarning, [mbOK], 0);
   end;
 end;
 
@@ -446,7 +448,7 @@ end;
 
 function TFuncoes.ValidarTextoSelecionado(const psTexto: string): boolean;
 begin
-  result := Length(psTexto) <= nTAMANHO_MAXIMO_ITEM_RTC;
+  result := Length(Trim(psTexto)) <= nTAMANHO_MAXIMO_ITEM_RTC;
 end;
 
 procedure TFuncoes.ConsultarRansack(Sender: TObject);
@@ -502,9 +504,9 @@ var
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
-    sExpressao := Format('%s.Active', [psNomeDataSet]);
+    sExpressao := Format('%s.State', [psNomeDataSet]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
-    result := (oRetorno = erOK) and (sResultado = 'True');
+    result := (oRetorno = erOK) and (sResultado <> 'dsInactive');
   finally
     FreeAndNil(oThread); //PC_OK
   end;

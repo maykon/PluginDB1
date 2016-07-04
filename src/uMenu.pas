@@ -109,7 +109,6 @@ begin
     result.Caption := sSEPARADOR;
   end;
 
-
   result.Action := oAction;
   result.Name := 'im' + psIdentificador;
   FoMenuDB1.Add(result);
@@ -145,6 +144,11 @@ begin
   begin
     oAction := FActions[nCont] as TAction;
     oAction.ShortCut := TextToShortCut(FslAtalhos.Values[oAction.Name]);
+  end;
+
+  if Assigned(FslAtalhos) then
+  begin
+    FreeAndNil(FslAtalhos); //PC_OK
   end;
 
   if Assigned(FoTimerAtalhos) then
@@ -236,6 +240,47 @@ begin
   CriarMenu(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
 end;
 
+procedure TWizard.ConfigurarAtalhos(Sender: TObject);
+begin
+  FoFuncoes.ConfigurarAtalhos;
+  CarregarAtalhos;
+  AtribuirAtalhos(Sender);
+end;
+
+procedure TWizard.CarregarAtalhos;
+var
+  oArquivoINI: TIniFile;
+begin
+  if not Assigned(FslAtalhos) then
+  begin
+    FslAtalhos := TStringList.Create; //PC_OK
+  end;
+
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  try
+    oArquivoINI.ReadSectionValues(sSECAO_ATALHOS, FslAtalhos);
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
+procedure TWizard.CriarPastaOutput;
+begin
+  if not DirectoryExists('C:\PluginDB1\Output') then
+  begin
+    ForceDirectories('C:\PluginDB1\Output');
+  end;
+end;
+
+procedure TWizard.ExcluirArquivosAntigos;
+begin
+  DeleteFile('C:\PluginDB1\Dados.xml');
+  DeleteFile('C:\PluginDB1\Filtro.txt');
+  DeleteFile('C:\PluginDB1\StringList.txt');
+  DeleteFile('C:\PluginDB1\unins000.exe');
+  DeleteFile('C:\PluginDB1\unins000.dat');
+end;
+
 function TWizard.GetState: TWizardState;
 begin
   result := [];
@@ -266,52 +311,14 @@ begin
 
 end;
 
-procedure TWizard.ConfigurarAtalhos(Sender: TObject);
-begin
-  FoFuncoes.ConfigurarAtalhos;
-  CarregarAtalhos;
-  AtribuirAtalhos(Sender);
-end;
-
-procedure TWizard.CarregarAtalhos;
-var
-  oArquivoINI: TIniFile;
-begin
-  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
-  try
-    oArquivoINI.ReadSectionValues(sSECAO_ATALHOS, FslAtalhos);
-  finally
-    FreeAndNil(oArquivoINI);
-  end;
-end;
-
-procedure TWizard.CriarPastaOutput;
-begin
-  if not DirectoryExists('C:\PluginDB1\Output') then
-  begin
-    ForceDirectories('C:\PluginDB1\Output');
-  end;
-end;
-
-procedure TWizard.ExcluirArquivosAntigos;
-begin
-  DeleteFile('C:\PluginDB1\Dados.xml');
-  DeleteFile('C:\PluginDB1\Filtro.txt');
-  DeleteFile('C:\PluginDB1\StringList.txt');
-  DeleteFile('C:\PluginDB1\unins000.exe');
-  DeleteFile('C:\PluginDB1\unins000.dat');
-end;
-
 initialization
   FoFuncoes := TFuncoes.Create; //PC_OK
   FActions := TObjectList.Create(True); //PC_OK
-  FslAtalhos := TStringList.Create; //PC_OK
 
 finalization
   FreeAndNil(FoFuncoes);
   FreeAndNil(FActions);
-  FreeAndNil(FslAtalhos);
-  
+
   if nIDWizard > 0 then
   begin
     (BorlandIDEServices as IOTAWizardServices).RemoveWizard(nIDWizard);
