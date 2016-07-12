@@ -146,11 +146,6 @@ begin
     oAction.ShortCut := TextToShortCut(FslAtalhos.Values[oAction.Name]);
   end;
 
-  if Assigned(FslAtalhos) then
-  begin
-    FreeAndNil(FslAtalhos); //PC_OK
-  end;
-
   if Assigned(FoTimerAtalhos) then
   begin
     FoTimerAtalhos.Enabled := False;
@@ -251,11 +246,6 @@ procedure TWizard.CarregarAtalhos;
 var
   oArquivoINI: TIniFile;
 begin
-  if not Assigned(FslAtalhos) then
-  begin
-    FslAtalhos := TStringList.Create; //PC_OK
-  end;
-
   oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
   try
     oArquivoINI.ReadSectionValues(sSECAO_ATALHOS, FslAtalhos);
@@ -314,10 +304,12 @@ end;
 initialization
   FoFuncoes := TFuncoes.Create; //PC_OK
   FActions := TObjectList.Create(True); //PC_OK
+  FslAtalhos := TStringList.Create; //PC_OK
 
 finalization
   FreeAndNil(FoFuncoes);
   FreeAndNil(FActions);
+  FreeAndNil(FslAtalhos);
 
   if nIDWizard > 0 then
   begin

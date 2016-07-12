@@ -369,7 +369,7 @@ begin
     tsPJ: sNomeAplicacao := sNOME_APLICACAO_PJ;
   end;
 
-  if not (VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao)) then
+  if not VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao) then
   begin
     Exit;
   end;
