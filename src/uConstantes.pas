@@ -22,6 +22,7 @@ const
   sPATH_ARQUIVO_LISTA    = 'C:\PluginDB1\Output\StringList.txt';
   sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
   sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';
+  sPATH_IMAGENS          = 'C:\PluginDB1\Imagens\';
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
   nBORDA_DBGRID = 12;

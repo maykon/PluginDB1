@@ -50,7 +50,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, IniFiles, FileCtrl, uFuncoes, uConstantes;
+  SysUtils, Forms, Windows, Graphics, IniFiles, FileCtrl, uFuncoes, uConstantes, ComCtrls;
 
 var
   FoFuncoes: TFuncoes;
@@ -85,6 +85,7 @@ function TWizard.CriarMenu(const psCaption, psIdentificador: string; poEvento: T
 var
   oNTAS: INTAServices;
   oAction: TAction;
+  oBitmap: TBitmap;
 begin
   oAction := nil;
   oNTAS := (BorlandIDEServices as INTAServices);
@@ -99,6 +100,14 @@ begin
     oAction.OnExecute := poEvento;
     oAction.Category := 'PluginDB1';
     oAction.ShortCut := TextToShortCut(FslAtalhos.Values[psIdentificador]);
+
+    if FileExists(Format('%s%s.bmp', [sPATH_IMAGENS, psIdentificador])) then
+    begin
+      oBitmap := TBitmap.Create;
+      oBitmap.LoadFromFile(Format('%s%s.bmp', [sPATH_IMAGENS, psIdentificador]));
+      oAction.ImageIndex := oNTAS.AddMasked(oBitmap, clFuchsia);
+      oBitmap.Free;
+    end;
 
     FActions.Add(oAction);
   end;
