@@ -36,9 +36,14 @@ const
   sNOME_PJ = 'PJ';
   sSECAO_ATALHOS = 'Atalhos';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
-  sURL_ITEM_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
-  sURL_SALT_RTC = 'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.search&q=%s';
-  sCOMANDO_RANSACK = '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
+  sCOMANDO_RMDIR = 'cmd.exe /c rmdir /s /q ';
+
+  sURL_ITEM_RTC =
+    'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
+  sURL_SALT_RTC =
+    'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.search&q=%s';
+  sCOMANDO_RANSACK =
+    '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
 
 implementation
 

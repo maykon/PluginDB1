@@ -73,8 +73,8 @@ End;
 
 procedure Register;
 begin
-  nIDWizard := (BorlandIDEServices as IOTAWizardServices).AddWizard(
-    InitialiseWizard(BorlandIDEServices));
+  nIDWizard :=
+    (BorlandIDEServices as IOTAWizardServices).AddWizard(InitialiseWizard(BorlandIDEServices));
     
   RegisterPackageWizard(TWizard.Create); //PC_OK
 end;
@@ -225,6 +225,7 @@ begin
   CriarMenu('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
   CriarMenu('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
   CriarMenu('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
+  CriarMenu('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
   CriarMenu(sSEPARADOR, 'Separador1', nil);
   CriarMenu('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
   CriarMenu('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);

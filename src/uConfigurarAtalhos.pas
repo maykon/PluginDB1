@@ -40,6 +40,8 @@ type
     btnOK: TBitBtn;
     lbConsultarNoRansack: TLabel;
     hkConsultarNoRansack: THotKey;
+    hkExcluirCache: THotKey;
+    lbExcluirCache: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -81,6 +83,7 @@ begin
   hkDiretorioBin.HotKey := PegarAtalho('AbrirDiretorioBin');
   hkSpCfg.HotKey := PegarAtalho('AbrirSpCfg');
   hkItemRTC.HotKey := PegarAtalho('AbrirItemRTC');
+  hkExcluirCache.HotKey := PegarAtalho('ExcluirCache');
   hkVisualizaDTS.HotKey := PegarAtalho('AbrirVisualizaDTS');
   hkSpMonitor.HotKey := PegarAtalho('AbrirSpMonitor');
   hkSpMonitor3.HotKey := PegarAtalho('AbrirSpMonitor3');
@@ -99,6 +102,7 @@ begin
   SalvarAtalho('AbrirDiretorioBin', hkDiretorioBin.HotKey);
   SalvarAtalho('AbrirSpCfg', hkSpCfg.HotKey);
   SalvarAtalho('AbrirItemRTC', hkItemRTC.HotKey);
+  SalvarAtalho('ExcluirCache', hkExcluirCache.HotKey);
   SalvarAtalho('AbrirVisualizaDTS', hkVisualizaDTS.HotKey);
   SalvarAtalho('AbrirSpMonitor', hkSpMonitor.HotKey);
   SalvarAtalho('AbrirSpMonitor3', hkSpMonitor3.HotKey);

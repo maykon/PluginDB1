@@ -28,7 +28,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    // Setter
+    // setters
     procedure SetTipoSistema(Value: TTipoSistema);
 
     // ferramentas internas
@@ -37,6 +37,7 @@ type
     procedure AbrirDiretorioBin(Sender: TObject);
     procedure AbrirSPCfg(Sender: TObject);
     procedure AbrirItemRTC(Sender: TObject);
+    procedure ExcluirCache(Sender: TObject);
 
     // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
@@ -77,10 +78,7 @@ end;
 
 destructor TFuncoes.Destroy;
 begin
-  if Assigned(FoToolsAPIUtils) then
-  begin
-    FreeAndNil(FoToolsAPIUtils); //PC_OK
-  end;
+  FreeAndNil(FoToolsAPIUtils); //PC_OK
 
   inherited;
 end;
@@ -98,11 +96,8 @@ begin
 end;
 
 procedure TFuncoes.VisualizarDataSet(Sender: TObject);
-var
-  sNomeDataSet: string;
 begin
-  sNomeDataSet := FoToolsAPIUtils.PegarTextoSelecionado;
-  ProcessarDataSet(sNomeDataSet);
+  ProcessarDataSet(FoToolsAPIUtils.PegarTextoSelecionado);
 end;
 
 procedure TFuncoes.CarregarArquivoDataSet;
@@ -157,7 +152,7 @@ begin
   slFiltro := TStringList.Create;
   try
     slFiltro.Add(sResultado);
-    slFiltro.SaveToFile(Format('%s', [sPATH_ARQUIVO_FILTRO]));
+    slFiltro.SaveToFile(sPATH_ARQUIVO_FILTRO);
   finally
     FreeAndNil(slFiltro);
   end;
@@ -518,6 +513,29 @@ var
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   result := Assigned(oThread);
+end;
+
+procedure TFuncoes.ExcluirCache(Sender: TObject);
+var
+  sDiretorioBin: string;
+
+  procedure ExcluirDiretorio(const psNomeDiretorio: string);
+  var
+    sDiretorioCache: string;
+    sComando: string;
+  begin
+    sDiretorioCache := Format('%s%s', [sDiretorioBin, psNomeDiretorio]);
+    sComando := Format('%s%s', [sCOMANDO_RMDIR, sDiretorioCache]);
+    WinExec(PAnsiChar(ansistring(sComando)), 0);
+  end;
+
+begin
+  sDiretorioBin := PegarDiretorioBin;
+
+  ExcluirDiretorio('Cache');
+  ExcluirDiretorio('cfgs');
+  ExcluirDiretorio('cfgs_srv');
+  ExcluirDiretorio('cfgs_usr');
 end;
 
 end.
