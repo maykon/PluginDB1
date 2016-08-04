@@ -135,13 +135,19 @@ begin
     ClientDataSet.First;
     ContarRegistros;
   except
-    ClientDataSet.Close;
-    MessageDlg('Não foi possível carregar os dados. Possíveis causas:' + #13 + #13 +
-      '- O DataSet está nil;' + #13 +
-      '- O DataSet está fechado;' + #13 +
-      '- O DataSet selecionado está em modo de inserção/edição.',
-      mtWarning, [mbOK], 0);
-    Application.Terminate;
+    On E:Exception do
+    begin
+      ClientDataSet.Close;
+      
+      MessageDlg('Não foi possível carregar os dados. Possíveis causas:' + #13 + #13 +
+        '- O DataSet está nil;' + #13 +
+        '- O DataSet está fechado;' + #13 +
+        '- O DataSet selecionado está em modo de inserção/edição.' + #13 +
+        'Erro: ' + E.Message,
+        mtWarning, [mbOK], 0);
+
+      Application.Terminate;
+    end;
   end;
   //jcf:format=on
 end;
