@@ -6,7 +6,21 @@ uses
   ToolsAPI;
 
 type
+  TNotificador = class(TInterfacedObject, IOTAThreadNotifier)
+  private
+    procedure AfterSave;
+    procedure BeforeSave;
+    procedure Destroyed;
+    procedure Modified;
+    procedure ThreadNotify(Reason: TOTANotifyReason);
+    procedure EvaluteComplete(const ExprStr, ResultStr: string; CanModify: boolean;
+      ResultAddress, ResultSize: longword; ReturnCode: integer);
+    procedure ModifyComplete(const ExprStr, ResultStr: string; ReturnCode: integer);
+  end;
+
   TToolsAPIUtils = class
+  private
+    procedure AguardarProcessamentoThread;
   public
     function PegarThreadAtual: IOTAThread;
     function PegarDiretorioProjetoAtivo: string;
@@ -19,7 +33,12 @@ type
 implementation
 
 uses
-  SysUtils, Windows, Forms;
+  SysUtils, Windows, Forms, Dialogs;
+
+var
+  FbProcessado: boolean;
+  FnErroProcessamento: integer;
+  FsResultadoDeferred: string;
 
 { TToolsAPIUtils }
 
@@ -32,10 +51,22 @@ begin
   sArquivo := Format('%s%s', [psDiretorio, psArquivo]);
   FillMemory(@oParamsExecucao, SizeOf(oParamsExecucao), 0);
   oParamsExecucao.cb := SizeOf(oParamsExecucao);
+
   CreateProcess(nil, PChar(sArquivo), nil, nil, False, NORMAL_PRIORITY_CLASS,
     nil, nil, oParamsExecucao, oInfoProcesso);
+
   CloseHandle(oInfoProcesso.hProcess);
   CloseHandle(oInfoProcesso.hThread);
+end;
+
+procedure TToolsAPIUtils.AguardarProcessamentoThread;
+begin
+  repeat
+    begin
+      Sleep(500);
+      Application.ProcessMessages;
+    end;
+  until FbProcessado or (FnErroProcessamento <> 0);
 end;
 
 function TToolsAPIUtils.ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
@@ -44,11 +75,49 @@ var
   bCanModify: boolean;
   sResultado: array[0..4095] of char;
   nEndereco, nTamanho, nValor: longword;
+  oNotificador: TNotificador;
+  nIndiceNotificador: integer;
 begin
-  result := poThread.Evaluate(psExpressao, @sResultado, Length(sResultado),
-    bCanModify, True, '', nEndereco, nTamanho, nValor);
-  Application.ProcessMessages;
-  psResultado := sResultado;
+  FbProcessado := False;
+  result := erOK;
+
+  oNotificador := TNotificador.Create; //PC_OK
+  nIndiceNotificador := poThread.AddNotifier(oNotificador);
+
+  try
+    while not FbProcessado do
+    begin
+      result := poThread.Evaluate(psExpressao, @sResultado, Length(sResultado),
+        bCanModify, True, '', nEndereco, nTamanho, nValor);
+      psResultado := sResultado;
+
+      if result = erOK then
+      begin
+        FbProcessado := True;
+        Break;
+      end;
+
+      if result = erDeferred then
+      begin
+        FbProcessado := False;
+        AguardarProcessamentoThread;
+        FbProcessado := True;
+
+        if FnErroProcessamento <> 0 then
+        begin
+          MessageDlg('Houve um erro ao executar o Evaluate do Delphi.', mtWarning, [mbOK], 0);
+          Break;
+        end;
+
+        if Trim(FsResultadoDeferred) <> EmptyStr then
+          psResultado := FsResultadoDeferred
+        else
+          psResultado := sResultado;
+      end;
+    end;
+  finally
+    poThread.RemoveNotifier(nIndiceNotificador);
+  end;
 end;
 
 function TToolsAPIUtils.PegarDiretorioProjetoAtivo: string;
@@ -118,6 +187,40 @@ begin
     FreeAndNil(oProcesso); //PC_OK
     FreeAndNil(oServicoDebug); //PC_OK
   end;
+end;
+
+{ TNotifier }
+
+procedure TNotificador.EvaluteComplete(const ExprStr, ResultStr: string;
+  CanModify: boolean; ResultAddress, ResultSize: longword; ReturnCode: integer);
+begin
+  FbProcessado := True;
+  FnErroProcessamento := ReturnCode;
+  FsResultadoDeferred := ResultStr;
+end;
+
+procedure TNotificador.AfterSave;
+begin
+end;
+
+procedure TNotificador.BeforeSave;
+begin
+end;
+
+procedure TNotificador.Destroyed;
+begin
+end;
+
+procedure TNotificador.Modified;
+begin
+end;
+
+procedure TNotificador.ModifyComplete(const ExprStr, ResultStr: string; ReturnCode: integer);
+begin
+end;
+
+procedure TNotificador.ThreadNotify(Reason: TOTANotifyReason);
+begin
 end;
 
 end.
