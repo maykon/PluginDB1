@@ -279,6 +279,7 @@ begin
   DeleteFile('C:\PluginDB1\StringList.txt');
   DeleteFile('C:\PluginDB1\unins000.exe');
   DeleteFile('C:\PluginDB1\unins000.dat');
+  DeleteFile('C:\PluginDB1\Output\StringList.txt');
 end;
 
 function TWizard.GetState: TWizardState;

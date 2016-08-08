@@ -8,10 +8,11 @@ uses
 type
   TfStringList = class(TForm)
     mmValores: TMemo;
-    procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
   private
-    procedure CarregarStringList;
+    procedure SetTextoLista(Value: string);
+  public
+    property TextoLista: string write SetTextoLista;
   end;
 
 var
@@ -19,34 +20,7 @@ var
 
 implementation
 
-uses
-  uConstantes;
-
 {$R *.DFM}
-
-procedure TfStringList.CarregarStringList;
-var
-  nTentativas: smallint;
-begin
-  nTentativas := 0;
-  repeat
-    Sleep(150);
-    Inc(nTentativas);
-  until FileExists(sPATH_ARQUIVO_LISTA) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
-
-  if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
-  begin
-    MessageDlg('Erro ao carregar os dados. Tente novamente!', mtWarning, [mbOK], 0);
-    Exit;
-  end;
-
-  mmValores.Lines.LoadFromFile(sPATH_ARQUIVO_LISTA);
-end;
-
-procedure TfStringList.FormCreate(Sender: TObject);
-begin
-  CarregarStringList;
-end;
 
 procedure TfStringList.FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
 begin
@@ -54,6 +28,15 @@ begin
   begin
     Close;
   end;
+end;
+
+procedure TfStringList.SetTextoLista(Value: string);
+var
+  sTextoFormatado: string;
+begin
+  sTextoFormatado := StringReplace(Value, '#$D#$A', #13, [rfReplaceAll]);
+  sTextoFormatado := StringReplace(sTextoFormatado, #39, EmptyStr, [rfReplaceAll]);
+  mmValores.Lines.Text := sTextoFormatado;
 end;
 
 end.

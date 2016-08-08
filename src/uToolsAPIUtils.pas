@@ -60,13 +60,17 @@ begin
 end;
 
 procedure TToolsAPIUtils.AguardarProcessamentoThread;
+var
+  nTentativas: smallint;
 begin
+  nTentativas := 0;
   repeat
     begin
+      Inc(nTentativas);
       Sleep(500);
       Application.ProcessMessages;
     end;
-  until FbProcessado or (FnErroProcessamento <> 0);
+  until FbProcessado or (FnErroProcessamento <> 0) or (nTentativas = 10);
 end;
 
 function TToolsAPIUtils.ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;

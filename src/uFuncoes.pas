@@ -291,8 +291,7 @@ begin
       Exit;
     end;
 
-    ExcluirArquivo(sPATH_ARQUIVO_LISTA);
-    sExpressao := Format('%s.SaveToFile(''%s'')', [sTextoSelecionado, sPATH_ARQUIVO_LISTA]);
+    sExpressao := Format('%s.Text', [sTextoSelecionado]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
     if not (oRetorno in [erOK, erDeferred]) then
@@ -300,8 +299,11 @@ begin
       Exit;
     end;
 
+    //ShowMessage(sResultado);
+
     fStringList := TfStringList.Create(nil);
     try
+      fStringList.TextoLista := sResultado;
       fStringList.ShowModal;
     finally
       FreeAndNil(fStringList);

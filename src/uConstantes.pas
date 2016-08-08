@@ -19,7 +19,6 @@ const
   sPATH_WINSPY           = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
   sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Output\Dados.xml';
   sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Output\Filtro.txt';
-  sPATH_ARQUIVO_LISTA    = 'C:\PluginDB1\Output\StringList.txt';
   sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
   sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';
   sPATH_IMAGENS          = 'C:\PluginDB1\Imagens\';
