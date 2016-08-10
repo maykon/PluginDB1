@@ -28,12 +28,13 @@ type
     function ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
       var psResultado: string): TOTAEvaluateResult;
     procedure AbrirArquivo(const psDiretorio, psArquivo: string);
+    procedure AbrirURL(const psURL: string);
   end;
 
 implementation
 
 uses
-  SysUtils, Windows, Forms, Dialogs;
+  SysUtils, Windows, Forms, Dialogs, ShellAPI, uConstantes;
 
 var
   FbProcessado: boolean;
@@ -59,6 +60,11 @@ begin
   CloseHandle(oInfoProcesso.hThread);
 end;
 
+procedure TToolsAPIUtils.AbrirURL(const psURL: string);
+begin
+  ShellExecute(0, 'open', PChar(psURL), '', '', SW_SHOWNORMAL);
+end;
+
 procedure TToolsAPIUtils.AguardarProcessamentoThread;
 var
   nTentativas: smallint;
@@ -70,7 +76,12 @@ begin
       Sleep(500);
       Application.ProcessMessages;
     end;
-  until FbProcessado or (FnErroProcessamento <> 0) or (nTentativas = 10);
+  until FbProcessado or (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO);
+
+  if (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO) then
+  begin
+    MessageDlg('Ocorreu um erro no processamento da Thread.', mtWarning, [mbOK], 0);
+  end;
 end;
 
 function TToolsAPIUtils.ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
@@ -101,9 +112,10 @@ begin
         Break;
       end;
 
+      FnErroProcessamento := 0;
+      FsResultadoDeferred := EmptyStr;
       if result = erDeferred then
       begin
-        FbProcessado := False;
         AguardarProcessamentoThread;
         FbProcessado := True;
 

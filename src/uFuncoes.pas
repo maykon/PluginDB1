@@ -38,6 +38,8 @@ type
     procedure AbrirSPCfg(Sender: TObject);
     procedure AbrirItemRTC(Sender: TObject);
     procedure ExcluirCache(Sender: TObject);
+    procedure ConsultarDocumentacaoDelphi(Sender: TObject);
+    procedure ConsultarDocumentacaoSP4(Sender: TObject);
 
     // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
@@ -414,8 +416,8 @@ begin
   else
     sURL := Format(sURL_ITEM_RTC, [sTexto]);
 
-  sTexto := StringReplace(sTexto, '/', '%2F', [rfReplaceAll]);
-  ShellExecute(0, 'open', PChar(sURL), '', '', SW_SHOWNORMAL);
+  //sTexto := StringReplace(sTexto, '/', '%2F', [rfReplaceAll]);
+  FoToolsAPIUtils.AbrirURL(sURL);
 end;
 
 procedure TFuncoes.AbrirVisualizaDTS(Sender: TObject);
@@ -538,6 +540,48 @@ begin
   ExcluirDiretorio('cfgs');
   ExcluirDiretorio('cfgs_srv');
   ExcluirDiretorio('cfgs_usr');
+end;
+
+procedure TFuncoes.ConsultarDocumentacaoDelphi(Sender: TObject);
+var
+  sTexto: string;
+  sURL: string;
+begin
+  sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
+
+  if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', sTexto) then
+  begin
+    Exit;
+  end;
+
+  if Trim(sTexto) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sURL := Format(sURL_DOCUMENTACAO_DELPHI, [sTexto]);
+  FoToolsAPIUtils.AbrirURL(sURL);
+end;
+
+procedure TFuncoes.ConsultarDocumentacaoSP4(Sender: TObject);
+var
+  sTexto: string;
+  sURL: string;
+begin
+  sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
+
+  if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', sTexto) then
+  begin
+    Exit;
+  end;
+
+  if Trim(sTexto) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sURL := Format(sURL_DOCUMENTACAO_SP4, [sTexto]);
+  FoToolsAPIUtils.AbrirURL(sURL);
 end;
 
 end.

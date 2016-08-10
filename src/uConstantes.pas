@@ -24,6 +24,7 @@ const
   sPATH_IMAGENS          = 'C:\PluginDB1\Imagens\';
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
+  nTENTATIVAS_PROCESSAMENTO = 10;
   nBORDA_DBGRID = 12;
   nTAMANHO_MAXIMO_ITEM_RTC = 8;
   sMENU_DB1 = 'DB&1';
@@ -41,6 +42,10 @@ const
     'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
   sURL_SALT_RTC =
     'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.search&q=%s';
+  sURL_DOCUMENTACAO_DELPHI =
+    'http://docwiki.embarcadero.com/RADStudio/Berlin/e/index.php?search=%s';
+  sURL_DOCUMENTACAO_SP4 =
+    'http://jenkins/view/Suporte%%20Interno/view/3%%20-%%20Noturno/job/SIU_DEVELOPMENT_NOTURNO_METRICAS/lastSuccessfulBuild/artifact/Artifacts/NOTURNO/Metrics/pasdoc/_tipue_results.html?q=%s';
   sCOMANDO_RANSACK =
     '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
 

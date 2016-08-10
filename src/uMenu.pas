@@ -237,6 +237,8 @@ begin
   CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
+  CriarMenu('Consultar Documentação Delphi', 'ConsultarDocumentacaoDelphi', FoFuncoes.ConsultarDocumentacaoDelphi);
+  CriarMenu('Consultar Documentação SP4', 'ConsultarDocumentacaoSP4', FoFuncoes.ConsultarDocumentacaoSP4);
   CriarMenu(sSEPARADOR, 'Separador3', nil);
   CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
   CriarMenu(sSEPARADOR, 'Separador4', nil);
