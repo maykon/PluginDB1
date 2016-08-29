@@ -14,16 +14,19 @@ type
     FenTipoSistema: TTipoSistema;
 
     function PegarDiretorioBin: string;
+    function PegarCriterioConsulta(var psTextoPadrao: string): string;
     function SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     function ValidarTextoSelecionado(const psTexto: string): boolean;
-    function VerificarDataSetEstaAssigned(const psNomeDataSet: string): boolean;
-    function VerificarDataSetEstaAtivo(const psNomeDataSet: string): boolean;
     function VerificarExisteThreadProcesso: boolean;
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string);
+
+    procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
+    procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
+    procedure VerificarDataSetEstaEmNavegacao(const psNomeDataSet: string);
   public
     constructor Create;
     destructor Destroy; override;
@@ -38,8 +41,10 @@ type
     procedure AbrirSPCfg(Sender: TObject);
     procedure AbrirItemRTC(Sender: TObject);
     procedure ExcluirCache(Sender: TObject);
-    procedure ConsultarDocumentacaoDelphi(Sender: TObject);
-    procedure ConsultarDocumentacaoSP4(Sender: TObject);
+    procedure ConsultarDocDelphi(Sender: TObject);
+    procedure ConsultarDocSP4(Sender: TObject);
+    procedure ConsultarColabore(Sender: TObject);
+    procedure ConsultarPadraoCodigo(Sender: TObject);
 
     // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
@@ -216,7 +221,7 @@ begin
 
   if not result then
   begin
-    MessageDlg(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [psNomeArquivo]), mtWarning, [mbOK], 0);
+    FoToolsAPIUtils.Aviso(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [psNomeArquivo]));
   end;
 end;
 
@@ -239,17 +244,9 @@ begin
     ExcluirArquivo(sPATH_ARQUIVO_DADOS);
     ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
 
-    if not VerificarDataSetEstaAssigned(psNomeDataSet) then
-    begin
-      MessageDlg('O DataSet está nil.', mtInformation, [mbOK], 0);
-      Exit;
-    end;
-
-    if not VerificarDataSetEstaAtivo(psNomeDataSet) then
-    begin
-      MessageDlg('O DataSet não está ativo.', mtInformation, [mbOK], 0);
-      Exit;
-    end;
+    VerificarDataSetEstaAssigned(psNomeDataSet);
+    VerificarDataSetEstaAtivo(psNomeDataSet);
+    VerificarDataSetEstaEmNavegacao(psNomeDataSet);
 
     oFormAguarde.Show;
     Application.ProcessMessages;
@@ -280,6 +277,12 @@ var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
 begin
+  sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
+  if Trim(sTextoSelecionado) = EmptyStr then
+  begin
+    Exit;
+  end;
+
   if not VerificarExisteThreadProcesso then
   begin
     Exit;
@@ -287,12 +290,6 @@ begin
 
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
-    sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
-    if Trim(sTextoSelecionado) = EmptyStr then
-    begin
-      Exit;
-    end;
-
     sExpressao := Format('%s.Text', [sTextoSelecionado]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
@@ -300,8 +297,6 @@ begin
     begin
       Exit;
     end;
-
-    //ShowMessage(sResultado);
 
     fStringList := TfStringList.Create(nil);
     try
@@ -336,7 +331,8 @@ begin
 
   if not DeleteFile(PChar(psNomeArquivo)) then
   begin
-    MessageDlg('Ocorreu um erro ao manipular os arquivos :(', mtWarning, [mbOK], 0);
+    FoToolsAPIUtils.Aviso('Ocorreu um erro ao manipular os arquivos :(');
+    Abort;
   end;
 end;
 
@@ -477,7 +473,7 @@ begin
     EmptyStr);
 end;
 
-function TFuncoes.VerificarDataSetEstaAssigned(const psNomeDataSet: string): boolean;
+procedure TFuncoes.VerificarDataSetEstaAssigned(const psNomeDataSet: string);
 var
   sExpressao: string;
   sResultado: string;
@@ -488,13 +484,18 @@ begin
   try
     sExpressao := Format('Assigned(%s)', [psNomeDataSet]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
-    result := (oRetorno = erOK) and (sResultado = 'True');
+
+    if (oRetorno <> erOK) or (sResultado <> 'True') then
+    begin
+      FoToolsAPIUtils.Aviso('O DataSet está nil.');
+      Abort;
+    end;
   finally
     FreeAndNil(oThread); //PC_OK
   end;
 end;
 
-function TFuncoes.VerificarDataSetEstaAtivo(const psNomeDataSet: string): boolean;
+procedure TFuncoes.VerificarDataSetEstaAtivo(const psNomeDataSet: string);
 var
   sExpressao: string;
   sResultado: string;
@@ -505,7 +506,12 @@ begin
   try
     sExpressao := Format('%s.State', [psNomeDataSet]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
-    result := (oRetorno = erOK) and (sResultado <> 'dsInactive');
+
+    if (oRetorno <> erOK) or (sResultado = 'dsInactive') then
+    begin
+      FoToolsAPIUtils.Aviso('O DataSet não está ativo.');
+      Abort;
+    end;
   finally
     FreeAndNil(oThread); //PC_OK
   end;
@@ -542,17 +548,13 @@ begin
   ExcluirDiretorio('cfgs_usr');
 end;
 
-procedure TFuncoes.ConsultarDocumentacaoDelphi(Sender: TObject);
+procedure TFuncoes.ConsultarDocDelphi(Sender: TObject);
 var
   sTexto: string;
   sURL: string;
 begin
   sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
-
-  if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', sTexto) then
-  begin
-    Exit;
-  end;
+  PegarCriterioConsulta(sTexto);
 
   if Trim(sTexto) = EmptyStr then
   begin
@@ -563,17 +565,13 @@ begin
   FoToolsAPIUtils.AbrirURL(sURL);
 end;
 
-procedure TFuncoes.ConsultarDocumentacaoSP4(Sender: TObject);
+procedure TFuncoes.ConsultarDocSP4(Sender: TObject);
 var
   sTexto: string;
   sURL: string;
 begin
   sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
-
-  if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', sTexto) then
-  begin
-    Exit;
-  end;
+  PegarCriterioConsulta(sTexto);
 
   if Trim(sTexto) = EmptyStr then
   begin
@@ -582,6 +580,63 @@ begin
 
   sURL := Format(sURL_DOCUMENTACAO_SP4, [sTexto]);
   FoToolsAPIUtils.AbrirURL(sURL);
+end;
+
+procedure TFuncoes.VerificarDataSetEstaEmNavegacao(const psNomeDataSet: string);
+var
+  sExpressao: string;
+  sResultado: string;
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+  bEstaEmModoInsercao: boolean;
+  bEstaEmModoAlteracao: boolean;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  try
+    sExpressao := Format('%s.State', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+
+    bEstaEmModoInsercao := sResultado = 'dsInsert';
+    bEstaEmModoAlteracao := sResultado = 'dsEdit';
+
+    if (oRetorno <> erOK) or (bEstaEmModoInsercao) or (bEstaEmModoAlteracao) then
+    begin
+      FoToolsAPIUtils.Aviso('O DataSet está em modo de inserção/alteração.');
+      Abort;
+    end;
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
+end;
+
+procedure TFuncoes.ConsultarColabore(Sender: TObject);
+var
+  sTexto: string;
+  sURL: string;
+begin
+  sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
+  PegarCriterioConsulta(sTexto);
+
+  if Trim(sTexto) = EmptyStr then
+  begin
+    Exit;
+  end;
+
+  sURL := Format(sURL_COLABORE, [sTexto]);
+  FoToolsAPIUtils.AbrirURL(sURL);
+end;
+
+function TFuncoes.PegarCriterioConsulta(var psTextoPadrao: string): string;
+begin
+  if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', psTextoPadrao) then
+  begin
+    psTextoPadrao := EmptyStr;
+  end;
+end;
+
+procedure TFuncoes.ConsultarPadraoCodigo(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirURL(sURL_PADRAO_CODIGO);
 end;
 
 end.

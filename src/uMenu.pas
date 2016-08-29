@@ -226,22 +226,32 @@ begin
   CriarMenu('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
   CriarMenu('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
   CriarMenu('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
+
   CriarMenu(sSEPARADOR, 'Separador1', nil);
+
   CriarMenu('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
   CriarMenu('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
   CriarMenu('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
   CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
   CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
   CriarMenu('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
+  CriarMenu('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
+  CriarMenu('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
+  CriarMenu('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
+  CriarMenu('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
+  
   CriarMenu(sSEPARADOR, 'Separador2', nil);
+
   CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
-  CriarMenu('Consultar Documentação Delphi', 'ConsultarDocumentacaoDelphi', FoFuncoes.ConsultarDocumentacaoDelphi);
-  CriarMenu('Consultar Documentação SP4', 'ConsultarDocumentacaoSP4', FoFuncoes.ConsultarDocumentacaoSP4);
+
   CriarMenu(sSEPARADOR, 'Separador3', nil);
+
   CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
+
   CriarMenu(sSEPARADOR, 'Separador4', nil);
+
   CriarMenu(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
   CriarMenu(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
   CriarMenu(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
