@@ -94,7 +94,7 @@ var
 begin
   SetLength(FaTamanhoMaximo, ClientDataSet.FieldCount);
 
-  for nCont := 0 to grdDados.Columns.Count - 1 do
+  for nCont := 0 to Pred(grdDados.Columns.Count) do
   begin
     FaTamanhoMaximo[nCont] := Canvas.TextWidth(ClientDataSet.Fields[nCont].DisplayLabel) +
       nBORDA_DBGRID;
@@ -104,7 +104,7 @@ begin
   ClientDataSet.First;
   while not ClientDataSet.EOF do
   begin
-    for nCont := 0 to grdDados.Columns.Count - 1 do
+    for nCont := 0 to Pred(grdDados.Columns.Count) do
     begin
       sDisplayText := grdDados.Columns[nCont].Field.DisplayText;
       nTamanho := Canvas.TextWidth(Trim(sDisplayText)) + nBORDA_DBGRID;
@@ -145,25 +145,18 @@ begin
     On E:Exception do
     begin
       ClientDataSet.Close;
-      
-      MessageDlg('Não foi possível carregar os dados. Possíveis causas:' + #13 + #13 +
-        '- O DataSet está nil;' + #13 +
-        '- O DataSet está fechado;' + #13 +
-        '- O DataSet selecionado está em modo de inserção/edição.' + #13 +
-        'Erro: ' + E.Message,
-        mtWarning, [mbOK], 0);
-
+      MessageDlg('Não foi possível carregar os dados. Erro: ' + E.Message, mtWarning, [mbOK], 0);
       Application.Terminate;
     end;
   end;
-  //jcf:format=on
+  //jcf:format=on                                 
 end;
 
 procedure TfVisualizadorDataSet.CarregarCampos;
 var
   nCont: smallint;
 begin
-  for nCont := 0 to ClientDataSet.Fields.Count - 1 do
+  for nCont := 0 to Pred(ClientDataSet.Fields.Count) do
   begin
     clCampos.Items.Add(ClientDataSet.Fields[nCont].FieldName);
     clCampos.Checked[nCont] := True;
@@ -269,7 +262,7 @@ var
   oOrdenacao: TIndexOptions;
   nCont: smallint;
 begin
-  for nCont := 0 to grdDados.Columns.Count - 1 do
+  for nCont := 0 to Pred(grdDados.Columns.Count) do
   begin
     grdDados.Columns[nCont].Title.Font.Style := [];
   end;
@@ -298,7 +291,7 @@ var
   nCont: smallint;
   sNomeCampo: string;
 begin
-  for nCont := 0 to clCampos.Items.Count - 1 do
+  for nCont := 0 to Pred(clCampos.Items.Count) do
   begin
     clCampos.Checked[nCont] := pbMarcar;
     sNomeCampo := clCampos.Items[nCont];

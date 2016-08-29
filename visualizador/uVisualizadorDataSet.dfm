@@ -107,7 +107,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Top = 532
     Width = 168
     Height = 17
-    Anchors = [akTop, akRight, akBottom]
+    Anchors = [akRight, akBottom]
     Caption = 'Ajustar Tamanho das Colunas'
     TabOrder = 6
     OnClick = chkAjustarTamanhoColunasClick
