@@ -29,6 +29,7 @@ type
       var psResultado: string): TOTAEvaluateResult;
     procedure AbrirArquivo(const psDiretorio, psArquivo: string);
     procedure AbrirURL(const psURL: string);
+    procedure Aviso(const psMensagem: string);
   end;
 
 implementation
@@ -80,8 +81,14 @@ begin
 
   if (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO) then
   begin
-    MessageDlg('Ocorreu um erro no processamento da Thread.', mtWarning, [mbOK], 0);
+    Aviso('Ocorreu um erro no processamento da Thread.');
+    Abort;
   end;
+end;
+
+procedure TToolsAPIUtils.Aviso(const psMensagem: string);
+begin
+  MessageDlg(psMensagem, mtWarning, [mbOK], 0);
 end;
 
 function TToolsAPIUtils.ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
@@ -92,6 +99,7 @@ var
   nEndereco, nTamanho, nValor: longword;
   oNotificador: TNotificador;
   nIndiceNotificador: integer;
+  bVariavelInacessivel: boolean;
 begin
   FbProcessado := False;
   result := erOK;
@@ -112,6 +120,13 @@ begin
         Break;
       end;
 
+      bVariavelInacessivel := Pos('inacessible', sResultado) > 0;
+      if (result = erError) or bVariavelInacessivel then
+      begin
+        Aviso('O objeto selecionado está inacessível no breakpoint atual.');
+        Abort;
+      end;
+
       FnErroProcessamento := 0;
       FsResultadoDeferred := EmptyStr;
       if result = erDeferred then
@@ -121,8 +136,8 @@ begin
 
         if FnErroProcessamento <> 0 then
         begin
-          MessageDlg('Houve um erro ao executar o Evaluate do Delphi.', mtWarning, [mbOK], 0);
-          Break;
+          Aviso('Houve um erro ao executar o Evaluate do Delphi.');
+          Abort;
         end;
 
         if Trim(FsResultadoDeferred) <> EmptyStr then
