@@ -21,10 +21,10 @@ type
     PopupMenuCopiar: TMenuItem;
     PopupMenuExcluir: TMenuItem;
     lbFiltro: TLabel;
+    chkAjustarTamanhoColunas: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure chkFiltroAtivadoClick(Sender: TObject);
     procedure clCamposClickCheck(Sender: TObject);
-    procedure ClientDataSetAfterOpen(DataSet: TDataSet);
     procedure edtFiltroChange(Sender: TObject);
     procedure edtFiltroKeyPress(Sender: TObject; var Key: char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -34,6 +34,7 @@ type
     procedure PopupMenuCopiarClick(Sender: TObject);
     procedure PopupMenuExcluirClick(Sender: TObject);
     procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
+    procedure chkAjustarTamanhoColunasClick(Sender: TObject);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -70,12 +71,18 @@ end;
 procedure TfVisualizadorDataSet.AjustarTamanhoColunas;
 var
   nCont: smallint;
+  nTamanho: integer;
 begin
-  for nCont := 0 to grdDados.Columns.Count - 1 do
+  for nCont := 0 to Pred(grdDados.Columns.Count) do
   begin
-    if FaTamanhoMaximo[nCont] > 0 then
+    if chkAjustarTamanhoColunas.Checked then
+      nTamanho := FaTamanhoMaximo[nCont]
+    else
+      nTamanho := grdDados.Columns[nCont].Field.Size;
+
+    if nTamanho > 0 then
     begin
-      grdDados.Columns[nCont].Width := FaTamanhoMaximo[nCont];
+      grdDados.Columns[nCont].Width := nTamanho;
     end;
   end;
 end;
@@ -230,12 +237,6 @@ begin
   end;
 end;
 
-procedure TfVisualizadorDataSet.ClientDataSetAfterOpen(DataSet: TDataSet);
-begin
-  CalcularTamanhoColunas;
-  AjustarTamanhoColunas;
-end;
-
 procedure TfVisualizadorDataSet.ContarRegistros;
 begin
   lbQuantidade.Caption := Format('%d registro(s)', [ClientDataSet.RecordCount]);
@@ -352,6 +353,16 @@ end;
 procedure TfVisualizadorDataSet.ClientDataSetBeforeInsert(DataSet: TDataSet);
 begin
   Abort;
+end;
+
+procedure TfVisualizadorDataSet.chkAjustarTamanhoColunasClick(Sender: TObject);
+begin
+  if chkAjustarTamanhoColunas.Checked then
+  begin
+    CalcularTamanhoColunas;
+  end;
+
+  AjustarTamanhoColunas;
 end;
 
 end.

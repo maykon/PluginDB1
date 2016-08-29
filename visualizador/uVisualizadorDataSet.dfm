@@ -1,6 +1,6 @@
 object fVisualizadorDataSet: TfVisualizadorDataSet
-  Left = 190
-  Top = 76
+  Left = 189
+  Top = 119
   Width = 1035
   Height = 608
   Caption = 'Visualizador de DataSet'
@@ -76,7 +76,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Left = 845
     Top = 31
     Width = 168
-    Height = 516
+    Height = 495
     OnClickCheck = clCamposClickCheck
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
@@ -102,6 +102,16 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     TabOrder = 5
     OnClick = btnNenhumClick
   end
+  object chkAjustarTamanhoColunas: TCheckBox
+    Left = 845
+    Top = 532
+    Width = 168
+    Height = 17
+    Anchors = [akTop, akRight, akBottom]
+    Caption = 'Ajustar Tamanho das Colunas'
+    TabOrder = 6
+    OnClick = chkAjustarTamanhoColunasClick
+  end
   object DataSource: TDataSource
     AutoEdit = False
     DataSet = ClientDataSet
@@ -111,7 +121,6 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   object ClientDataSet: TClientDataSet
     Aggregates = <>
     Params = <>
-    AfterOpen = ClientDataSetAfterOpen
     BeforeInsert = ClientDataSetBeforeInsert
     Left = 19
     Top = 494
