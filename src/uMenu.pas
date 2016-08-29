@@ -149,7 +149,7 @@ var
   nCont: integer;
   oAction: TAction;
 begin
-  for nCont := 0 to FActions.Count - 1 do
+  for nCont := 0 to Pred(FActions.Count) do
   begin
     oAction := FActions[nCont] as TAction;
     oAction.ShortCut := TextToShortCut(FslAtalhos.Values[oAction.Name]);
@@ -204,7 +204,7 @@ begin
     tsPJ: sNomeMenu := sNOME_PJ;
   end;
 
-  for nCont := 0 to FActions.Count - 1 do
+  for nCont := 0 to Pred(FActions.Count) do
   begin
     oAction := FActions[nCont] as TAction;
     oAction.Checked := oAction.Caption = sNomeMenu;
@@ -234,23 +234,26 @@ begin
   CriarMenu('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
   CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
   CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
+
+  CriarMenu(sSEPARADOR, 'Separador2', nil);
+
   CriarMenu('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
   CriarMenu('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
   CriarMenu('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
   CriarMenu('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
   CriarMenu('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
-  
-  CriarMenu(sSEPARADOR, 'Separador2', nil);
+
+  CriarMenu(sSEPARADOR, 'Separador3', nil);
 
   CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
 
-  CriarMenu(sSEPARADOR, 'Separador3', nil);
+  CriarMenu(sSEPARADOR, 'Separador4', nil);
 
   CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
 
-  CriarMenu(sSEPARADOR, 'Separador4', nil);
+  CriarMenu(sSEPARADOR, 'Separador5', nil);
 
   CriarMenu(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
   CriarMenu(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);

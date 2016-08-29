@@ -160,7 +160,7 @@ var
   nCont: integer;
 begin
   oModuleServices := BorlandIDEServices as IOTAModuleServices;
-  for nCont := 0 to oModuleServices.ModuleCount - 1 do
+  for nCont := 0 to Pred(oModuleServices.ModuleCount) do
   begin
     oModulo := oModuleServices.Modules[nCont];
     if oModulo.QueryInterface(IOTAProjectGroup, oGrupo) = S_OK then
