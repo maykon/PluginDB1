@@ -23,6 +23,7 @@ type
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string);
+    procedure SalvarIndicesDataSet(const psNomeDataSet: string);
 
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
@@ -147,14 +148,10 @@ begin
   end;
 
   if oRetorno = erError then
-  begin
     Exit;
-  end;
 
   if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
-  begin
     Exit;
-  end;
 
   slFiltro := TStringList.Create;
   try
@@ -172,9 +169,7 @@ begin
   sNomeDataSet := 'Ex: fpgProcessoParte.esajParte';
 
   if not InputQuery('Informar o DataSet', 'Informe o nome do DataSet:', sNomeDataSet) then
-  begin
     Exit;
-  end;
 
   ProcessarDataSet(sNomeDataSet);
 end;
@@ -220,9 +215,7 @@ begin
   result := FileExists(Format('%s%s', [PegarDiretorioBin, psNomeArquivo]));
 
   if not result then
-  begin
     FoToolsAPIUtils.Aviso(Format(sMENSAGEM_ARQUIVO_NAO_ENCONTRADO, [psNomeArquivo]));
-  end;
 end;
 
 procedure TFuncoes.ProcessarDataSet(const psNomeDataSet: string);
@@ -230,14 +223,10 @@ var
   oFormAguarde: TfAguarde;
 begin
   if Trim(psNomeDataSet) = EmptyStr then
-  begin
     Exit;
-  end;
 
   if not VerificarExisteThreadProcesso then
-  begin
     Exit;
-  end;
 
   oFormAguarde := TfAguarde.Create(nil);
   try
@@ -252,10 +241,10 @@ begin
     Application.ProcessMessages;
 
     SalvarFiltroDataSet(psNomeDataSet);
+    SalvarIndicesDataSet(psNomeDataSet);
+
     if SalvarArquivoDataSet(psNomeDataSet) then
-    begin
       CarregarArquivoDataSet;
-    end;
   finally
     oFormAguarde.Close;
     FreeAndNil(oFormAguarde);
@@ -279,14 +268,10 @@ var
 begin
   sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
   if Trim(sTextoSelecionado) = EmptyStr then
-  begin
     Exit;
-  end;
 
   if not VerificarExisteThreadProcesso then
-  begin
     Exit;
-  end;
 
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
@@ -294,9 +279,7 @@ begin
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
     if not (oRetorno in [erOK, erDeferred]) then
-    begin
       Exit;
-    end;
 
     fStringList := TfStringList.Create(nil);
     try
@@ -325,9 +308,7 @@ end;
 procedure TFuncoes.ExcluirArquivo(const psNomeArquivo: string);
 begin
   if not FileExists(psNomeArquivo) then
-  begin
     Exit;
-  end;
 
   if not DeleteFile(PChar(psNomeArquivo)) then
   begin
@@ -347,9 +328,7 @@ begin
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeServidor) then
-  begin
     Exit;
-  end;
 
   FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeServidor);
 end;
@@ -365,9 +344,7 @@ begin
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao) then
-  begin
     Exit;
-  end;
 
   FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeAplicacao);
 end;
@@ -393,19 +370,13 @@ begin
   sTexto := FoToolsAPIUtils.PegarTextoSelecionado;
 
   if not ValidarTextoSelecionado(sTexto) then
-  begin
     sTexto := EmptyStr;
-  end;
 
   if not InputQuery('Digite o item do RTC', 'Item do RTC:', sTexto) then
-  begin
     Exit;
-  end;
 
   if Trim(sTexto) = EmptyStr then
-  begin
     Exit;
-  end;
 
   if Pos('/', sTexto) > 0 then
     sURL := Format(sURL_SALT_RTC, [sTexto])
@@ -455,17 +426,13 @@ var
 begin
   sTextoSelecionado := FoToolsAPIUtils.PegarTextoSelecionado;
   if Trim(sTextoSelecionado) = EmptyStr then
-  begin
     Exit;
-  end;
 
   sDiretorio := FoToolsAPIUtils.PegarDiretorioProjetoAtivo;
   nPosicaoPastaSRC := Pos('src', sDiretorio);
 
   if nPosicaoPastaSRC <= 0 then
-  begin
     Exit;
-  end;
 
   sParteAposSRC := Copy(sDiretorio, nPosicaoPastaSRC, Length(sDiretorio));
   sDiretorio := StringReplace(sDiretorio, sParteAposSRC, 'src', [rfReplaceAll]);
@@ -557,9 +524,7 @@ begin
   PegarCriterioConsulta(sTexto);
 
   if Trim(sTexto) = EmptyStr then
-  begin
     Exit;
-  end;
 
   sURL := Format(sURL_DOCUMENTACAO_DELPHI, [sTexto]);
   FoToolsAPIUtils.AbrirURL(sURL);
@@ -574,9 +539,7 @@ begin
   PegarCriterioConsulta(sTexto);
 
   if Trim(sTexto) = EmptyStr then
-  begin
     Exit;
-  end;
 
   sURL := Format(sURL_DOCUMENTACAO_SP4, [sTexto]);
   FoToolsAPIUtils.AbrirURL(sURL);
@@ -618,9 +581,7 @@ begin
   PegarCriterioConsulta(sTexto);
 
   if Trim(sTexto) = EmptyStr then
-  begin
     Exit;
-  end;
 
   sURL := Format(sURL_COLABORE, [sTexto]);
   FoToolsAPIUtils.AbrirURL(sURL);
@@ -629,14 +590,44 @@ end;
 function TFuncoes.PegarCriterioConsulta(var psTextoPadrao: string): string;
 begin
   if not InputQuery('Digite o critério de consulta', 'Critério de consulta:', psTextoPadrao) then
-  begin
     psTextoPadrao := EmptyStr;
-  end;
 end;
 
 procedure TFuncoes.ConsultarPadraoCodigo(Sender: TObject);
 begin
   FoToolsAPIUtils.AbrirURL(sURL_PADRAO_CODIGO);
+end;
+
+procedure TFuncoes.SalvarIndicesDataSet(const psNomeDataSet: string);
+var
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+  sExpressao: string;
+  sResultado: string;
+  slIndices: TStringList;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  sResultado := EmptyStr;
+  try
+    sExpressao := Format('%s.IndexFieldNames', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
+
+  if oRetorno = erError then
+    Exit;
+
+  if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
+    Exit;
+
+  slIndices := TStringList.Create;
+  try
+    slIndices.Add(sResultado);
+    slIndices.SaveToFile(sPATH_ARQUIVO_INDICES);
+  finally
+    FreeAndNil(slIndices);
+  end;
 end;
 
 end.

@@ -22,6 +22,9 @@ type
     PopupMenuExcluir: TMenuItem;
     lbFiltro: TLabel;
     chkAjustarTamanhoColunas: TCheckBox;
+    lbIndices: TLabel;
+    edtIndices: TEdit;
+    chkIndicesAtivado: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure chkFiltroAtivadoClick(Sender: TObject);
     procedure clCamposClickCheck(Sender: TObject);
@@ -35,6 +38,9 @@ type
     procedure PopupMenuExcluirClick(Sender: TObject);
     procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
     procedure chkAjustarTamanhoColunasClick(Sender: TObject);
+    procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
+    procedure edtIndicesChange(Sender: TObject);
+    procedure chkIndicesAtivadoClick(Sender: TObject);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -44,6 +50,7 @@ type
     procedure CarregarArquivoDados;
     procedure CarregarCampos;
     procedure CarregarFiltro;
+    procedure CarregarIndices;
     procedure ContarRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
   public
@@ -81,9 +88,7 @@ begin
       nTamanho := grdDados.Columns[nCont].Field.Size;
 
     if nTamanho > 0 then
-    begin
       grdDados.Columns[nCont].Width := nTamanho;
-    end;
   end;
 end;
 
@@ -108,10 +113,9 @@ begin
     begin
       sDisplayText := grdDados.Columns[nCont].Field.DisplayText;
       nTamanho := Canvas.TextWidth(Trim(sDisplayText)) + nBORDA_DBGRID;
+
       if nTamanho > FaTamanhoMaximo[nCont] then
-      begin
         FaTamanhoMaximo[nCont] := nTamanho;
-      end;
     end;
     ClientDataSet.Next;
   end;
@@ -168,6 +172,7 @@ begin
   CarregarArquivoDados;
   CarregarCampos;
   CarregarFiltro;
+  CarregarIndices;
 end;
 
 procedure TfVisualizadorDataSet.CarregarFiltro;
@@ -176,14 +181,10 @@ var
   sFiltro: string;
 begin
   if not FileExists(sPATH_ARQUIVO_FILTRO) then
-  begin
     Exit;
-  end;
 
   if not ClientDataSet.Active then
-  begin
     Exit;
-  end;
 
   slFiltro := TStringList.Create;
   try
@@ -191,9 +192,7 @@ begin
     sFiltro := Copy(slFiltro[0], 2, Length(slFiltro[0]) - 2);
 
     if sFiltro = EmptyStr then
-    begin
       Exit;
-    end;
 
     edtFiltro.Text := sFiltro;
     chkFiltroAtivado.Checked := True;
@@ -206,6 +205,10 @@ procedure TfVisualizadorDataSet.chkFiltroAtivadoClick(Sender: TObject);
 begin
   ClientDataSet.Filter := edtFiltro.Text;
   try
+    chkFiltroAtivado.Font.Style := [];
+    if chkFiltroAtivado.Checked then
+      chkFiltroAtivado.Font.Style := [fsBold];
+
     ClientDataSet.Filtered := chkFiltroAtivado.Checked;
   except
     MessageDlg('Filtro inválido!', mtWarning, [mbOK], 0);
@@ -225,9 +228,7 @@ begin
   ClientDataSet.FieldByName(sNomeCampo).Visible := bHabilitar;
 
   if bHabilitar then
-  begin
     AjustarTamanhoColunas;
-  end;
 end;
 
 procedure TfVisualizadorDataSet.ContarRegistros;
@@ -263,9 +264,7 @@ var
   nCont: smallint;
 begin
   for nCont := 0 to Pred(grdDados.Columns.Count) do
-  begin
     grdDados.Columns[nCont].Title.Font.Style := [];
-  end;
 
   ClientDataSet.IndexDefs.Clear;
 
@@ -351,11 +350,68 @@ end;
 procedure TfVisualizadorDataSet.chkAjustarTamanhoColunasClick(Sender: TObject);
 begin
   if chkAjustarTamanhoColunas.Checked then
-  begin
     CalcularTamanhoColunas;
-  end;
 
   AjustarTamanhoColunas;
+end;
+
+procedure TfVisualizadorDataSet.CarregarIndices;
+var
+  slIndices: TStringList;
+  sIndices: string;
+begin
+  if not FileExists(sPATH_ARQUIVO_INDICES) then
+    Exit;
+
+  if not ClientDataSet.Active then
+    Exit;
+
+  slIndices := TStringList.Create;
+  try
+    slIndices.LoadFromFile(sPATH_ARQUIVO_INDICES);
+    sIndices := Copy(slIndices[0], 2, Length(slIndices[0]) - 2);
+
+    if sIndices = EmptyStr then
+      Exit;
+
+    edtIndices.Text := sIndices;
+    ClientDataSet.IndexFieldNames := sIndices;
+    chkIndicesAtivado.Checked := True;
+  finally
+    FreeAndNil(slIndices);
+  end;
+end;
+
+procedure TfVisualizadorDataSet.edtIndicesKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    chkIndicesAtivado.Checked := not chkIndicesAtivado.Checked;
+  end;
+end;
+
+procedure TfVisualizadorDataSet.edtIndicesChange(Sender: TObject);
+begin
+  ClientDataSet.IndexFieldNames := EmptyStr;
+  chkIndicesAtivado.Checked := False;
+end;
+
+procedure TfVisualizadorDataSet.chkIndicesAtivadoClick(Sender: TObject);
+begin
+  try
+    ClientDataSet.IndexFieldNames := EmptyStr;
+    chkIndicesAtivado.Font.Style := [];
+    if chkIndicesAtivado.Checked then
+    begin
+      chkIndicesAtivado.Font.Style := [fsBold];
+      ClientDataSet.IndexFieldNames := Trim(edtIndices.Text);
+    end;
+  except
+    MessageDlg('Índice inválido!', mtWarning, [mbOK], 0);
+    edtIndices.SetFocus;
+    chkIndicesAtivado.Checked := False;
+  end;
 end;
 
 end.

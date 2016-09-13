@@ -114,9 +114,7 @@ begin
 
   result.Caption := psCaption;
   if psCaption = sSEPARADOR then
-  begin
     result.Caption := sSEPARADOR;
-  end;
 
   result.Action := oAction;
   result.Name := 'im' + psIdentificador;
@@ -282,9 +280,7 @@ end;
 procedure TWizard.CriarPastaOutput;
 begin
   if not DirectoryExists('C:\PluginDB1\Output') then
-  begin
     ForceDirectories('C:\PluginDB1\Output');
-  end;
 end;
 
 procedure TWizard.ExcluirArquivosAntigos;
@@ -338,9 +334,7 @@ finalization
   FreeAndNil(FslAtalhos);
 
   if nIDWizard > 0 then
-  begin
     (BorlandIDEServices as IOTAWizardServices).RemoveWizard(nIDWizard);
-  end;
 
   //jcf:format=on
 end.

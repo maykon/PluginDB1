@@ -31,21 +31,28 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     ParentFont = False
   end
   object lbFiltro: TLabel
-    Left = 13
+    Left = 24
     Top = 9
     Width = 28
     Height = 13
     Caption = 'Filtro:'
   end
+  object lbIndices: TLabel
+    Left = 14
+    Top = 32
+    Width = 38
+    Height = 13
+    Caption = 'Índices:'
+  end
   object grdDados: TDBGrid
     Left = 12
-    Top = 31
+    Top = 53
     Width = 820
-    Height = 516
+    Height = 495
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource
     PopupMenu = PopupMenu
-    TabOrder = 0
+    TabOrder = 7
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -54,22 +61,22 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnTitleClick = grdDadosTitleClick
   end
   object edtFiltro: TEdit
-    Left = 46
+    Left = 56
     Top = 5
-    Width = 713
+    Width = 703
     Height = 21
     MaxLength = 200
-    TabOrder = 1
+    TabOrder = 0
     OnChange = edtFiltroChange
     OnKeyPress = edtFiltroKeyPress
   end
   object chkFiltroAtivado: TCheckBox
     Left = 766
-    Top = 8
+    Top = 7
     Width = 66
     Height = 17
     Caption = 'Ativado'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = chkFiltroAtivadoClick
   end
   object clCampos: TCheckListBox
@@ -80,7 +87,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClickCheck = clCamposClickCheck
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
-    TabOrder = 3
+    TabOrder = 5
   end
   object btnTodos: TBitBtn
     Left = 845
@@ -89,7 +96,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Todos'
-    TabOrder = 4
+    TabOrder = 3
     OnClick = btnTodosClick
   end
   object btnNenhum: TBitBtn
@@ -99,7 +106,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Nenhum'
-    TabOrder = 5
+    TabOrder = 4
     OnClick = btnNenhumClick
   end
   object chkAjustarTamanhoColunas: TCheckBox
@@ -111,6 +118,25 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Caption = 'Ajustar Tamanho das Colunas'
     TabOrder = 6
     OnClick = chkAjustarTamanhoColunasClick
+  end
+  object edtIndices: TEdit
+    Left = 56
+    Top = 28
+    Width = 703
+    Height = 21
+    MaxLength = 200
+    TabOrder = 2
+    OnChange = edtIndicesChange
+    OnKeyPress = edtIndicesKeyPress
+  end
+  object chkIndicesAtivado: TCheckBox
+    Left = 766
+    Top = 31
+    Width = 66
+    Height = 17
+    Caption = 'Ativado'
+    TabOrder = 8
+    OnClick = chkIndicesAtivadoClick
   end
   object DataSource: TDataSource
     AutoEdit = False

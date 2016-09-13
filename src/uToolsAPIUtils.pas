@@ -164,9 +164,7 @@ begin
   begin
     oModulo := oModuleServices.Modules[nCont];
     if oModulo.QueryInterface(IOTAProjectGroup, oGrupo) = S_OK then
-    begin
       Break;
-    end;
   end;
 
   result := EmptyStr;
@@ -174,9 +172,7 @@ begin
   begin
     oProjeto := oGrupo.ActiveProject;
     if Assigned(oProjeto) then
-    begin
       result := oProjeto.FileName;
-    end;
   end;
 end;
 
@@ -191,9 +187,7 @@ begin
 
   if (oBloco.StartingColumn <> oBloco.EndingColumn) or
     (oBloco.StartingRow <> oBloco.EndingRow) then
-  begin
     result := oBloco.Text;
-  end;
 end;
 
 function TToolsAPIUtils.PegarThreadAtual: IOTAThread;
@@ -204,14 +198,10 @@ begin
   result := nil;
   try
     if Supports(BorlandIDEServices, IOTADebuggerServices, oServicoDebug) then
-    begin
       oProcesso := oServicoDebug.CurrentProcess;
-    end;
 
     if not Assigned(oProcesso) then
-    begin
       Exit;
-    end;
 
     result := oProcesso.CurrentThread;
   finally
