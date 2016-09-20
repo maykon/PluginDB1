@@ -30,6 +30,7 @@ object fStringList: TfStringList
     Font.Name = 'Courier New'
     Font.Style = []
     ParentFont = False
+    ScrollBars = ssBoth
     TabOrder = 0
   end
 end
