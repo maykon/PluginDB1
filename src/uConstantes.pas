@@ -52,11 +52,11 @@ const
   sURL_PADRAO_CODIGO =
     'https://colabore.softplan.com.br/pages/viewpage.action?pageId=12386698#Padr%C3%A3odeC%C3%B3digoDelphi-144';
   sCOMANDO_RANSACK =
-    '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "%s" -d "%s" -r -s';
+    '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "\"%s"\" -d "%s" -r -s';
 
 implementation
 
 //jcf:format=on
 
 end.
-
+                                                                              
