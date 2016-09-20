@@ -244,6 +244,12 @@ end;
 
 procedure TfVisualizadorDataSet.edtFiltroKeyPress(Sender: TObject; var Key: char);
 begin
+  if Trim(edtFiltro.Text) = EmptyStr then
+  begin
+    chkFiltroAtivado.Checked := False;
+    Exit;
+  end;
+
   if Key = #13 then
   begin
     Key := #0;
@@ -375,7 +381,6 @@ begin
       Exit;
 
     edtIndices.Text := sIndices;
-    ClientDataSet.IndexFieldNames := sIndices;
     chkIndicesAtivado.Checked := True;
   finally
     FreeAndNil(slIndices);
@@ -384,6 +389,12 @@ end;
 
 procedure TfVisualizadorDataSet.edtIndicesKeyPress(Sender: TObject; var Key: char);
 begin
+  if Trim(edtIndices.Text) = EmptyStr then
+  begin
+    chkIndicesAtivado.Checked := False;
+    Exit;
+  end;
+
   if Key = #13 then
   begin
     Key := #0;
