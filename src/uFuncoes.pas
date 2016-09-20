@@ -232,6 +232,7 @@ begin
   try
     ExcluirArquivo(sPATH_ARQUIVO_DADOS);
     ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
+    ExcluirArquivo(sPATH_ARQUIVO_INDICES);
 
     VerificarDataSetEstaAssigned(psNomeDataSet);
     VerificarDataSetEstaAtivo(psNomeDataSet);
@@ -351,7 +352,7 @@ end;
 
 procedure TFuncoes.AbrirDiretorioBin(Sender: TObject);
 begin
-  ShellExecute(0, nil, PChar(PegarDiretorioBin), '', '', SW_SHOW);
+  ShellExecute(Application.Handle, 'explore', PChar(PegarDiretorioBin), nil, nil, SW_SHOW);
 end;
 
 procedure TFuncoes.AbrirSPCfg(Sender: TObject);
