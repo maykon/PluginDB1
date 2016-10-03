@@ -4,7 +4,12 @@ unit uConstantes;
 
 interface
 
-const                                                                        
+type
+  TenTipoArquivoMVP = (taNaoMVP, taModelAPI, taPresenterAPI, taViewAPI, taModel,
+    taPresenter, taViewFrame, taViewPanel, taViewForm, taView, taBuilder,
+    taParamsBuild, taParamsBuildAPI);
+
+const
   sNOME_SERVIDOR_PG      = 'pg5Servidor.exe';
   sNOME_SERVIDOR_SG      = 'sg5Servidor.exe';
   sNOME_SERVIDOR_PJ      = 'spjServidor.exe';
@@ -29,6 +34,7 @@ const
   nBORDA_DBGRID = 12;
   nTAMANHO_MAXIMO_ITEM_RTC = 8;
   sMENU_DB1 = 'DB&1';
+  sMENU_MVP = '&MVP';
   sSEPARADOR = '-';
   sINDEX_ASC = '_ASC';
   sINDEX_DESC = '_DESC';

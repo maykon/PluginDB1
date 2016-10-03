@@ -212,7 +212,10 @@ begin
     ClientDataSet.Filtered := chkFiltroAtivado.Checked;
   except
     MessageDlg('Filtro inválido!', mtWarning, [mbOK], 0);
-    edtFiltro.SetFocus;
+
+    if edtFiltro.CanFocus then
+      edtFiltro.SetFocus;
+
     chkFiltroAtivado.Checked := False;
   end;
   ContarRegistros;
@@ -420,7 +423,10 @@ begin
     end;
   except
     MessageDlg('Índice inválido!', mtWarning, [mbOK], 0);
-    edtIndices.SetFocus;
+
+    if edtIndices.CanFocus then
+      edtIndices.SetFocus;
+
     chkIndicesAtivado.Checked := False;
   end;
 end;

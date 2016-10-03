@@ -11,7 +11,8 @@ uses
   uConfigurarAtalhos in '..\src\uConfigurarAtalhos.pas' {fConfigurarAtalhos},
   uFuncoes in '..\src\uFuncoes.pas',
   uConstantes in '..\src\uConstantes.pas',
-  uToolsAPIUtils in '..\src\uToolsAPIUtils.pas';
+  uToolsAPIUtils in '..\src\uToolsAPIUtils.pas',
+  uExpansorArquivoMVP in '..\src\uExpansorArquivoMVP.pas';
 
 {$R *.RES}
 

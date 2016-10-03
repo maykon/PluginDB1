@@ -12,12 +12,17 @@ type
   private
     FoTimerAtalhos: TTimer;
     FoMenuDB1: TMenuItem;
+    FoMenuMVP: TMenuItem;
 
-    function CriarMenu(const psCaption, psIdentificador: string; poEvento: TNotifyEvent): TMenuItem;
+    procedure AbrirArquivoMVP(Sender: TObject);
+    procedure CriarItemMenuDB1(const psCaption, psIdentificador: string; poEvento: TNotifyEvent);
+    procedure CriarItemMenuMVP(const psCaption, psIdentificador: string; const pnTag: integer = 0);
     procedure CriarMenuDB1;
+    procedure CriarMenuMVP;
     procedure CriarTemporizadorAtalhos;
     procedure CriarPastaOutput;
-    procedure AdicionarAcoes;
+    procedure AdicionarAcoesDB1;
+    procedure AdicionarAcoesMVP;
     procedure CarregarAtalhos;
     procedure AtribuirAtalhos(Sender: TObject);
     procedure MarcarMenu;
@@ -25,7 +30,7 @@ type
     procedure SelecionarSistemaSG(Sender: TObject);
     procedure SelecionarSistemaPJ(Sender: TObject);
     procedure ConfigurarAtalhos(Sender: TObject);
-    procedure ExcluirArquivosAntigos;
+    procedure ProcessarArquivosMVP(Sender: TObject);
   public
     constructor Create;
 
@@ -81,15 +86,16 @@ end;
 
 { TWizard }
 
-function TWizard.CriarMenu(const psCaption, psIdentificador: string; poEvento: TNotifyEvent): TMenuItem;
+procedure TWizard.CriarItemMenuDB1(const psCaption, psIdentificador: string; poEvento: TNotifyEvent);
 var
   oNTAS: INTAServices;
   oAction: TAction;
   oBitmap: TBitmap;
+  oMenuItem: TMenuItem;
 begin
   oAction := nil;
   oNTAS := (BorlandIDEServices as INTAServices);
-  result := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
+  oMenuItem := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
 
   if Assigned(poEvento) then
   begin
@@ -112,24 +118,27 @@ begin
     FActions.Add(oAction);
   end;
 
-  result.Caption := psCaption;
+  oMenuItem.Caption := psCaption;
   if psCaption = sSEPARADOR then
-    result.Caption := sSEPARADOR;
+    oMenuItem.Caption := sSEPARADOR;
 
-  result.Action := oAction;
-  result.Name := 'im' + psIdentificador;
-  FoMenuDB1.Add(result);
+  oMenuItem.Action := oAction;
+  oMenuItem.Name := 'im' + psIdentificador;
+  FoMenuDB1.Add(oMenuItem);
 end;
 
 constructor TWizard.Create;
 begin
+  CriarMenuMVP;
+  AdicionarAcoesMVP;
+
   CriarMenuDB1;
+  AdicionarAcoesDB1;
+
   CarregarAtalhos;
-  AdicionarAcoes;
   MarcarMenu;
   CriarTemporizadorAtalhos;
   CriarPastaOutput;
-  ExcluirArquivosAntigos;
 end;
 
 function TWizard.GetIDString: string;
@@ -216,46 +225,47 @@ begin
   FoTimerAtalhos.OnTimer := AtribuirAtalhos;
 end;
 
-procedure TWizard.AdicionarAcoes;
+procedure TWizard.AdicionarAcoesDB1;
 begin
-  CriarMenu('Abrir Servidor', 'AbrirServidor', FoFuncoes.AbrirServidor);
-  CriarMenu('Abrir Aplicação', 'AbrirAplicacao', FoFuncoes.AbrirAplicacao);
-  CriarMenu('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
-  CriarMenu('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
-  CriarMenu('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
-  CriarMenu('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
+  CriarItemMenuDB1('Abrir Servidor', 'AbrirServidor', FoFuncoes.AbrirServidor);
+  CriarItemMenuDB1('Abrir Aplicação', 'AbrirAplicacao', FoFuncoes.AbrirAplicacao);
+  CriarItemMenuDB1('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
+  CriarItemMenuDB1('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
+  CriarItemMenuDB1('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
+  CriarItemMenuDB1('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
 
-  CriarMenu(sSEPARADOR, 'Separador1', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador1', nil);
 
-  CriarMenu('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
-  CriarMenu('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
-  CriarMenu('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
-  CriarMenu('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
-  CriarMenu('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
+  CriarItemMenuDB1('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
+  CriarItemMenuDB1('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
+  CriarItemMenuDB1('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
+  CriarItemMenuDB1('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
+  CriarItemMenuDB1('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
 
-  CriarMenu(sSEPARADOR, 'Separador2', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador2', nil);
 
-  CriarMenu('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
-  CriarMenu('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
-  CriarMenu('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
-  CriarMenu('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
-  CriarMenu('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
+  CriarItemMenuDB1('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
+  CriarItemMenuDB1('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
+  CriarItemMenuDB1('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
+  CriarItemMenuDB1('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
+  CriarItemMenuDB1('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
 
-  CriarMenu(sSEPARADOR, 'Separador3', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador3', nil);
 
-  CriarMenu('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
-  CriarMenu('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
-  CriarMenu('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
+  CriarItemMenuDB1('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
+  CriarItemMenuDB1('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
+  CriarItemMenuDB1('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
+  CriarItemMenuDB1('Não Formatar Código', 'NaoFormatarCodigo', FoFuncoes.NaoFormatarCodigo);
 
-  CriarMenu(sSEPARADOR, 'Separador4', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador4', nil);
 
-  CriarMenu('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
+  CriarItemMenuDB1('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
 
-  CriarMenu(sSEPARADOR, 'Separador5', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador5', nil);
 
-  CriarMenu(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
-  CriarMenu(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
-  CriarMenu(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
+  CriarItemMenuDB1(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
+  CriarItemMenuDB1(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
+  CriarItemMenuDB1(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
 end;
 
 procedure TWizard.ConfigurarAtalhos(Sender: TObject);
@@ -281,16 +291,6 @@ procedure TWizard.CriarPastaOutput;
 begin
   if not DirectoryExists('C:\PluginDB1\Output') then
     ForceDirectories('C:\PluginDB1\Output');
-end;
-
-procedure TWizard.ExcluirArquivosAntigos;
-begin
-  DeleteFile('C:\PluginDB1\Dados.xml');
-  DeleteFile('C:\PluginDB1\Filtro.txt');
-  DeleteFile('C:\PluginDB1\StringList.txt');
-  DeleteFile('C:\PluginDB1\unins000.exe');
-  DeleteFile('C:\PluginDB1\unins000.dat');
-  DeleteFile('C:\PluginDB1\Output\StringList.txt');
 end;
 
 function TWizard.GetState: TWizardState;
@@ -321,6 +321,83 @@ end;
 procedure TWizard.Modified;
 begin
 
+end;
+
+procedure TWizard.CriarMenuMVP;
+var
+  oMainMenu: TMainMenu;
+begin
+  oMainMenu := (BorlandIDEServices as INTAServices).MainMenu;
+  FoMenuMVP := TMenuItem.Create(oMainMenu); //PC_OK
+  FoMenuMVP.Name := 'miMVP';
+  FoMenuMVP.Caption := sMENU_MVP;
+  FoMenuMVP.OnClick := ProcessarArquivosMVP;
+  oMainMenu.Items.Add(FoMenuMVP);
+end;
+
+procedure TWizard.AdicionarAcoesMVP;
+begin
+  CriarItemMenuMVP('Abrir API', 'MVPAbrirAPI');
+  CriarItemMenuMVP('Abrir Impl', 'MVPAbrirImpl');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador6');
+
+  CriarItemMenuMVP('Model API', 'MVPModelAPI', Ord(taModelAPI));
+  CriarItemMenuMVP('Presenter API', 'MVPPresenterAPI', Ord(taPresenterAPI));
+  CriarItemMenuMVP('PresenteView API', 'MVPViewAPI', Ord(taViewAPI));
+  CriarItemMenuMVP(sSEPARADOR, 'Separador7');
+
+  CriarItemMenuMVP('Model', 'MVPModel' Ord(taModel));
+  CriarItemMenuMVP('Presenter', 'MVPPresenter', Ord(taPresenter));
+  CriarItemMenuMVP('ViewFrame', 'MVPViewFrame', Ord(taViewFrame));
+  CriarItemMenuMVP('ViewPanel', 'MVPViewPanel', Ord(taViewPanel));
+  CriarItemMenuMVP('ViewForm', 'MVPViewForm', Ord(taViewForm));
+  CriarItemMenuMVP('View', 'MVPView', Ord(taView));
+  CriarItemMenuMVP(sSEPARADOR, 'Separador8');
+
+  CriarItemMenuMVP('Builder', 'MVPBuilder', Ord(taBuilder));
+  CriarItemMenuMVP('ParamsBuild', 'MVPParamsBuild', Ord(taParamsBuild));
+  CriarItemMenuMVP('ParamsBuild API', 'MVPParamsBuildAPI', Ord(taParamsBuildAPI));
+end;
+
+procedure TWizard.CriarItemMenuMVP(const psCaption, psIdentificador: string; const pnTag: integer = 0);
+var
+  oNTAS: INTAServices;
+  oAction: TAction;
+  oMenuItem: TMenuItem;
+begin
+  oAction := nil;
+  oNTAS := (BorlandIDEServices as INTAServices);
+  oMenuItem := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
+
+  if psCaption <> sSEPARADOR then
+  begin
+    oAction := TAction.Create(oNTAS.ActionList); //PC_OK
+    oAction.ActionList := oNTAS.ActionList;
+    oAction.Name := psIdentificador;
+    oAction.Caption := psCaption;
+    oAction.OnExecute := AbrirArquivoMVP;
+    oAction.Category := 'PluginDB1';
+    oAction.Tag := pnTag;
+
+    FActions.Add(oAction);
+    oMenuItem.Caption := psCaption;
+  end
+  else
+    oMenuItem.Caption := sSEPARADOR;
+
+  oMenuItem.Action := oAction;
+  oMenuItem.Name := 'im' + psIdentificador;
+  FoMenuMVP.Add(oMenuItem);
+end;
+
+procedure TWizard.AbrirArquivoMVP(Sender: TObject);
+begin
+  FoFuncoes.AbrirArquivoMVP(TMenuItem(Sender).Tag);
+end;
+
+procedure TWizard.ProcessarArquivosMVP(Sender: TObject);
+begin
+  FoFuncoes.CriarExpansorArquivoMVP;
 end;
 
 initialization

@@ -3,7 +3,7 @@ unit uFuncoes;
 interface
 
 uses
-  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils;
+  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uExpansorArquivoMVP;
 
 type
   TTipoSistema = (tsPG, tsSG, tsPJ);
@@ -11,6 +11,7 @@ type
   TFuncoes = class
   private
     FoToolsAPIUtils: TToolsAPIUTils;
+    FoExpansorArquivoMVP: TExpansorArquivoMVP;
     FenTipoSistema: TTipoSistema;
 
     function PegarDiretorioBin: string;
@@ -55,15 +56,20 @@ type
     procedure AbrirWinSpy(Sender: TObject);
     procedure ConsultarRansack(Sender: TObject);
 
-    // operações com DataSet e StringList
+    // operações com DataSet, StringList e código-fonte
     procedure ProcessarDataSet(const psNomeDataSet: string);
     procedure VisualizarDataSet(Sender: TObject);
     procedure VisualizarDataSetManual(Sender: TObject);
     procedure LerStringList(Sender: TObject);
     procedure GravarSistemaArquivoINI;
+    procedure NaoFormatarCodigo(Sender: TObject);
 
     // atalhos
     procedure ConfigurarAtalhos;
+
+    // MVP
+    procedure CriarExpansorArquivoMVP;
+    procedure AbrirArquivoMVP(const pnIndiceMenu: integer);
 
     property TipoSistema: TTipoSistema read FenTipoSistema write SetTipoSistema;
   end;
@@ -72,7 +78,7 @@ implementation
 
 uses
   Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfigurarAtalhos;
+  uStringList, uConfigurarAtalhos, JcfIdeRegister;
 
 { TFuncoes }
 
@@ -629,6 +635,26 @@ begin
   finally
     FreeAndNil(slIndices);
   end;
+end;
+
+procedure TFuncoes.AbrirArquivoMVP(const pnIndiceMenu: integer);
+var
+  sArquivo: string;
+begin
+  sArquivo := TArquivoMVP(FoExpansorArquivoMVP.ListaDeArquivosMVP[pnIndiceMenu]).Arquivo;
+  (BorlandIDEServices as IOTAActionServices).OpenFile(sArquivo);
+end;
+
+procedure TFuncoes.CriarExpansorArquivoMVP;
+begin
+  FreeAndNil(FoExpansorArquivoMVP); //PC_OK
+
+  FoExpansorArquivoMVP := TExpansorArquivoMVP.Create(FoToolsAPIUtils.PegarNomeArquivoAtual); //PC_OK
+end;
+
+procedure TFuncoes.NaoFormatarCodigo(Sender: TObject);
+begin
+  TMenuEditFormatar.MeuCliqueMarcarBloco(nil);
 end;
 
 end.

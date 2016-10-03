@@ -22,6 +22,8 @@ type
   private
     procedure AguardarProcessamentoThread;
   public
+    function SourceEditor(Module: IOTAMOdule): IOTASourceEditor;
+    function PegarNomeArquivoAtual: string;
     function PegarThreadAtual: IOTAThread;
     function PegarDiretorioProjetoAtivo: string;
     function PegarTextoSelecionado: string;
@@ -176,6 +178,25 @@ begin
   end;
 end;
 
+function TToolsAPIUtils.PegarNomeArquivoAtual: string;
+var
+  oEditor: IOTASourceEditor;
+  oModulo: IOTAModule;
+begin
+  result := EmptyStr;
+
+  if not Assigned(BorlandIDEServices) then
+    Exit;
+
+  oModulo := (BorlandIDEServices as IOTAModuleServices).CurrentModule;
+  oEditor := SourceEditor(oModulo);
+
+  if not Assigned(oEditor) then
+    Exit;
+
+  result := oEditor.GetFileName;
+end;
+
 function TToolsAPIUtils.PegarTextoSelecionado: string;
 var
   oViewer: IOTAEditView;
@@ -207,6 +228,23 @@ begin
   finally
     FreeAndNil(oProcesso); //PC_OK
     FreeAndNil(oServicoDebug); //PC_OK
+  end;
+end;
+
+function TToolsAPIUtils.SourceEditor(Module: IOTAMOdule): IOTASourceEditor;
+var
+  iFileCount: integer;
+  i: integer;
+begin
+  result := nil;
+  if Module = nil then
+    Exit;
+  with Module do
+  begin
+    iFileCount := GetModuleFileCount;
+    for i := 0 to iFileCount - 1 do
+      if GetModuleFileEditor(i).QueryInterface(IOTASourceEditor, result) = S_OK then
+        Break;
   end;
 end;
 
