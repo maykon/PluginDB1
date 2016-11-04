@@ -236,13 +236,19 @@ begin
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador1', nil);
 
+  CriarItemMenuDB1('Compilar Projetos Cliente', 'CompilarClientes', FoFuncoes.CompilarProjetosClientes);
+  CriarItemMenuDB1('Compilar Projetos Servidor', 'CompilarServidores', FoFuncoes.CompilarProjetosServidores);
+  CriarItemMenuDB1('Compilar Todos', 'CompilarTudo', FoFuncoes.CompilarTodosProjetos);
+
+  CriarItemMenuDB1(sSEPARADOR, 'Separador2', nil);
+
   CriarItemMenuDB1('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
   CriarItemMenuDB1('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
   CriarItemMenuDB1('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
   CriarItemMenuDB1('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
   CriarItemMenuDB1('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
 
-  CriarItemMenuDB1(sSEPARADOR, 'Separador2', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador3', nil);
 
   CriarItemMenuDB1('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
   CriarItemMenuDB1('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
@@ -250,18 +256,18 @@ begin
   CriarItemMenuDB1('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
   CriarItemMenuDB1('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
 
-  CriarItemMenuDB1(sSEPARADOR, 'Separador3', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador4', nil);
 
   CriarItemMenuDB1('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarItemMenuDB1('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarItemMenuDB1('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
   CriarItemMenuDB1('Não Formatar Código', 'NaoFormatarCodigo', FoFuncoes.NaoFormatarCodigo);
 
-  CriarItemMenuDB1(sSEPARADOR, 'Separador4', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador5', nil);
 
   CriarItemMenuDB1('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
 
-  CriarItemMenuDB1(sSEPARADOR, 'Separador5', nil);
+  CriarItemMenuDB1(sSEPARADOR, 'Separador6', nil);
 
   CriarItemMenuDB1(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
   CriarItemMenuDB1(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
@@ -339,12 +345,12 @@ procedure TWizard.AdicionarAcoesMVP;
 begin
   CriarItemMenuMVP('Abrir API', 'MVPAbrirAPI');
   CriarItemMenuMVP('Abrir Impl', 'MVPAbrirImpl');
-  CriarItemMenuMVP(sSEPARADOR, 'Separador6');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador7');
 
   CriarItemMenuMVP('Model API', 'MVPModelAPI', Ord(taModelAPI));
   CriarItemMenuMVP('Presenter API', 'MVPPresenterAPI', Ord(taPresenterAPI));
   CriarItemMenuMVP('PresenteView API', 'MVPViewAPI', Ord(taViewAPI));
-  CriarItemMenuMVP(sSEPARADOR, 'Separador7');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador8');
 
   CriarItemMenuMVP('Model', 'MVPModel' Ord(taModel));
   CriarItemMenuMVP('Presenter', 'MVPPresenter', Ord(taPresenter));
@@ -352,7 +358,7 @@ begin
   CriarItemMenuMVP('ViewPanel', 'MVPViewPanel', Ord(taViewPanel));
   CriarItemMenuMVP('ViewForm', 'MVPViewForm', Ord(taViewForm));
   CriarItemMenuMVP('View', 'MVPView', Ord(taView));
-  CriarItemMenuMVP(sSEPARADOR, 'Separador8');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador9');
 
   CriarItemMenuMVP('Builder', 'MVPBuilder', Ord(taBuilder));
   CriarItemMenuMVP('ParamsBuild', 'MVPParamsBuild', Ord(taParamsBuild));

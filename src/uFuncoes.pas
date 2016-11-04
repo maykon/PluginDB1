@@ -48,6 +48,11 @@ type
     procedure ConsultarColabore(Sender: TObject);
     procedure ConsultarPadraoCodigo(Sender: TObject);
 
+    // Compilação
+    procedure CompilarProjetosClientes(Sender: TObject);
+    procedure CompilarProjetosServidores(Sender: TObject);
+    procedure CompilarTodosProjetos(Sender: TObject);
+
     // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
     procedure AbrirSPMonitor(Sender: TObject);
@@ -78,7 +83,7 @@ implementation
 
 uses
   Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfigurarAtalhos, JcfIdeRegister;
+  uStringList, uConfigurarAtalhos{ JcfIdeRegister};
 
 { TFuncoes }
 
@@ -654,7 +659,30 @@ end;
 
 procedure TFuncoes.NaoFormatarCodigo(Sender: TObject);
 begin
-  TMenuEditFormatar.MeuCliqueMarcarBloco(nil);
+  //TMenuEditFormatar.MeuCliqueMarcarBloco(nil);
+end;
+
+procedure TFuncoes.CompilarProjetosClientes(Sender: TObject);
+begin
+  FoToolsAPIUtils.CompilarProjeto('prcImpl');
+  FoToolsAPIUtils.CompilarProjeto('prcCliente');
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
+end;
+
+procedure TFuncoes.CompilarProjetosServidores(Sender: TObject);
+begin
+  FoToolsAPIUtils.CompilarProjeto('prcServidor');
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', True);
+end;
+
+procedure TFuncoes.CompilarTodosProjetos(Sender: TObject);
+begin
+  FoToolsAPIUtils.CompilarProjeto('prcAPI');
+  FoToolsAPIUtils.CompilarProjeto('prcImpl');
+  FoToolsAPIUtils.CompilarProjeto('prcCliente');
+  FoToolsAPIUtils.CompilarProjeto('prcServidor');
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor');
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
 end;
 
 end.

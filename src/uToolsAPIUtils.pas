@@ -32,6 +32,7 @@ type
     procedure AbrirArquivo(const psDiretorio, psArquivo: string);
     procedure AbrirURL(const psURL: string);
     procedure Aviso(const psMensagem: string);
+    procedure CompilarProjeto(const psNomeProjeto: string; const pbEsperarPorOK: boolean = False);
   end;
 
 implementation
@@ -91,6 +92,40 @@ end;
 procedure TToolsAPIUtils.Aviso(const psMensagem: string);
 begin
   MessageDlg(psMensagem, mtWarning, [mbOK], 0);
+end;
+
+procedure TToolsAPIUtils.CompilarProjeto(const psNomeProjeto: string; const pbEsperarPorOK: boolean = False);
+var
+  oProjeto: IOTAProject;
+  oGrupo: IOTAProjectGroup;
+  oModuleServices: IOTAModuleServices;
+  oModulo: IOTAModule;
+  nCont: integer;
+  sNomeProjeto: string;
+begin
+  oModuleServices := BorlandIDEServices as IOTAModuleServices;
+  for nCont := 0 to Pred(oModuleServices.ModuleCount) do
+  begin
+    oModulo := oModuleServices.Modules[nCont];
+    if oModulo.QueryInterface(IOTAProjectGroup, oGrupo) = S_OK then
+      Break;
+  end;
+
+  for nCont := 0 to Pred(oGrupo.ProjectCount) do
+  begin
+    oProjeto := oGrupo.GetProject(nCont);
+    sNomeProjeto := ExtractFileName(oProjeto.FileName);
+    if Pos(psNomeProjeto, sNomeProjeto) > 0 then
+    begin
+      if not oProjeto.ProjectBuilder.BuildProject(cmOTAMake, pbEsperarPorOK) then
+      begin
+        MessageDlg('Erro ao compilar o projeto ' + sNomeProjeto, mtWarning, [mbOK], 0);
+        Abort;
+      end;
+
+      Break;
+    end;
+  end;
 end;
 
 function TToolsAPIUtils.ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
