@@ -254,7 +254,6 @@ begin
   CriarItemMenuDB1('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
   CriarItemMenuDB1('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
   CriarItemMenuDB1('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
-  CriarItemMenuDB1('Consultar Padrão de Código', 'ConsultarPadraoCodigo', FoFuncoes.ConsultarPadraoCodigo);
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador4', nil);
 

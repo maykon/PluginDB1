@@ -46,7 +46,6 @@ type
     procedure ConsultarDocDelphi(Sender: TObject);
     procedure ConsultarDocSP4(Sender: TObject);
     procedure ConsultarColabore(Sender: TObject);
-    procedure ConsultarPadraoCodigo(Sender: TObject);
 
     // Compilação
     procedure CompilarProjetosClientes(Sender: TObject);
@@ -83,7 +82,7 @@ implementation
 
 uses
   Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfigurarAtalhos{ JcfIdeRegister};
+  uStringList, uConfigurarAtalhos, JcfIdeRegister;
 
 { TFuncoes }
 
@@ -605,11 +604,6 @@ begin
     psTextoPadrao := EmptyStr;
 end;
 
-procedure TFuncoes.ConsultarPadraoCodigo(Sender: TObject);
-begin
-  FoToolsAPIUtils.AbrirURL(sURL_PADRAO_CODIGO);
-end;
-
 procedure TFuncoes.SalvarIndicesDataSet(const psNomeDataSet: string);
 var
   oThread: IOTAThread;
@@ -659,7 +653,7 @@ end;
 
 procedure TFuncoes.NaoFormatarCodigo(Sender: TObject);
 begin
-  //TMenuEditFormatar.MeuCliqueMarcarBloco(nil);
+  TMenuEditFormatar.MeuCliqueMarcarBloco(nil);
 end;
 
 procedure TFuncoes.CompilarProjetosClientes(Sender: TObject);

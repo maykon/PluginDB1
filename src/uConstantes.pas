@@ -55,8 +55,6 @@ const
     'http://jenkins/view/Suporte%%20Interno/view/3%%20-%%20Noturno/job/SIU_DEVELOPMENT_NOTURNO_METRICAS/lastSuccessfulBuild/artifact/Artifacts/NOTURNO/Metrics/pasdoc/_tipue_results.html?q=%s';
   sURL_COLABORE =
     'https://colabore.softplan.com.br/dosearchsite.action?queryString=%s';
-  sURL_PADRAO_CODIGO =
-    'https://colabore.softplan.com.br/pages/viewpage.action?pageId=12386698#Padr%C3%A3odeC%C3%B3digoDelphi-144';
   sCOMANDO_RANSACK =
     '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "\"%s"\" -d "%s" -r -s';
 
