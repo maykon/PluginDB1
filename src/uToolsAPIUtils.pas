@@ -119,7 +119,7 @@ begin
     begin
       if not oProjeto.ProjectBuilder.BuildProject(cmOTAMake, pbEsperarPorOK) then
       begin
-        MessageDlg('Erro ao compilar o projeto ' + sNomeProjeto, mtWarning, [mbOK], 0);
+        MessageDlg(Format('Erro ao compilar o projeto: %s.', [sNomeProjeto]), mtWarning, [mbOK], 0);
         Abort;
       end;
 
