@@ -671,6 +671,7 @@ end;
 
 procedure TFuncoes.CompilarTodosProjetos(Sender: TObject);
 begin
+  FoToolsAPIUtils.CompilarProjeto('prcDT');
   FoToolsAPIUtils.CompilarProjeto('prcAPI');
   FoToolsAPIUtils.CompilarProjeto('prcImpl');
   FoToolsAPIUtils.CompilarProjeto('prcCliente');
