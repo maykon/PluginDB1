@@ -394,7 +394,6 @@ begin
   else
     sURL := Format(sURL_ITEM_RTC, [sTexto]);
 
-  //sTexto := StringReplace(sTexto, '/', '%2F', [rfReplaceAll]);
   FoToolsAPIUtils.AbrirURL(sURL);
 end;
 

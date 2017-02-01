@@ -94,7 +94,8 @@ begin
   MessageDlg(psMensagem, mtWarning, [mbOK], 0);
 end;
 
-procedure TToolsAPIUtils.CompilarProjeto(const psNomeProjeto: string; const pbEsperarPorOK: boolean = False);
+procedure TToolsAPIUtils.CompilarProjeto(const psNomeProjeto: string;
+  const pbEsperarPorOK: boolean = False);
 var
   oProjeto: IOTAProject;
   oGrupo: IOTAProjectGroup;
@@ -119,7 +120,8 @@ begin
     begin
       if not oProjeto.ProjectBuilder.BuildProject(cmOTAMake, pbEsperarPorOK) then
       begin
-        MessageDlg(Format('Erro ao compilar o projeto: %s.', [sNomeProjeto]), mtWarning, [mbOK], 0);
+        MessageDlg(Format('Erro ao compilar o projeto: %s.', [sNomeProjeto]),
+          mtWarning, [mbOK], 0);
         Abort;
       end;
 

@@ -236,9 +236,9 @@ begin
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador1', nil);
 
-  CriarItemMenuDB1('Compilar Projetos Cliente', 'CompilarClientes', FoFuncoes.CompilarProjetosClientes);
-  CriarItemMenuDB1('Compilar Projetos Servidor', 'CompilarServidores', FoFuncoes.CompilarProjetosServidores);
-  CriarItemMenuDB1('Compilar Todos', 'CompilarTudo', FoFuncoes.CompilarTodosProjetos);
+  CriarItemMenuDB1('Compilar Projetos Cliente', 'CompilarCliente', FoFuncoes.CompilarProjetosClientes);
+  CriarItemMenuDB1('Compilar Projetos Servidor', 'CompilarServidor', FoFuncoes.CompilarProjetosServidores);
+  CriarItemMenuDB1('Compilar Todos', 'CompilarTodos', FoFuncoes.CompilarTodosProjetos);
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador2', nil);
 
