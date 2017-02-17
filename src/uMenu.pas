@@ -268,6 +268,12 @@ begin
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador6', nil);
 
+  CriarItemMenuDB1('Usar base 175', 'UsarBase175', FoFuncoes.UsarBase175);
+  CriarItemMenuDB1('Usar base 152', 'UsarBase152', FoFuncoes.UsarBase152);
+  CriarItemMenuDB1('Usar base 202', 'UsarBase202', FoFuncoes.UsarBase202);
+
+  CriarItemMenuDB1(sSEPARADOR, 'Separador7', nil);
+
   CriarItemMenuDB1(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
   CriarItemMenuDB1(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
   CriarItemMenuDB1(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
@@ -344,12 +350,12 @@ procedure TWizard.AdicionarAcoesMVP;
 begin
   CriarItemMenuMVP('Abrir API', 'MVPAbrirAPI');
   CriarItemMenuMVP('Abrir Impl', 'MVPAbrirImpl');
-  CriarItemMenuMVP(sSEPARADOR, 'Separador7');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador8');
 
   CriarItemMenuMVP('Model API', 'MVPModelAPI', Ord(taModelAPI));
   CriarItemMenuMVP('Presenter API', 'MVPPresenterAPI', Ord(taPresenterAPI));
   CriarItemMenuMVP('PresenteView API', 'MVPViewAPI', Ord(taViewAPI));
-  CriarItemMenuMVP(sSEPARADOR, 'Separador8');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador9');
 
   CriarItemMenuMVP('Model', 'MVPModel' Ord(taModel));
   CriarItemMenuMVP('Presenter', 'MVPPresenter', Ord(taPresenter));
@@ -357,7 +363,7 @@ begin
   CriarItemMenuMVP('ViewPanel', 'MVPViewPanel', Ord(taViewPanel));
   CriarItemMenuMVP('ViewForm', 'MVPViewForm', Ord(taViewForm));
   CriarItemMenuMVP('View', 'MVPView', Ord(taView));
-  CriarItemMenuMVP(sSEPARADOR, 'Separador9');
+  CriarItemMenuMVP(sSEPARADOR, 'Separador10');
 
   CriarItemMenuMVP('Builder', 'MVPBuilder', Ord(taBuilder));
   CriarItemMenuMVP('ParamsBuild', 'MVPParamsBuild', Ord(taParamsBuild));

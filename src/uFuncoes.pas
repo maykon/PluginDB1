@@ -25,6 +25,7 @@ type
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string);
     procedure SalvarIndicesDataSet(const psNomeDataSet: string);
+    procedure AlterarConexaoNoArquivoCfg(const psServer: string);
 
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
@@ -46,6 +47,9 @@ type
     procedure ConsultarDocDelphi(Sender: TObject);
     procedure ConsultarDocSP4(Sender: TObject);
     procedure ConsultarColabore(Sender: TObject);
+    procedure UsarBase175(Sender: TObject);
+    procedure UsarBase152(Sender: TObject);
+    procedure UsarBase202(Sender: TObject);
 
     // Compilação
     procedure CompilarProjetosClientes(Sender: TObject);
@@ -677,6 +681,33 @@ begin
   FoToolsAPIUtils.CompilarProjeto('prcServidor');
   FoToolsAPIUtils.CompilarProjeto('pg5Servidor');
   FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
+end;
+
+procedure TFuncoes.UsarBase152(Sender: TObject);
+begin
+  AlterarConexaoNoArquivoCfg('192.168.226.152\iSAJ01');
+end;
+
+procedure TFuncoes.UsarBase175(Sender: TObject);
+begin
+  AlterarConexaoNoArquivoCfg('192.168.225.175\iSAJ01');
+end;
+
+procedure TFuncoes.UsarBase202(Sender: TObject);
+begin
+  AlterarConexaoNoArquivoCfg('192.168.225.202\iSAJ01');
+end;
+
+procedure TFuncoes.AlterarConexaoNoArquivoCfg(const psServer: string);
+var
+  oArquivoINI: TIniFile;
+begin
+  oArquivoINI := TIniFile.Create(Format('%s%s', [PegarDiretorioBin, sNOME_ARQUIVO_CONFIG]));
+  try
+    oArquivoINI.WriteString('Database', 'Server', psServer);
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
 end;
 
 end.
