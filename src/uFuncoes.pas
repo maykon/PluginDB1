@@ -709,6 +709,7 @@ begin
   finally
     FreeAndNil(oArquivoINI);
   end;
+  AbrirServidor(nil);
 end;
 
 procedure TFuncoes.FinalizarProcessos(Sender: TObject);
