@@ -31,6 +31,7 @@ type
     procedure SelecionarSistemaPJ(Sender: TObject);
     procedure ConfigurarAtalhos(Sender: TObject);
     procedure ProcessarArquivosMVP(Sender: TObject);
+    function PegarAtalho(const psIdentificador: string): TShortCut;
   public
     constructor Create;
 
@@ -105,7 +106,7 @@ begin
     oAction.Caption := psCaption;
     oAction.OnExecute := poEvento;
     oAction.Category := 'PluginDB1';
-    oAction.ShortCut := TextToShortCut(FslAtalhos.Values[psIdentificador]);
+    oAction.ShortCut := PegarAtalho(psIdentificador);
 
     if FileExists(Format('%s%s.bmp', [sPATH_IMAGENS, psIdentificador])) then
     begin
@@ -119,9 +120,6 @@ begin
   end;
 
   oMenuItem.Caption := psCaption;
-  if psCaption = sSEPARADOR then
-    oMenuItem.Caption := sSEPARADOR;
-
   oMenuItem.Action := oAction;
   oMenuItem.Name := 'im' + psIdentificador;
   FoMenuDB1.Add(oMenuItem);
@@ -159,7 +157,7 @@ begin
   for nCont := 0 to Pred(FActions.Count) do
   begin
     oAction := FActions[nCont] as TAction;
-    oAction.ShortCut := TextToShortCut(FslAtalhos.Values[oAction.Name]);
+    oAction.ShortCut := PegarAtalho(oAction.Name);
   end;
 
   if Assigned(FoTimerAtalhos) then
@@ -233,6 +231,7 @@ begin
   CriarItemMenuDB1('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
   CriarItemMenuDB1('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
   CriarItemMenuDB1('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
+  CriarItemMenuDB1('Finalizar Processos', 'FinalizarProcessos', FoFuncoes.FinalizarProcessos);
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador1', nil);
 
@@ -264,14 +263,14 @@ begin
 
   CriarItemMenuDB1(sSEPARADOR, 'Separador5', nil);
 
-  CriarItemMenuDB1('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
-
-  CriarItemMenuDB1(sSEPARADOR, 'Separador6', nil);
-
   CriarItemMenuDB1('Usar base 175', 'UsarBase175', FoFuncoes.UsarBase175);
   CriarItemMenuDB1('Usar base 152', 'UsarBase152', FoFuncoes.UsarBase152);
   CriarItemMenuDB1('Usar base 202', 'UsarBase202', FoFuncoes.UsarBase202);
 
+  CriarItemMenuDB1(sSEPARADOR, 'Separador6', nil);
+
+  CriarItemMenuDB1('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
+  
   CriarItemMenuDB1(sSEPARADOR, 'Separador7', nil);
 
   CriarItemMenuDB1(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
@@ -391,11 +390,9 @@ begin
     oAction.Tag := pnTag;
 
     FActions.Add(oAction);
-    oMenuItem.Caption := psCaption;
-  end
-  else
-    oMenuItem.Caption := sSEPARADOR;
+  end;
 
+  oMenuItem.Caption := psCaption;
   oMenuItem.Action := oAction;
   oMenuItem.Name := 'im' + psIdentificador;
   FoMenuMVP.Add(oMenuItem);
@@ -409,6 +406,11 @@ end;
 procedure TWizard.ProcessarArquivosMVP(Sender: TObject);
 begin
   FoFuncoes.CriarExpansorArquivoMVP;
+end;
+
+function TWizard.PegarAtalho(const psIdentificador: string): TShortCut;
+begin
+  result := TextToShortCut(FslAtalhos.Values[psIdentificador]);
 end;
 
 initialization

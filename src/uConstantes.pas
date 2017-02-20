@@ -44,6 +44,7 @@ const
   sSECAO_ATALHOS = 'Atalhos';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
   sCOMANDO_RMDIR = 'cmd.exe /c rmdir /s /q ';
+  sCOMANDO_FINALIZAR_PROCESSOS = 'tskill %s';
 
   sURL_ITEM_RTC =
     'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';

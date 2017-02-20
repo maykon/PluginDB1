@@ -33,12 +33,13 @@ type
     procedure AbrirURL(const psURL: string);
     procedure Aviso(const psMensagem: string);
     procedure CompilarProjeto(const psNomeProjeto: string; const pbEsperarPorOK: boolean = False);
+    procedure FinalizarProcesso(const psNomeProcesso: string);
   end;
 
 implementation
 
 uses
-  SysUtils, Windows, Forms, Dialogs, ShellAPI, uConstantes;
+  SysUtils, tlhelp32, Windows, Forms, Dialogs, ShellAPI, uConstantes;
 
 var
   FbProcessado: boolean;
@@ -188,6 +189,29 @@ begin
   finally
     poThread.RemoveNotifier(nIndiceNotificador);
   end;
+end;
+
+procedure TToolsAPIUtils.FinalizarProcesso(const psNomeProcesso: string);
+var
+  Loop: BOOL;
+  Snapshot: THandle;
+  FProcessEntry32: TProcessEntry32;
+begin
+  Snapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+  Loop := Process32First(Snapshot, FProcessEntry32);
+
+  while integer(Loop) <> 0 do
+  begin
+    if UpperCase(FProcessEntry32.szExeFile) = UpperCase(psNomeProcesso) then
+    begin
+      TerminateProcess(OpenProcess($0001, BOOL(0), FProcessEntry32.th32ProcessID), 0);
+      Break;
+    end;
+
+    Loop := Process32Next(Snapshot, FProcessEntry32);
+  end;
+  CloseHandle(Snapshot);
 end;
 
 function TToolsAPIUtils.PegarDiretorioProjetoAtivo: string;

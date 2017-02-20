@@ -50,6 +50,7 @@ type
     procedure UsarBase175(Sender: TObject);
     procedure UsarBase152(Sender: TObject);
     procedure UsarBase202(Sender: TObject);
+    procedure FinalizarProcessos(Sender: TObject);
 
     // Compilação
     procedure CompilarProjetosClientes(Sender: TObject);
@@ -708,6 +709,35 @@ begin
   finally
     FreeAndNil(oArquivoINI);
   end;
+end;
+
+procedure TFuncoes.FinalizarProcessos(Sender: TObject);
+var
+  sNomeServidor: string;
+  sNomeAplicacao: string;
+begin
+  case FenTipoSistema of
+    tsPG:
+    begin
+      sNomeServidor := sNOME_SERVIDOR_PG;
+      sNomeAplicacao := sNOME_APLICACAO_PG;
+    end;
+
+    tsSG:
+    begin
+      sNomeServidor := sNOME_SERVIDOR_SG;
+      sNomeAplicacao := sNOME_APLICACAO_SG;
+    end;
+
+    tsPJ:
+    begin
+      sNomeServidor := sNOME_SERVIDOR_PJ;
+      sNomeAplicacao := sNOME_APLICACAO_PJ;
+    end;
+  end;
+
+  FoToolsAPIUtils.FinalizarProcesso(sNomeServidor);
+  FoToolsAPIUtils.FinalizarProcesso(sNomeAplicacao);
 end;
 
 end.
