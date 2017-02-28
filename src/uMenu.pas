@@ -356,7 +356,7 @@ begin
   CriarItemMenuMVP('PresenteView API', 'MVPViewAPI', Ord(taViewAPI));
   CriarItemMenuMVP(sSEPARADOR, 'Separador9');
 
-  CriarItemMenuMVP('Model', 'MVPModel' Ord(taModel));
+  CriarItemMenuMVP('Model', 'MVPModel', Ord(taModel));
   CriarItemMenuMVP('Presenter', 'MVPPresenter', Ord(taPresenter));
   CriarItemMenuMVP('ViewFrame', 'MVPViewFrame', Ord(taViewFrame));
   CriarItemMenuMVP('ViewPanel', 'MVPViewPanel', Ord(taViewPanel));

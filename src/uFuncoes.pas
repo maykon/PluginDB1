@@ -675,9 +675,9 @@ end;
 
 procedure TFuncoes.CompilarTodosProjetos(Sender: TObject);
 begin
-  FoToolsAPIUtils.CompilarProjeto('prcDT');
   FoToolsAPIUtils.CompilarProjeto('prcAPI');
   FoToolsAPIUtils.CompilarProjeto('prcImpl');
+  FoToolsAPIUtils.CompilarProjeto('prcDT');
   FoToolsAPIUtils.CompilarProjeto('prcCliente');
   FoToolsAPIUtils.CompilarProjeto('prcServidor');
   FoToolsAPIUtils.CompilarProjeto('pg5Servidor');
@@ -709,7 +709,9 @@ begin
   finally
     FreeAndNil(oArquivoINI);
   end;
-  AbrirServidor(nil);
+
+  if MessageDlg('Executar o servidor?', mtConfirmation, [mbYes, mbNo], 0) = idYes then
+    AbrirServidor(nil);
 end;
 
 procedure TFuncoes.FinalizarProcessos(Sender: TObject);
