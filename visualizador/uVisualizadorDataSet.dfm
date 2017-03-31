@@ -18,9 +18,9 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   TextHeight = 13
   object lbQuantidade: TLabel
     Left = 13
-    Top = 550
+    Top = 547
     Width = 511
-    Height = 16
+    Height = 19
     Anchors = [akLeft, akBottom]
     AutoSize = False
     Font.Charset = DEFAULT_CHARSET
@@ -48,11 +48,11 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Left = 12
     Top = 53
     Width = 820
-    Height = 495
+    Height = 491
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource
     PopupMenu = PopupMenu
-    TabOrder = 7
+    TabOrder = 6
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -81,42 +81,42 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   end
   object clCampos: TCheckListBox
     Left = 845
-    Top = 31
+    Top = 51
     Width = 168
-    Height = 495
+    Height = 472
     OnClickCheck = clCamposClickCheck
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
-    TabOrder = 5
+    TabOrder = 7
   end
   object btnTodos: TBitBtn
     Left = 845
-    Top = 3
+    Top = 22
     Width = 80
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Todos'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = btnTodosClick
   end
   object btnNenhum: TBitBtn
     Left = 933
-    Top = 3
+    Top = 22
     Width = 80
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Nenhum'
-    TabOrder = 4
+    TabOrder = 5
     OnClick = btnNenhumClick
   end
   object chkAjustarTamanhoColunas: TCheckBox
     Left = 845
-    Top = 532
+    Top = 527
     Width = 168
     Height = 17
     Anchors = [akRight, akBottom]
     Caption = 'Ajustar Tamanho das Colunas'
-    TabOrder = 6
+    TabOrder = 8
     OnClick = chkAjustarTamanhoColunasClick
   end
   object edtIndices: TEdit
@@ -135,7 +135,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Width = 66
     Height = 17
     Caption = 'Ativado'
-    TabOrder = 8
+    TabOrder = 3
     OnClick = chkIndicesAtivadoClick
   end
   object DataSource: TDataSource
@@ -148,6 +148,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Aggregates = <>
     Params = <>
     BeforeInsert = ClientDataSetBeforeInsert
+    AfterScroll = ClientDataSetAfterScroll
     Left = 19
     Top = 494
   end

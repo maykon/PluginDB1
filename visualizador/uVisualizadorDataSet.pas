@@ -41,6 +41,7 @@ type
     procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
     procedure edtIndicesChange(Sender: TObject);
     procedure chkIndicesAtivadoClick(Sender: TObject);
+    procedure ClientDataSetAfterScroll(DataSet: TDataSet);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -51,7 +52,8 @@ type
     procedure CarregarCampos;
     procedure CarregarFiltro;
     procedure CarregarIndices;
-    procedure ContarRegistros;
+    procedure CarregarNome;
+    procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
   public
     procedure CarregarDadosDataSet;
@@ -144,7 +146,7 @@ begin
   try
     ClientDataSet.LoadFromFile(sPATH_ARQUIVO_DADOS);
     ClientDataSet.First;
-    ContarRegistros;
+    AtualizarContadorRegistros;
   except
     On E:Exception do
     begin
@@ -173,6 +175,7 @@ begin
   CarregarCampos;
   CarregarFiltro;
   CarregarIndices;
+  CarregarNome;
 end;
 
 procedure TfVisualizadorDataSet.CarregarFiltro;
@@ -218,7 +221,7 @@ begin
 
     chkFiltroAtivado.Checked := False;
   end;
-  ContarRegistros;
+  AtualizarContadorRegistros;
 end;
 
 procedure TfVisualizadorDataSet.clCamposClickCheck(Sender: TObject);
@@ -234,9 +237,10 @@ begin
     AjustarTamanhoColunas;
 end;
 
-procedure TfVisualizadorDataSet.ContarRegistros;
+procedure TfVisualizadorDataSet.AtualizarContadorRegistros;
 begin
-  lbQuantidade.Caption := Format('%d registro(s)', [ClientDataSet.RecordCount]);
+  lbQuantidade.Caption := Format('Contador: %d / %d', [ClientDataSet.RecNo,
+    ClientDataSet.RecordCount]);
 end;
 
 procedure TfVisualizadorDataSet.edtFiltroChange(Sender: TObject);
@@ -348,7 +352,7 @@ end;
 procedure TfVisualizadorDataSet.PopupMenuExcluirClick(Sender: TObject);
 begin
   ClientDataSet.Delete;
-  ContarRegistros;
+  AtualizarContadorRegistros;
 end;
 
 procedure TfVisualizadorDataSet.ClientDataSetBeforeInsert(DataSet: TDataSet);
@@ -429,6 +433,36 @@ begin
 
     chkIndicesAtivado.Checked := False;
   end;
+end;
+
+procedure TfVisualizadorDataSet.CarregarNome;
+var
+  slNome: TStringList;
+  sNome: string;
+begin
+  if not FileExists(sPATH_ARQUIVO_NOME) then
+    Exit;
+
+  if not ClientDataSet.Active then
+    Exit;
+
+  slNome := TStringList.Create;
+  try
+    slNome.LoadFromFile(sPATH_ARQUIVO_NOME);
+    sNome := Copy(slNome[0], 2, Length(slNome[0]) - 2);
+
+    if sNome = EmptyStr then
+      Exit;
+
+    Self.Caption := sNome + ' - Visualizador de DataSet';
+  finally
+    FreeAndNil(slNome);
+  end;
+end;
+
+procedure TfVisualizadorDataSet.ClientDataSetAfterScroll(DataSet: TDataSet);
+begin
+  AtualizarContadorRegistros;
 end;
 
 end.

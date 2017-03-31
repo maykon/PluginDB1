@@ -25,6 +25,7 @@ type
     procedure PegarSistemaPadrao;
     procedure SalvarFiltroDataSet(const psNomeDataSet: string);
     procedure SalvarIndicesDataSet(const psNomeDataSet: string);
+    procedure SalvarNomeDataSet(const psNomeDataSet: string);
     procedure AlterarConexaoNoArquivoCfg(const psServer: string);
 
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
@@ -258,6 +259,7 @@ begin
 
     SalvarFiltroDataSet(psNomeDataSet);
     SalvarIndicesDataSet(psNomeDataSet);
+    SalvarNomeDataSet(psNomeDataSet);
 
     if SalvarArquivoDataSet(psNomeDataSet) then
       CarregarArquivoDataSet;
@@ -741,6 +743,38 @@ begin
 
   FoToolsAPIUtils.FinalizarProcesso(sNomeServidor);
   FoToolsAPIUtils.FinalizarProcesso(sNomeAplicacao);
+end;
+
+procedure TFuncoes.SalvarNomeDataSet(const psNomeDataSet: string);
+var
+  oThread: IOTAThread;
+  oRetorno: TOTAEvaluateResult;
+  sExpressao: string;
+  sResultado: string;
+  slIndices: TStringList;
+begin
+  oThread := FoToolsAPIUtils.PegarThreadAtual;
+  sResultado := EmptyStr;
+  try
+    sExpressao := Format('%s.Name', [psNomeDataSet]);
+    oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
+  finally
+    FreeAndNil(oThread); //PC_OK
+  end;
+
+  if oRetorno = erError then
+    Exit;
+
+  if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
+    Exit;
+
+  slIndices := TStringList.Create;
+  try
+    slIndices.Add(sResultado);
+    slIndices.SaveToFile(sPATH_ARQUIVO_NOME);
+  finally
+    FreeAndNil(slIndices);
+  end;
 end;
 
 end.
