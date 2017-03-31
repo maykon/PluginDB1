@@ -455,6 +455,7 @@ begin
       Exit;
 
     Self.Caption := sNome + ' - Visualizador de DataSet';
+    Application.Title := sNome + ' - Visualizador de DataSet';
   finally
     FreeAndNil(slNome);
   end;
