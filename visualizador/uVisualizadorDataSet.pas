@@ -52,7 +52,7 @@ type
     procedure CarregarCampos;
     procedure CarregarFiltro;
     procedure CarregarIndices;
-    procedure CarregarNome;
+    procedure CarregarClasse;
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
   public
@@ -175,7 +175,7 @@ begin
   CarregarCampos;
   CarregarFiltro;
   CarregarIndices;
-  CarregarNome;
+  CarregarClasse;
 end;
 
 procedure TfVisualizadorDataSet.CarregarFiltro;
@@ -435,12 +435,12 @@ begin
   end;
 end;
 
-procedure TfVisualizadorDataSet.CarregarNome;
+procedure TfVisualizadorDataSet.CarregarClasse;
 var
   slNome: TStringList;
   sNome: string;
 begin
-  if not FileExists(sPATH_ARQUIVO_NOME) then
+  if not FileExists(sPATH_ARQUIVO_CLASSE) then
     Exit;
 
   if not ClientDataSet.Active then
@@ -448,7 +448,7 @@ begin
 
   slNome := TStringList.Create;
   try
-    slNome.LoadFromFile(sPATH_ARQUIVO_NOME);
+    slNome.LoadFromFile(sPATH_ARQUIVO_CLASSE);
     sNome := Copy(slNome[0], 2, Length(slNome[0]) - 2);
 
     if sNome = EmptyStr then
