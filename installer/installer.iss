@@ -21,7 +21,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "C:\Git\PluginDB1\bin\PluginDB1.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Git\PluginDB1\bin\Visualizador.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Git\PluginDB1\bin\Visualizador.exe"; DestDir: "{app}\Visualizador"; Flags: ignoreversion
+Source: "C:\Git\PluginDB1\bin\TesteSpSelect.exe"; DestDir: "{app}\TesteSpSelect"; Flags: ignoreversion
 Source: "C:\Git\PluginDB1\bin\midas.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Git\PluginDB1\imagens\*.*"; DestDir: "{app}\Imagens"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\spMonitor\*.*"; DestDir: "{app}\Tools\spMonitor"; Flags: ignoreversion
