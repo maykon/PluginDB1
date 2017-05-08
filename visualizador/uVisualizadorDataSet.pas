@@ -50,9 +50,7 @@ type
     procedure CalcularTamanhoColunas;
     procedure CarregarArquivoDados;
     procedure CarregarCampos;
-    procedure CarregarFiltro;
-    procedure CarregarIndices;
-    procedure CarregarClasse;
+    procedure CarregarParametrosDataSet;
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
   public
@@ -173,35 +171,8 @@ procedure TfVisualizadorDataSet.CarregarDadosDataSet;
 begin
   CarregarArquivoDados;
   CarregarCampos;
-  CarregarFiltro;
-  CarregarIndices;
-  CarregarClasse;
-end;
 
-procedure TfVisualizadorDataSet.CarregarFiltro;
-var
-  slFiltro: TStringList;
-  sFiltro: string;
-begin
-  if not FileExists(sPATH_ARQUIVO_FILTRO) then
-    Exit;
-
-  if not ClientDataSet.Active then
-    Exit;
-
-  slFiltro := TStringList.Create;
-  try
-    slFiltro.LoadFromFile(sPATH_ARQUIVO_FILTRO);
-    sFiltro := Copy(slFiltro[0], 2, Length(slFiltro[0]) - 2);
-
-    if sFiltro = EmptyStr then
-      Exit;
-
-    edtFiltro.Text := sFiltro;
-    chkFiltroAtivado.Checked := True;
-  finally
-    FreeAndNil(slFiltro);
-  end;
+  CarregarParametrosDataSet;
 end;
 
 procedure TfVisualizadorDataSet.chkFiltroAtivadoClick(Sender: TObject);
@@ -368,32 +339,6 @@ begin
   AjustarTamanhoColunas;
 end;
 
-procedure TfVisualizadorDataSet.CarregarIndices;
-var
-  slIndices: TStringList;
-  sIndices: string;
-begin
-  if not FileExists(sPATH_ARQUIVO_INDICES) then
-    Exit;
-
-  if not ClientDataSet.Active then
-    Exit;
-
-  slIndices := TStringList.Create;
-  try
-    slIndices.LoadFromFile(sPATH_ARQUIVO_INDICES);
-    sIndices := Copy(slIndices[0], 2, Length(slIndices[0]) - 2);
-
-    if sIndices = EmptyStr then
-      Exit;
-
-    edtIndices.Text := sIndices;
-    chkIndicesAtivado.Checked := True;
-  finally
-    FreeAndNil(slIndices);
-  end;
-end;
-
 procedure TfVisualizadorDataSet.edtIndicesKeyPress(Sender: TObject; var Key: char);
 begin
   if Trim(edtIndices.Text) = EmptyStr then
@@ -435,35 +380,53 @@ begin
   end;
 end;
 
-procedure TfVisualizadorDataSet.CarregarClasse;
-var
-  slNome: TStringList;
-  sNome: string;
+procedure TfVisualizadorDataSet.ClientDataSetAfterScroll(DataSet: TDataSet);
 begin
-  if not FileExists(sPATH_ARQUIVO_CLASSE) then
+  AtualizarContadorRegistros;
+end;
+
+procedure TfVisualizadorDataSet.CarregarParametrosDataSet;
+var
+  slParametros: TStringList;
+  sFiltro: string;
+  sIndices: string;
+  sNomeClasse: string;
+begin
+  if not FileExists(sPATH_PROP_DATASET) then
     Exit;
 
   if not ClientDataSet.Active then
     Exit;
 
-  slNome := TStringList.Create;
+  slParametros := TStringList.Create;
   try
-    slNome.LoadFromFile(sPATH_ARQUIVO_CLASSE);
-    sNome := Copy(slNome[0], 2, Length(slNome[0]) - 2);
+    slParametros.LoadFromFile(sPATH_PROP_DATASET);
 
-    if sNome = EmptyStr then
-      Exit;
+    sFiltro := Copy(slParametros[0], 2, Length(slParametros[0]) - 2);
+    sIndices := Copy(slParametros[1], 2, Length(slParametros[1]) - 2);
+    sNomeClasse := Copy(slParametros[2], 2, Length(slParametros[2]) - 2);
 
-    Self.Caption := sNome + ' - Visualizador de DataSet';
-    Application.Title := sNome + ' - Visualizador de DataSet';
+    if Trim(sFiltro) <> EmptyStr then
+    begin
+      edtFiltro.Text := sFiltro;
+      chkFiltroAtivado.Checked := True;
+    end;
+
+    if Trim(sIndices) <> EmptyStr then
+    begin
+      edtIndices.Text := sIndices;
+      chkIndicesAtivado.Checked := True;
+    end;
+
+    if Trim(sNomeClasse) <> EmptyStr then
+    begin
+      Self.Caption := sNomeClasse + ' - Visualizador de DataSet';
+      Application.Title := sNomeClasse + ' - Visualizador de DataSet';
+    end;
+
   finally
-    FreeAndNil(slNome);
+    FreeAndNil(slParametros);
   end;
-end;
-
-procedure TfVisualizadorDataSet.ClientDataSetAfterScroll(DataSet: TDataSet);
-begin
-  AtualizarContadorRegistros;
 end;
 
 end.
