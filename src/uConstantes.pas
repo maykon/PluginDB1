@@ -22,12 +22,12 @@ const
   sPATH_SP_MONITOR3      = 'C:\PluginDB1\Tools\spMonitor3\spMonitor3.exe';
   sPATH_SELECT_SQL       = 'C:\PluginDB1\Tools\SelectSQL\SelectSQL.exe';
   sPATH_WINSPY           = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
-  sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Output\Dados.xml';
-  sPATH_ARQUIVO_FILTRO   = 'C:\PluginDB1\Output\Filtro.txt';
-  sPATH_ARQUIVO_INDICES  = 'C:\PluginDB1\Output\Indices.txt';
-  sPATH_ARQUIVO_CLASSE   = 'C:\PluginDB1\Output\Classe.txt';
+  sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Visualizador\Dados.xml';
+  sPATH_PROP_DATASET     = 'C:\PluginDB1\Visualizador\Propriedades.txt';
+  sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador\Visualizador.exe';
+  sPATH_TESTE_SPSELECT   = 'C:\PluginDB1\TesteSpSelect\TesteSpSelect.exe';
+  sPATH_PARAMS_SELECT    = 'C:\PluginDB1\TesteSpSelect\Parametros.xml';
   sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
-  sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador.exe';
   sPATH_IMAGENS          = 'C:\PluginDB1\Imagens\';
 
   nNUMERO_TENTATIVAS_LEITURA = 20;

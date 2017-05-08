@@ -23,9 +23,9 @@ type
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure PegarSistemaPadrao;
-    procedure SalvarFiltroDataSet(const psNomeDataSet: string);
-    procedure SalvarIndicesDataSet(const psNomeDataSet: string);
-    procedure SalvarClasseDataSet(const psNomeDataSet: string);
+    function SalvarFiltroDataSet(const psNomeDataSet: string): string;
+    function SalvarIndicesDataSet(const psNomeDataSet: string): string;
+    function SalvarClasseDataSet(const psNomeDataSet: string): string;
     procedure AlterarConexaoNoArquivoCfg(const psServer: string);
 
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
@@ -71,6 +71,7 @@ type
     procedure VisualizarDataSet(Sender: TObject);
     procedure VisualizarDataSetManual(Sender: TObject);
     procedure LerStringList(Sender: TObject);
+    procedure TestarSpSelect(Sender: TObject);
     procedure GravarSistemaArquivoINI;
     procedure NaoFormatarCodigo(Sender: TObject);
 
@@ -146,13 +147,12 @@ begin
   end;
 end;
 
-procedure TFuncoes.SalvarFiltroDataSet(const psNomeDataSet: string);
+function TFuncoes.SalvarFiltroDataSet(const psNomeDataSet: string): string;
 var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
   sExpressao: string;
   sResultado: string;
-  slFiltro: TStringList;
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   sResultado := EmptyStr;
@@ -169,13 +169,7 @@ begin
   if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
     Exit;
 
-  slFiltro := TStringList.Create;
-  try
-    slFiltro.Add(sResultado);
-    slFiltro.SaveToFile(sPATH_ARQUIVO_FILTRO);
-  finally
-    FreeAndNil(slFiltro);
-  end;
+  result := sResultado;
 end;
 
 procedure TFuncoes.VisualizarDataSetManual(Sender: TObject);
@@ -237,6 +231,7 @@ end;
 procedure TFuncoes.ProcessarDataSet(const psNomeDataSet: string);
 var
   oFormAguarde: TfAguarde;
+  slPropriedades: TStringList;
 begin
   if Trim(psNomeDataSet) = EmptyStr then
     Exit;
@@ -245,11 +240,10 @@ begin
     Exit;
 
   oFormAguarde := TfAguarde.Create(nil);
+  slPropriedades := TStringList.Create;
   try
     ExcluirArquivo(sPATH_ARQUIVO_DADOS);
-    ExcluirArquivo(sPATH_ARQUIVO_FILTRO);
-    ExcluirArquivo(sPATH_ARQUIVO_CLASSE);
-    ExcluirArquivo(sPATH_ARQUIVO_INDICES);
+    ExcluirArquivo(sPATH_PROP_DATASET);
 
     VerificarDataSetEstaAssigned(psNomeDataSet);
     VerificarDataSetEstaAtivo(psNomeDataSet);
@@ -258,14 +252,16 @@ begin
     oFormAguarde.Show;
     Application.ProcessMessages;
 
-    SalvarFiltroDataSet(psNomeDataSet);
-    SalvarIndicesDataSet(psNomeDataSet);
-    SalvarClasseDataSet(psNomeDataSet);
+    slPropriedades.Add(SalvarFiltroDataSet(psNomeDataSet));
+    slPropriedades.Add(SalvarIndicesDataSet(psNomeDataSet));
+    slPropriedades.Add(SalvarClasseDataSet(psNomeDataSet));
+    slPropriedades.SaveToFile(sPATH_PROP_DATASET);
 
     if SalvarArquivoDataSet(psNomeDataSet) then
       CarregarArquivoDataSet;
   finally
     oFormAguarde.Close;
+    FreeAndNil(slPropriedades);
     FreeAndNil(oFormAguarde);
   end;
 end;
@@ -611,13 +607,12 @@ begin
     psTextoPadrao := EmptyStr;
 end;
 
-procedure TFuncoes.SalvarIndicesDataSet(const psNomeDataSet: string);
+function TFuncoes.SalvarIndicesDataSet(const psNomeDataSet: string): string;
 var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
   sExpressao: string;
   sResultado: string;
-  slIndices: TStringList;
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   sResultado := EmptyStr;
@@ -634,13 +629,7 @@ begin
   if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
     Exit;
 
-  slIndices := TStringList.Create;
-  try
-    slIndices.Add(sResultado);
-    slIndices.SaveToFile(sPATH_ARQUIVO_INDICES);
-  finally
-    FreeAndNil(slIndices);
-  end;
+  result := sResultado;
 end;
 
 procedure TFuncoes.AbrirArquivoMVP(const pnIndiceMenu: integer);
@@ -667,6 +656,7 @@ procedure TFuncoes.CompilarProjetosClientes(Sender: TObject);
 begin
   FoToolsAPIUtils.CompilarProjeto('prcImpl');
   FoToolsAPIUtils.CompilarProjeto('prcCliente');
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo');
   FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
 end;
 
@@ -683,6 +673,7 @@ begin
   FoToolsAPIUtils.CompilarProjeto('prcDT');
   FoToolsAPIUtils.CompilarProjeto('prcCliente');
   FoToolsAPIUtils.CompilarProjeto('prcServidor');
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo');
   FoToolsAPIUtils.CompilarProjeto('pg5Servidor');
   FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
 end;
@@ -746,13 +737,12 @@ begin
   FoToolsAPIUtils.FinalizarProcesso(sNomeAplicacao);
 end;
 
-procedure TFuncoes.SalvarClasseDataSet(const psNomeDataSet: string);
+function TFuncoes.SalvarClasseDataSet(const psNomeDataSet: string): string;
 var
   oThread: IOTAThread;
   oRetorno: TOTAEvaluateResult;
   sExpressao: string;
   sResultado: string;
-  slIndices: TStringList;
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   sResultado := EmptyStr;
@@ -769,13 +759,12 @@ begin
   if Trim(StringReplace(sResultado, '''', '', [rfReplaceAll])) = EmptyStr then
     Exit;
 
-  slIndices := TStringList.Create;
-  try
-    slIndices.Add(sResultado);
-    slIndices.SaveToFile(sPATH_ARQUIVO_CLASSE);
-  finally
-    FreeAndNil(slIndices);
-  end;
+  result := sResultado;
+end;
+
+procedure TFuncoes.TestarSpSelect(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_TESTE_SPSELECT, EmptyStr);
 end;
 
 end.
