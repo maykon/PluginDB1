@@ -43,6 +43,7 @@ const
   sNOME_SG = 'SG';
   sNOME_PJ = 'PJ';
   sSECAO_ATALHOS = 'Atalhos';
+  sSECAO_PARAMETROS = 'Parametros';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';
   sCOMANDO_RMDIR = 'cmd.exe /c rmdir /s /q ';
   sCOMANDO_FINALIZAR_PROCESSOS = 'tskill %s';

@@ -29,7 +29,7 @@ type
     procedure SelecionarSistemaPG(Sender: TObject);
     procedure SelecionarSistemaSG(Sender: TObject);
     procedure SelecionarSistemaPJ(Sender: TObject);
-    procedure ConfigurarAtalhos(Sender: TObject);
+    procedure AbrirConfiguracoes(Sender: TObject);
     procedure ProcessarArquivosMVP(Sender: TObject);
     function PegarAtalho(const psIdentificador: string): TShortCut;
     function PegarNomeMenuPrincipal: string;
@@ -271,7 +271,7 @@ begin
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador6', nil);
 
-  CriarItemMenuPrincipal('Configurar Atalhos', 'ConfigurarAtalhos', ConfigurarAtalhos);
+  CriarItemMenuPrincipal('Configurações...', 'Configuracoes', AbrirConfiguracoes);
   
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador7', nil);
 
@@ -280,9 +280,9 @@ begin
   CriarItemMenuPrincipal(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
 end;
 
-procedure TWizard.ConfigurarAtalhos(Sender: TObject);
+procedure TWizard.AbrirConfiguracoes(Sender: TObject);
 begin
-  FoFuncoes.ConfigurarAtalhos;
+  FoFuncoes.AbrirConfiguracoes;
   CarregarAtalhos;
   AtribuirAtalhos(Sender);
 end;

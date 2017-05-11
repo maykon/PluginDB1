@@ -1,11 +1,11 @@
-object fConfigurarAtalhos: TfConfigurarAtalhos
+object fConfiguracoes: TfConfiguracoes
   Left = 195
   Top = 125
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
-  Caption = 'Configurar Atalhos'
-  ClientHeight = 330
-  ClientWidth = 287
+  Caption = 'Configurações'
+  ClientHeight = 383
+  ClientWidth = 286
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,10 +18,10 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object gbAtalhos: TGroupBox
+  object GroupBoxAtalhos: TGroupBox
     Left = 3
     Top = 2
-    Width = 281
+    Width = 280
     Height = 297
     Caption = ' Atalhos '
     TabOrder = 0
@@ -81,7 +81,7 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
       Height = 13
       Caption = 'Abrir spMonitor3:'
     end
-    object bvl1: TBevel
+    object Bevel2: TBevel
       Left = 10
       Top = 123
       Width = 250
@@ -246,11 +246,33 @@ object fConfigurarAtalhos: TfConfigurarAtalhos
   end
   object btnOK: TBitBtn
     Left = 93
-    Top = 302
+    Top = 354
     Width = 100
     Height = 25
     Caption = 'OK'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnOKClick
+  end
+  object GroupBoxNomeMenu: TGroupBox
+    Left = 3
+    Top = 304
+    Width = 280
+    Height = 46
+    Caption = 'Configuração '
+    TabOrder = 1
+    object LabelNomeMenu: TLabel
+      Left = 61
+      Top = 22
+      Width = 75
+      Height = 13
+      Caption = 'Nome do Menu:'
+    end
+    object EditNomeMenu: TEdit
+      Left = 140
+      Top = 18
+      Width = 110
+      Height = 21
+      TabOrder = 0
+    end
   end
 end

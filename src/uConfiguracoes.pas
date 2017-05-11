@@ -1,4 +1,4 @@
-unit uConfigurarAtalhos;
+unit uConfiguracoes;
 
 interface
 
@@ -7,8 +7,8 @@ uses
   ComCtrls, StdCtrls, ExtCtrls, Buttons, IniFiles;
 
 type
-  TfConfigurarAtalhos = class(TForm)
-    gbAtalhos: TGroupBox;
+  TfConfiguracoes = class(TForm)
+    GroupBoxAtalhos: TGroupBox;
     hkServidor: THotKey;
     hkAplicacao: THotKey;
     hkDiretorioBin: THotKey;
@@ -25,7 +25,7 @@ type
     lbSpMonitor3: TLabel;
     hkSpMonitor: THotKey;
     hkSpMonitor3: THotKey;
-    bvl1: TBevel;
+    Bevel2: TBevel;
     Bevel1: TBevel;
     lbVisualizarDataSet: TLabel;
     lblVisualizarDataSetManual: TLabel;
@@ -36,6 +36,9 @@ type
     btnOK: TBitBtn;
     lbConsultarNoRansack: TLabel;
     hkConsultarNoRansack: THotKey;
+    GroupBoxNomeMenu: TGroupBox;
+    LabelNomeMenu: TLabel;
+    EditNomeMenu: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -43,12 +46,14 @@ type
     FoArquivoINI: TIniFile;
 
     function PegarAtalho(const psNomeChave: string): TShortCut;
+    function PegarNomeMenu: string;
     procedure CarregarAtalhos;
     procedure SalvarAtalho(const psNomeChave: string; const poAtalho: TShortCut);
+    procedure SalvarNomeMenu;
   end;
 
 var
-  fConfigurarAtalhos: TfConfigurarAtalhos;
+  fConfiguracoes: TfConfiguracoes;
 
 implementation
 
@@ -59,18 +64,19 @@ uses
 
 { TfPersonalizarAtalhos }
 
-procedure TfConfigurarAtalhos.FormCreate(Sender: TObject);
+procedure TfConfiguracoes.FormCreate(Sender: TObject);
 begin
   FoArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI); //PC_OK
   CarregarAtalhos;
+  EditNomeMenu.Text := PegarNomeMenu;
 end;
 
-procedure TfConfigurarAtalhos.FormDestroy(Sender: TObject);
+procedure TfConfiguracoes.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(FoArquivoINI); //PC_OK
 end;
 
-procedure TfConfigurarAtalhos.CarregarAtalhos;
+procedure TfConfiguracoes.CarregarAtalhos;
 begin
   hkServidor.HotKey := PegarAtalho('AbrirServidor');
   hkAplicacao.HotKey := PegarAtalho('AbrirAplicacao');
@@ -86,7 +92,7 @@ begin
   hkLerTStringList.HotKey := PegarAtalho('LerTStringList');
 end;
 
-procedure TfConfigurarAtalhos.btnOKClick(Sender: TObject);
+procedure TfConfiguracoes.btnOKClick(Sender: TObject);
 begin
   SalvarAtalho('AbrirServidor', hkServidor.HotKey);
   SalvarAtalho('AbrirAplicacao', hkAplicacao.HotKey);
@@ -101,17 +107,29 @@ begin
   SalvarAtalho('VisualizarDataSetManual', hkVisualizarDataSetManual.HotKey);
   SalvarAtalho('LerTStringList', hkLerTStringList.HotKey);
 
+  SalvarNomeMenu;
+
   Close;
 end;
 
-procedure TfConfigurarAtalhos.SalvarAtalho(const psNomeChave: string; const poAtalho: TShortCut);
+procedure TfConfiguracoes.SalvarAtalho(const psNomeChave: string; const poAtalho: TShortCut);
 begin
   FoArquivoINI.WriteString(sSECAO_ATALHOS, psNomeChave, ShortCutToText(poAtalho));
 end;
 
-function TfConfigurarAtalhos.PegarAtalho(const psNomeChave: string): TShortCut;
+function TfConfiguracoes.PegarAtalho(const psNomeChave: string): TShortCut;
 begin
   result := TextToShortCut(FoArquivoINI.ReadString(sSECAO_ATALHOS, psNomeChave, EmptyStr));
+end;
+
+function TfConfiguracoes.PegarNomeMenu: string;
+begin
+  result := FoArquivoINI.ReadString(sSECAO_PARAMETROS, 'NomeMenu', sMENU_DB1);
+end;
+
+procedure TfConfiguracoes.SalvarNomeMenu;
+begin
+  FoArquivoINI.WriteString(sSECAO_PARAMETROS, 'NomeMenu', Trim(EditNomeMenu.Text));
 end;
 
 end.

@@ -75,8 +75,8 @@ type
     procedure GravarSistemaArquivoINI;
     procedure NaoFormatarCodigo(Sender: TObject);
 
-    // atalhos
-    procedure ConfigurarAtalhos;
+    // configurações
+    procedure AbrirConfiguracoes;
 
     // MVP
     procedure CriarExpansorArquivoMVP;
@@ -89,7 +89,7 @@ implementation
 
 uses
   Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfigurarAtalhos, JcfIdeRegister;
+  uStringList, uConfiguracoes, JcfIdeRegister;
 
 { TFuncoes }
 
@@ -192,7 +192,7 @@ begin
   oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
   try
     sValor := GetEnumName(TypeInfo(TTipoSistema), integer(FenTipoSistema));
-    oArquivoINI.WriteString('Parametros', 'Sistema', sValor);
+    oArquivoINI.WriteString(sSECAO_PARAMETROS, 'Sistema', sValor);
   finally
     FreeAndNil(oArquivoINI);
   end;
@@ -205,7 +205,7 @@ var
 begin
   oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
   try
-    sNomeSistema := oArquivoINI.ReadString('Parametros', 'Sistema', EmptyStr);
+    sNomeSistema := oArquivoINI.ReadString(sSECAO_PARAMETROS, 'Sistema', EmptyStr);
 
     if Trim(sNomeSistema) = EmptyStr then
     begin
@@ -308,15 +308,15 @@ begin
   end;
 end;
 
-procedure TFuncoes.ConfigurarAtalhos;
+procedure TFuncoes.AbrirConfiguracoes;
 var
-  fConfigurarAtalhos: TfConfigurarAtalhos;
+  fConfiguracoes: TfConfiguracoes;
 begin
-  fConfigurarAtalhos := TfConfigurarAtalhos.Create(nil);
+  fConfiguracoes := TfConfiguracoes.Create(nil);
   try
-    fConfigurarAtalhos.ShowModal;
+    fConfiguracoes.ShowModal;
   finally
-    FreeAndNil(fConfigurarAtalhos);
+    FreeAndNil(fConfiguracoes);
   end;
 end;
 
