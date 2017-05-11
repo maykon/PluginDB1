@@ -46,6 +46,7 @@ type
 
     function ConectarServidor: boolean;
     function PegarParametros: olevariant;
+    function PegarClasseConjuntoDados: string;
     function VerificarPodeExecutarTeste: boolean;
     procedure AtualizarStatus(const psMensagem: string);
     procedure ExecutarTeste;
@@ -116,7 +117,7 @@ begin
   if not ConectarServidor then
     Exit;
 
-  sClasseConjuntoDados := Trim(EditClasseConjuntoDados.Text);
+  sClasseConjuntoDados := PegarClasseConjuntoDados;
   sNomeSpSelect := Trim(EditNomeSpSelect.Text);
 
   try
@@ -158,13 +159,6 @@ begin
   begin
     MessageDlg('Preencha o nome do spSelect.', mtWarning, [mbOK], 0);
     EditNomeSpSelect.SetFocus;
-    Exit;
-  end;
-
-  if Copy(EditClasseConjuntoDados.Text, 0, 1) <> 'T' then
-  begin
-    MessageDlg('A classe do conjunto de dados deve iniciar com "T".', mtWarning, [mbOK], 0);
-    EditClasseConjuntoDados.SetFocus;
     Exit;
   end;
 
@@ -278,6 +272,18 @@ begin
   finally
     FreeAndNil(oArquivoINI);
   end;
+end;
+
+function TfTesteSpSelect.PegarClasseConjuntoDados: string;
+begin
+  result := Trim(EditClasseConjuntoDados.Text);
+
+  // adiciona o "T" antes do nome da classe, caso não exista
+  if Copy(result, 0, 1) <> 'T' then
+    result := 'T' + result;
+
+  // remove o sufixo "Serv" do nome
+  result := StringReplace(result, 'Serv', EmptyStr, [rfReplaceAll]);
 end;
 
 end.

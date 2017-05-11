@@ -2,7 +2,7 @@ object fTesteSpSelect: TfTesteSpSelect
   Left = 484
   Top = 114
   Width = 415
-  Height = 404
+  Height = 415
   Caption = 'Teste de projeções de consulta (IspSelect)'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object fTesteSpSelect: TfTesteSpSelect
     Left = 0
     Top = 0
     Width = 407
-    Height = 373
+    Height = 384
     ActivePage = TabSheetParametros
     Align = alClient
     TabOrder = 0
