@@ -143,7 +143,6 @@ begin
 
   try
     ClientDataSet.LoadFromFile(sPATH_ARQUIVO_DADOS);
-    ClientDataSet.First;
     AtualizarContadorRegistros;
   except
     On E:Exception do
@@ -424,6 +423,7 @@ begin
       Application.Title := sNomeClasse + ' - Visualizador de DataSet';
     end;
 
+    ClientDataSet.First;
   finally
     FreeAndNil(slParametros);
   end;

@@ -1,11 +1,9 @@
 object fStringList: TfStringList
-  Left = 485
-  Top = 182
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  Left = 325
+  Top = 209
+  Width = 719
+  Height = 434
   Caption = 'Visualizador de TStringList'
-  ClientHeight = 403
-  ClientWidth = 340
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,7 +19,7 @@ object fStringList: TfStringList
   object mmValores: TMemo
     Left = 0
     Top = 0
-    Width = 340
+    Width = 711
     Height = 403
     Align = alClient
     Font.Charset = DEFAULT_CHARSET

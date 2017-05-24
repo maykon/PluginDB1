@@ -53,7 +53,7 @@ type
     procedure UsarBase202(Sender: TObject);
     procedure FinalizarProcessos(Sender: TObject);
 
-    // Compilação
+    // compilação
     procedure CompilarProjetosClientes(Sender: TObject);
     procedure CompilarProjetosServidores(Sender: TObject);
     procedure CompilarTodosProjetos(Sender: TObject);
@@ -327,7 +327,7 @@ begin
 
   if not DeleteFile(PChar(psNomeArquivo)) then
   begin
-    FoToolsAPIUtils.Aviso('Ocorreu um erro ao manipular os arquivos :(');
+    FoToolsAPIUtils.Aviso('Ocorreu um erro no depurador do Delphi.');
     Abort;
   end;
 end;
