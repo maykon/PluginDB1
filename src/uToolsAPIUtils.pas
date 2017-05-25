@@ -20,7 +20,7 @@ type
 
   TToolsAPIUtils = class
   private
-    procedure AguardarProcessamentoThread;
+    function AguardarProcessamentoThread: boolean;
   public
     function SourceEditor(Module: IOTAMOdule): IOTASourceEditor;
     function PegarNomeArquivoAtual: string;
@@ -70,10 +70,11 @@ begin
   ShellExecute(0, 'open', PChar(psURL), '', '', SW_SHOWNORMAL);
 end;
 
-procedure TToolsAPIUtils.AguardarProcessamentoThread;
+function TToolsAPIUtils.AguardarProcessamentoThread: boolean;
 var
   nTentativas: smallint;
 begin
+  result := True;
   nTentativas := 0;
   repeat
     begin
@@ -84,10 +85,7 @@ begin
   until FbProcessado or (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO);
 
   if (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO) then
-  begin
-    Aviso('Ocorreu um erro no processamento da Thread.');
-    Abort;
-  end;
+    result := False;
 end;
 
 procedure TToolsAPIUtils.Aviso(const psMensagem: string);
@@ -164,7 +162,8 @@ begin
       if (result = erError) or bVariavelInacessivel then
       begin
         Aviso('O objeto selecionado está inacessível no breakpoint atual.');
-        Abort;
+        result := erError;
+        Exit;
       end;
 
       FnErroProcessamento := 0;
@@ -172,12 +171,12 @@ begin
       if result = erDeferred then
       begin
         AguardarProcessamentoThread;
-        FbProcessado := True;
 
         if FnErroProcessamento <> 0 then
         begin
-          Aviso('Houve um erro ao executar o Evaluate do Delphi.');
-          Abort;
+          Aviso('Ocorreu um erro no processamento da Thread.');
+          result := erError;
+          Exit;
         end;
 
         if Trim(FsResultadoDeferred) <> EmptyStr then
@@ -193,25 +192,25 @@ end;
 
 procedure TToolsAPIUtils.FinalizarProcesso(const psNomeProcesso: string);
 var
-  Loop: BOOL;
-  Snapshot: THandle;
-  FProcessEntry32: TProcessEntry32;
+  bLoop: BOOL;
+  oHandle: THandle;
+  oProcesso: TProcessEntry32;
 begin
-  Snapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
-  Loop := Process32First(Snapshot, FProcessEntry32);
+  oHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  oProcesso.dwSize := SizeOf(oProcesso);
+  bLoop := Process32First(oHandle, oProcesso);
 
-  while integer(Loop) <> 0 do
+  while integer(bLoop) <> 0 do
   begin
-    if UpperCase(FProcessEntry32.szExeFile) = UpperCase(psNomeProcesso) then
+    if UpperCase(oProcesso.szExeFile) = UpperCase(psNomeProcesso) then
     begin
-      TerminateProcess(OpenProcess($0001, BOOL(0), FProcessEntry32.th32ProcessID), 0);
+      TerminateProcess(OpenProcess($0001, BOOL(0), oProcesso.th32ProcessID), 0);
       Break;
     end;
 
-    Loop := Process32Next(Snapshot, FProcessEntry32);
+    bLoop := Process32Next(oHandle, oProcesso);
   end;
-  CloseHandle(Snapshot);
+  CloseHandle(oHandle);
 end;
 
 function TToolsAPIUtils.PegarDiretorioProjetoAtivo: string;
@@ -222,7 +221,7 @@ var
   oModulo: IOTAModule;
   nCont: integer;
 begin
-  oModuleServices := BorlandIDEServices as IOTAModuleServices;
+  oModuleServices := (BorlandIDEServices as IOTAModuleServices);
   for nCont := 0 to Pred(oModuleServices.ModuleCount) do
   begin
     oModulo := oModuleServices.Modules[nCont];
@@ -246,9 +245,6 @@ var
 begin
   result := EmptyStr;
 
-  if not Assigned(BorlandIDEServices) then
-    Exit;
-
   oModulo := (BorlandIDEServices as IOTAModuleServices).CurrentModule;
   oEditor := SourceEditor(oModulo);
 
@@ -266,10 +262,7 @@ begin
   result := EmptyStr;
   oViewer := (BorlandIDEServices as IOTAEditorServices).TopView;
   oBloco := oViewer.GetBlock;
-
-  if (oBloco.StartingColumn <> oBloco.EndingColumn) or
-    (oBloco.StartingRow <> oBloco.EndingRow) then
-    result := oBloco.Text;
+  result := oBloco.Text;
 end;
 
 function TToolsAPIUtils.PegarThreadAtual: IOTAThread;
@@ -279,8 +272,8 @@ var
 begin
   result := nil;
   try
-    if Supports(BorlandIDEServices, IOTADebuggerServices, oServicoDebug) then
-      oProcesso := oServicoDebug.CurrentProcess;
+    oServicoDebug := (BorlandIDEServices as IOTADebuggerServices);
+    oProcesso := oServicoDebug.CurrentProcess;
 
     if not Assigned(oProcesso) then
       Exit;
@@ -294,19 +287,18 @@ end;
 
 function TToolsAPIUtils.SourceEditor(Module: IOTAMOdule): IOTASourceEditor;
 var
-  iFileCount: integer;
-  i: integer;
+  nQtdeArquivos: integer;
+  nContador: integer;
 begin
   result := nil;
-  if Module = nil then
+
+  if not Assigned(Module) then
     Exit;
-  with Module do
-  begin
-    iFileCount := GetModuleFileCount;
-    for i := 0 to iFileCount - 1 do
-      if GetModuleFileEditor(i).QueryInterface(IOTASourceEditor, result) = S_OK then
-        Break;
-  end;
+
+  nQtdeArquivos := Module.GetModuleFileCount;
+  for nContador := 0 to Pred(nQtdeArquivos) do
+    if Module.GetModuleFileEditor(nContador).QueryInterface(IOTASourceEditor, result) = S_OK then
+      Break;
 end;
 
 { TNotifier }
