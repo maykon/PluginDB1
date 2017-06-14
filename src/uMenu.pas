@@ -15,7 +15,8 @@ type
     FoMenuMVP: TMenuItem;
 
     procedure AbrirArquivoMVP(Sender: TObject);
-    procedure CriarItemMenuPrincipal(const psCaption, psIdentificador: string; poEvento: TNotifyEvent);
+    procedure CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
+      poEvento: TNotifyEvent; const psMenuPai: string = '');
     procedure CriarItemMenuMVP(const psCaption, psIdentificador: string; const pnTag: integer = 0);
     procedure CriarMenuPrincipal;
     procedure CriarMenuMVP;
@@ -28,11 +29,11 @@ type
     procedure MarcarMenu;
     procedure SelecionarSistemaPG(Sender: TObject);
     procedure SelecionarSistemaSG(Sender: TObject);
-    procedure SelecionarSistemaPJ(Sender: TObject);
     procedure AbrirConfiguracoes(Sender: TObject);
     procedure ProcessarArquivosMVP(Sender: TObject);
     function PegarAtalho(const psIdentificador: string): TShortCut;
     function PegarNomeMenuPrincipal: string;
+    function ProcurarMenu(const psNomeMenu: string): TMenuItem;
   public
     constructor Create;
 
@@ -57,7 +58,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, Graphics, IniFiles, FileCtrl, uFuncoes, uConstantes, ComCtrls;
+  SysUtils, Forms, Windows, ComCtrls, Graphics, IniFiles, FileCtrl, uFuncoes, uConstantes;
 
 var
   FoFuncoes: TFuncoes;
@@ -88,12 +89,14 @@ end;
 
 { TWizard }
 
-procedure TWizard.CriarItemMenuPrincipal(const psCaption, psIdentificador: string; poEvento: TNotifyEvent);
+procedure TWizard.CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
+  poEvento: TNotifyEvent; const psMenuPai: string = '');
 var
   oNTAS: INTAServices;
   oAction: TAction;
   oBitmap: TBitmap;
   oMenuItem: TMenuItem;
+  oMenuPai: TMenuItem;
 begin
   oAction := nil;
   oNTAS := (BorlandIDEServices as INTAServices);
@@ -123,7 +126,13 @@ begin
   oMenuItem.Caption := psCaption;
   oMenuItem.Action := oAction;
   oMenuItem.Name := 'im' + psIdentificador;
-  FoMenuPrincipal.Add(oMenuItem);
+
+  if psMenuPai = EmptyStr then
+    oMenuPai := FoMenuPrincipal
+  else
+    oMenuPai := ProcurarMenu(psMenuPai);
+
+  oMenuPai.Add(oMenuItem);
 end;
 
 constructor TWizard.Create;
@@ -192,12 +201,6 @@ begin
   MarcarMenu;
 end;
 
-procedure TWizard.SelecionarSistemaPJ(Sender: TObject);
-begin
-  FoFuncoes.TipoSistema := tsPJ;
-  MarcarMenu;
-end;
-
 procedure TWizard.MarcarMenu;
 var
   nCont: integer;
@@ -207,7 +210,6 @@ begin
   case FoFuncoes.TipoSistema of
     tsPG: sNomeMenu := sNOME_PG;
     tsSG: sNomeMenu := sNOME_SG;
-    tsPJ: sNomeMenu := sNOME_PJ;
   end;
 
   for nCont := 0 to Pred(FActions.Count) do
@@ -239,6 +241,7 @@ begin
   CriarItemMenuPrincipal('Compilar Projetos Cliente', 'CompilarCliente', FoFuncoes.CompilarProjetosClientes);
   CriarItemMenuPrincipal('Compilar Projetos Servidor', 'CompilarServidor', FoFuncoes.CompilarProjetosServidores);
   CriarItemMenuPrincipal('Compilar Todos', 'CompilarTodos', FoFuncoes.CompilarTodosProjetos);
+  CriarItemMenuPrincipal('Compilação Personalizada', 'CompilacaoPersonalizada', FoFuncoes.CompilacaoPersonalizada);
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador2', nil);
 
@@ -250,34 +253,37 @@ begin
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador3', nil);
 
-  CriarItemMenuPrincipal('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
-  CriarItemMenuPrincipal('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi);
-  CriarItemMenuPrincipal('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4);
-  CriarItemMenuPrincipal('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore);
+  CriarItemMenuPrincipal('Abrir Visualizador de DataSets', 'AbrirVisualizadorDataSets', FoFuncoes.AbrirVisualizadorDataSets);
+  CriarItemMenuPrincipal('Exportar Dados do DataSet', 'ExportarDataSet', FoFuncoes.ExportarDadosDataSet);
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador4', nil);
 
   CriarItemMenuPrincipal('Visualizar DataSet', 'VisualizarDataSet', FoFuncoes.VisualizarDataSet);
   CriarItemMenuPrincipal('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarItemMenuPrincipal('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
+  CriarItemMenuPrincipal('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
   CriarItemMenuPrincipal('Testar SpSelect', 'TestarSpSelect', FoFuncoes.TestarSpSelect);
   CriarItemMenuPrincipal('Não Formatar Código', 'NaoFormatarCodigo', FoFuncoes.NaoFormatarCodigo);
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador5', nil);
 
-  CriarItemMenuPrincipal('Usar base 175', 'UsarBase175', FoFuncoes.UsarBase175);
-  CriarItemMenuPrincipal('Usar base 152', 'UsarBase152', FoFuncoes.UsarBase152);
-  CriarItemMenuPrincipal('Usar base 202', 'UsarBase202', FoFuncoes.UsarBase202);
+  CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil);
+  CriarItemMenuPrincipal('175 - Desenvolvimento', 'Base175', FoFuncoes.SelecionarBase175, 'SelecionarBaseDados');
+  CriarItemMenuPrincipal('152 - Testes', 'Base152', FoFuncoes.SelecionarBase152, 'SelecionarBaseDados');
+  CriarItemMenuPrincipal('202 - System Team', 'Base202', FoFuncoes.SelecionarBase202, 'SelecionarBaseDados');
 
-  CriarItemMenuPrincipal(sSEPARADOR, 'Separador6', nil);
+  //CriarItemMenuPrincipal(sSEPARADOR, 'Separador6', nil);
 
+  CriarItemMenuPrincipal('Documentação', 'Documentacao', nil);
+  CriarItemMenuPrincipal('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi, 'Documentacao');
+  CriarItemMenuPrincipal('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4, 'Documentacao');
+  CriarItemMenuPrincipal('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore, 'Documentacao');
   CriarItemMenuPrincipal('Configurações...', 'Configuracoes', AbrirConfiguracoes);
-  
+
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador7', nil);
 
-  CriarItemMenuPrincipal(sNOME_PG, 'SelecionarSistemaPG', SelecionarSistemaPG);
-  CriarItemMenuPrincipal(sNOME_SG, 'SelecionarSistemaSG', SelecionarSistemaSG);
-  CriarItemMenuPrincipal(sNOME_PJ, 'SelecionarSistemaPJ', SelecionarSistemaPJ);
+  CriarItemMenuPrincipal(sNOME_PG, 'SelecionarProjetoPG', SelecionarSistemaPG);
+  CriarItemMenuPrincipal(sNOME_SG, 'SelecionarProjetoSG', SelecionarSistemaSG);
 end;
 
 procedure TWizard.AbrirConfiguracoes(Sender: TObject);
@@ -424,6 +430,21 @@ begin
     result := oArquivoINI.ReadString('Parametros', 'NomeMenu', sMENU_DB1);
   finally
     FreeAndNil(oArquivoINI);
+  end;
+end;
+
+function TWizard.ProcurarMenu(const psNomeMenu: string): TMenuItem;
+var
+  nContador: byte;
+begin
+  result := nil;
+  for nContador := 0 to Pred(FoMenuPrincipal.Count) do
+  begin
+    if FoMenuPrincipal.Items[nContador].Name = ('im' + psNomeMenu) then
+    begin
+      result := FoMenuPrincipal[nContador];
+      Break;
+    end;
   end;
 end;
 

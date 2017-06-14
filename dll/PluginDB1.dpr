@@ -12,7 +12,8 @@ uses
   uFuncoes in '..\src\uFuncoes.pas',
   uConstantes in '..\src\uConstantes.pas',
   uToolsAPIUtils in '..\src\uToolsAPIUtils.pas',
-  uExpansorArquivoMVP in '..\src\uExpansorArquivoMVP.pas';
+  uExpansorArquivoMVP in '..\src\uExpansorArquivoMVP.pas',
+  uCompilacao in '..\src\uCompilacao.pas' {fCompilacao};
 
 {$R *.RES}
 

@@ -27,19 +27,22 @@ type
     function PegarThreadAtual: IOTAThread;
     function PegarDiretorioProjetoAtivo: string;
     function PegarTextoSelecionado: string;
+    function PegarProjetosCarregados: string;
+    function PegarGrupoProjetos: IOTAProjectGroup;
     function ExecutarEvaluate(poThread: IOTAThread; const psExpressao: string;
       var psResultado: string): TOTAEvaluateResult;
     procedure AbrirArquivo(const psDiretorio, psArquivo: string);
     procedure AbrirURL(const psURL: string);
     procedure Aviso(const psMensagem: string);
-    procedure CompilarProjeto(const psNomeProjeto: string; const pbEsperarPorOK: boolean = False);
+    procedure CompilarProjeto(const psNomeProjeto: string; const poGrupoProjetos: IOTAProjectGroup;
+      const pbEsperarPorOK: boolean = False);
     procedure FinalizarProcesso(const psNomeProcesso: string);
   end;
 
 implementation
 
 uses
-  SysUtils, tlhelp32, Windows, Forms, Dialogs, ShellAPI, uConstantes;
+  SysUtils, Classes, tlhelp32, Windows, Forms, Dialogs, ShellAPI, uConstantes;
 
 var
   FbProcessado: boolean;
@@ -94,26 +97,15 @@ begin
 end;
 
 procedure TToolsAPIUtils.CompilarProjeto(const psNomeProjeto: string;
-  const pbEsperarPorOK: boolean = False);
+  const poGrupoProjetos: IOTAProjectGroup; const pbEsperarPorOK: boolean = False);
 var
   oProjeto: IOTAProject;
-  oGrupo: IOTAProjectGroup;
-  oModuleServices: IOTAModuleServices;
-  oModulo: IOTAModule;
   nCont: integer;
   sNomeProjeto: string;
 begin
-  oModuleServices := BorlandIDEServices as IOTAModuleServices;
-  for nCont := 0 to Pred(oModuleServices.ModuleCount) do
+  for nCont := 0 to Pred(poGrupoProjetos.ProjectCount) do
   begin
-    oModulo := oModuleServices.Modules[nCont];
-    if oModulo.QueryInterface(IOTAProjectGroup, oGrupo) = S_OK then
-      Break;
-  end;
-
-  for nCont := 0 to Pred(oGrupo.ProjectCount) do
-  begin
-    oProjeto := oGrupo.GetProject(nCont);
+    oProjeto := poGrupoProjetos.GetProject(nCont);
     sNomeProjeto := ExtractFileName(oProjeto.FileName);
     if Pos(psNomeProjeto, sNomeProjeto) > 0 then
     begin
@@ -238,6 +230,21 @@ begin
   end;
 end;
 
+function TToolsAPIUtils.PegarGrupoProjetos: IOTAProjectGroup;
+var
+  oModuleServices: IOTAModuleServices;
+  oModulo: IOTAModule;
+  nCont: smallint;
+begin
+  oModuleServices := BorlandIDEServices as IOTAModuleServices;
+  for nCont := 0 to Pred(oModuleServices.ModuleCount) do
+  begin
+    oModulo := oModuleServices.Modules[nCont];
+    if oModulo.QueryInterface(IOTAProjectGroup, result) = S_OK then
+      Break;
+  end;
+end;
+
 function TToolsAPIUtils.PegarNomeArquivoAtual: string;
 var
   oEditor: IOTASourceEditor;
@@ -252,6 +259,28 @@ begin
     Exit;
 
   result := oEditor.GetFileName;
+end;
+
+function TToolsAPIUtils.PegarProjetosCarregados: string;
+var
+  oGrupo: IOTAProjectGroup;
+  oProjeto: IOTAProject;
+  nCont: integer;
+  StringListProjetos: TStringList;
+begin
+  oGrupo := PegarGrupoProjetos;
+
+  StringListProjetos := TStringList.Create;
+  try
+    for nCont := 0 to Pred(oGrupo.ProjectCount) do
+    begin
+      oProjeto := oGrupo.GetProject(nCont);
+      StringListProjetos.Add(ExtractFileName(oProjeto.FileName));
+    end;
+    result := StringListProjetos.CommaText;
+  finally
+    FreeAndNil(StringListProjetos);
+  end;
 end;
 
 function TToolsAPIUtils.PegarTextoSelecionado: string;

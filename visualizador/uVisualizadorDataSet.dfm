@@ -1,8 +1,8 @@
 object fVisualizadorDataSet: TfVisualizadorDataSet
   Left = 189
   Top = 119
-  Width = 1035
-  Height = 608
+  Width = 1029
+  Height = 610
   Caption = 'Visualizador de DataSet'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,8 +17,8 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   PixelsPerInch = 96
   TextHeight = 13
   object lbQuantidade: TLabel
-    Left = 13
-    Top = 547
+    Left = 6
+    Top = 552
     Width = 511
     Height = 19
     Anchors = [akLeft, akBottom]
@@ -31,28 +31,28 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     ParentFont = False
   end
   object lbFiltro: TLabel
-    Left = 24
+    Left = 17
     Top = 9
     Width = 28
     Height = 13
     Caption = 'Filtro:'
   end
   object lbIndices: TLabel
-    Left = 14
+    Left = 7
     Top = 32
     Width = 38
     Height = 13
     Caption = 'Índices:'
   end
   object grdDados: TDBGrid
-    Left = 12
+    Left = 5
     Top = 53
-    Width = 820
-    Height = 491
+    Width = 831
+    Height = 493
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource
     PopupMenu = PopupMenu
-    TabOrder = 6
+    TabOrder = 8
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -61,7 +61,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnTitleClick = grdDadosTitleClick
   end
   object edtFiltro: TEdit
-    Left = 56
+    Left = 59
     Top = 5
     Width = 703
     Height = 21
@@ -71,7 +71,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnKeyPress = edtFiltroKeyPress
   end
   object chkFiltroAtivado: TCheckBox
-    Left = 766
+    Left = 770
     Top = 7
     Width = 66
     Height = 17
@@ -80,18 +80,18 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClick = chkFiltroAtivadoClick
   end
   object clCampos: TCheckListBox
-    Left = 845
-    Top = 51
+    Left = 844
+    Top = 77
     Width = 168
-    Height = 472
+    Height = 449
     OnClickCheck = clCamposClickCheck
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
     TabOrder = 7
   end
   object btnTodos: TBitBtn
-    Left = 845
-    Top = 22
+    Left = 844
+    Top = 24
     Width = 80
     Height = 25
     Anchors = [akTop, akRight]
@@ -100,8 +100,8 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClick = btnTodosClick
   end
   object btnNenhum: TBitBtn
-    Left = 933
-    Top = 22
+    Left = 932
+    Top = 24
     Width = 80
     Height = 25
     Anchors = [akTop, akRight]
@@ -110,17 +110,17 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClick = btnNenhumClick
   end
   object chkAjustarTamanhoColunas: TCheckBox
-    Left = 845
-    Top = 527
+    Left = 844
+    Top = 529
     Width = 168
     Height = 17
     Anchors = [akRight, akBottom]
     Caption = 'Ajustar Tamanho das Colunas'
-    TabOrder = 8
+    TabOrder = 9
     OnClick = chkAjustarTamanhoColunasClick
   end
   object edtIndices: TEdit
-    Left = 56
+    Left = 59
     Top = 28
     Width = 703
     Height = 21
@@ -130,7 +130,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnKeyPress = edtIndicesKeyPress
   end
   object chkIndicesAtivado: TCheckBox
-    Left = 766
+    Left = 770
     Top = 31
     Width = 66
     Height = 17
@@ -138,10 +138,30 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     TabOrder = 3
     OnClick = chkIndicesAtivadoClick
   end
+  object btnCarregar: TBitBtn
+    Left = 736
+    Top = 550
+    Width = 100
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Carregar Dados'
+    TabOrder = 10
+    OnClick = btnCarregarClick
+  end
+  object edtPesquisaCampos: TEdit
+    Left = 845
+    Top = 53
+    Width = 168
+    Height = 21
+    Anchors = [akTop, akRight]
+    TabOrder = 6
+    OnChange = edtPesquisaCamposChange
+    OnKeyPress = edtPesquisaCamposKeyPress
+  end
   object DataSource: TDataSource
     AutoEdit = False
     DataSet = ClientDataSet
-    Left = 49
+    Left = 42
     Top = 494
   end
   object ClientDataSet: TClientDataSet
@@ -149,11 +169,11 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Params = <>
     BeforeInsert = ClientDataSetBeforeInsert
     AfterScroll = ClientDataSetAfterScroll
-    Left = 19
+    Left = 12
     Top = 494
   end
   object PopupMenu: TPopupMenu
-    Left = 79
+    Left = 72
     Top = 494
     object PopupMenuCopiar: TMenuItem
       Caption = 'Copiar'

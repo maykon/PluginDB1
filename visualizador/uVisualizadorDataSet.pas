@@ -25,6 +25,8 @@ type
     lbIndices: TLabel;
     edtIndices: TEdit;
     chkIndicesAtivado: TCheckBox;
+    btnCarregar: TBitBtn;
+    edtPesquisaCampos: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure chkFiltroAtivadoClick(Sender: TObject);
     procedure clCamposClickCheck(Sender: TObject);
@@ -42,15 +44,18 @@ type
     procedure edtIndicesChange(Sender: TObject);
     procedure chkIndicesAtivadoClick(Sender: TObject);
     procedure ClientDataSetAfterScroll(DataSet: TDataSet);
+    procedure btnCarregarClick(Sender: TObject);
+    procedure edtPesquisaCamposChange(Sender: TObject);
+    procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
   private
     FaTamanhoMaximo: array of smallint;
 
-    procedure MouseScroll(var Msg: TMsg; var Handled: boolean);
     procedure AjustarTamanhoColunas;
     procedure CalcularTamanhoColunas;
-    procedure CarregarArquivoDados;
+    procedure CarregarArquivoDados(const psNomeArquivo: string);
     procedure CarregarCampos;
     procedure CarregarParametrosDataSet;
+    procedure ControlarVisibilidadeCampo;
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
   public
@@ -71,37 +76,42 @@ uses
 
 procedure TfVisualizadorDataSet.FormCreate(Sender: TObject);
 begin
-  Application.OnMessage := MouseScroll;
-  CarregarDadosDataSet;
+  if ParamStr(1) = '/auto' then
+    CarregarDadosDataSet;
 end;
 
 procedure TfVisualizadorDataSet.AjustarTamanhoColunas;
 var
-  nCont: smallint;
-  nTamanho: integer;
+  nTamanho, nContador: smallint;
 begin
-  for nCont := 0 to Pred(grdDados.Columns.Count) do
+  if not ClientDataSet.Active then
+    Exit;
+
+  for nContador := 0 to Pred(grdDados.Columns.Count) do
   begin
     if chkAjustarTamanhoColunas.Checked then
-      nTamanho := FaTamanhoMaximo[nCont]
+      nTamanho := FaTamanhoMaximo[nContador]
     else
-      nTamanho := grdDados.Columns[nCont].Field.Size;
+      nTamanho := grdDados.Columns[nContador].Field.Size;
 
     if nTamanho > 0 then
-      grdDados.Columns[nCont].Width := nTamanho;
+      grdDados.Columns[nContador].Width := nTamanho;
   end;
 end;
 
 procedure TfVisualizadorDataSet.CalcularTamanhoColunas;
 var
-  nTamanho, nCont: smallint;
+  nTamanho, nContador: smallint;
   sDisplayText: string;
 begin
+  if not ClientDataSet.Active then
+    Exit;
+
   SetLength(FaTamanhoMaximo, ClientDataSet.FieldCount);
 
-  for nCont := 0 to Pred(grdDados.Columns.Count) do
+  for nContador := 0 to Pred(grdDados.Columns.Count) do
   begin
-    FaTamanhoMaximo[nCont] := Canvas.TextWidth(ClientDataSet.Fields[nCont].DisplayLabel) +
+    FaTamanhoMaximo[nContador] := Canvas.TextWidth(ClientDataSet.Fields[nContador].DisplayLabel) +
       nBORDA_DBGRID;
   end;
 
@@ -109,13 +119,13 @@ begin
   ClientDataSet.First;
   while not ClientDataSet.EOF do
   begin
-    for nCont := 0 to Pred(grdDados.Columns.Count) do
+    for nContador := 0 to Pred(grdDados.Columns.Count) do
     begin
-      sDisplayText := grdDados.Columns[nCont].Field.DisplayText;
+      sDisplayText := grdDados.Columns[nContador].Field.DisplayText;
       nTamanho := Canvas.TextWidth(Trim(sDisplayText)) + nBORDA_DBGRID;
 
-      if nTamanho > FaTamanhoMaximo[nCont] then
-        FaTamanhoMaximo[nCont] := nTamanho;
+      if nTamanho > FaTamanhoMaximo[nContador] then
+        FaTamanhoMaximo[nContador] := nTamanho;
     end;
     ClientDataSet.Next;
   end;
@@ -123,7 +133,7 @@ begin
   ClientDataSet.EnableControls;
 end;
 
-procedure TfVisualizadorDataSet.CarregarArquivoDados;
+procedure TfVisualizadorDataSet.CarregarArquivoDados(const psNomeArquivo: string);
 var
   nTentativas: smallint;
 begin
@@ -132,7 +142,7 @@ begin
   repeat
     Sleep(150);
     Inc(nTentativas);
-  until FileExists(sPATH_ARQUIVO_DADOS) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
+  until FileExists(psNomeArquivo) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
 
   if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
   begin
@@ -142,7 +152,8 @@ begin
   end;
 
   try
-    ClientDataSet.LoadFromFile(sPATH_ARQUIVO_DADOS);
+    ClientDataSet.Close;
+    ClientDataSet.LoadFromFile(psNomeArquivo);
     AtualizarContadorRegistros;
   except
     On E:Exception do
@@ -157,18 +168,18 @@ end;
 
 procedure TfVisualizadorDataSet.CarregarCampos;
 var
-  nCont: smallint;
+  nContador: smallint;
 begin
-  for nCont := 0 to Pred(ClientDataSet.Fields.Count) do
+  for nContador := 0 to Pred(ClientDataSet.Fields.Count) do
   begin
-    clCampos.Items.Add(ClientDataSet.Fields[nCont].FieldName);
-    clCampos.Checked[nCont] := True;
+    clCampos.Items.Add(ClientDataSet.Fields[nContador].FieldName);
+    clCampos.Checked[nContador] := True;
   end;
 end;
 
 procedure TfVisualizadorDataSet.CarregarDadosDataSet;
 begin
-  CarregarArquivoDados;
+  CarregarArquivoDados(sPATH_ARQUIVO_DADOS);
   CarregarCampos;
 
   CarregarParametrosDataSet;
@@ -195,20 +206,15 @@ begin
 end;
 
 procedure TfVisualizadorDataSet.clCamposClickCheck(Sender: TObject);
-var
-  bHabilitar: boolean;
-  sNomeCampo: string;
 begin
-  bHabilitar := clCampos.Checked[clCampos.ItemIndex];
-  sNomeCampo := clCampos.Items[clCampos.ItemIndex];
-  ClientDataSet.FieldByName(sNomeCampo).Visible := bHabilitar;
-
-  if bHabilitar then
-    AjustarTamanhoColunas;
+  ControlarVisibilidadeCampo;
 end;
 
 procedure TfVisualizadorDataSet.AtualizarContadorRegistros;
 begin
+  if not ClientDataSet.Active then
+    Exit;
+
   lbQuantidade.Caption := Format('Contador: %d / %d', [ClientDataSet.RecNo,
     ClientDataSet.RecordCount]);
 end;
@@ -244,10 +250,13 @@ procedure TfVisualizadorDataSet.grdDadosTitleClick(Column: TColumn);
 var
   sIndexName: string;
   oOrdenacao: TIndexOptions;
-  nCont: smallint;
+  nContador: smallint;
 begin
-  for nCont := 0 to Pred(grdDados.Columns.Count) do
-    grdDados.Columns[nCont].Title.Font.Style := [];
+  if not ClientDataSet.Active then
+    Exit;
+
+  for nContador := 0 to Pred(grdDados.Columns.Count) do
+    grdDados.Columns[nContador].Title.Font.Style := [];
 
   ClientDataSet.IndexDefs.Clear;
 
@@ -270,33 +279,14 @@ end;
 
 procedure TfVisualizadorDataSet.MarcarTodosRegistros(const pbMarcar: boolean);
 var
-  nCont: smallint;
+  nContador: smallint;
   sNomeCampo: string;
 begin
-  for nCont := 0 to Pred(clCampos.Items.Count) do
+  for nContador := 0 to Pred(clCampos.Items.Count) do
   begin
-    clCampos.Checked[nCont] := pbMarcar;
-    sNomeCampo := clCampos.Items[nCont];
+    clCampos.Checked[nContador] := pbMarcar;
+    sNomeCampo := clCampos.Items[nContador];
     ClientDataSet.FieldByName(sNomeCampo).Visible := pbMarcar;
-  end;
-end;
-
-procedure TfVisualizadorDataSet.MouseScroll(var Msg: TMsg; var Handled: boolean);
-var
-  nCont: smallint;
-begin
-  if Msg.message = WM_MOUSEWHEEL then
-  begin
-    Msg.message := WM_KEYDOWN;
-    Msg.lParam := 0;
-    nCont := HiWord(Msg.wParam);
-
-    if nCont > 0 then
-      Msg.wParam := VK_UP
-    else
-      Msg.wParam := VK_DOWN;
-
-    Handled := False;
   end;
 end;
 
@@ -312,11 +302,8 @@ begin
 end;
 
 procedure TfVisualizadorDataSet.PopupMenuCopiarClick(Sender: TObject);
-var
-  sColuna: string;
 begin
-  sColuna := grdDados.SelectedField.FieldName;
-  Clipboard.AsText := ClientDataSet.FieldByName(sColuna).AsString;
+  Clipboard.AsText := ClientDataSet.FieldByName(grdDados.SelectedField.FieldName).AsString;
 end;
 
 procedure TfVisualizadorDataSet.PopupMenuExcluirClick(Sender: TObject);
@@ -427,6 +414,73 @@ begin
   finally
     FreeAndNil(slParametros);
   end;
+end;
+
+procedure TfVisualizadorDataSet.btnCarregarClick(Sender: TObject);
+var
+  oOpenDialog: TOpenDialog;
+begin
+  oOpenDialog := TOpenDialog.Create(Self);
+  try
+    if not oOpenDialog.Execute then
+      Exit;
+
+    clCampos.Clear;
+    edtFiltro.Clear;
+    edtIndices.Clear;
+    CarregarArquivoDados(oOpenDialog.FileName);
+    CarregarCampos;
+  finally
+    FreeAndNil(oOpenDialog);
+  end;
+end;
+
+procedure TfVisualizadorDataSet.edtPesquisaCamposChange(Sender: TObject);
+var
+  nContador: smallint;
+begin
+  if Trim(edtPesquisaCampos.Text) = EmptyStr then
+  begin
+    clCampos.ItemIndex := 0;
+    Exit;
+  end;
+
+  for nContador := 0 to Pred(clCampos.Items.Count) do
+  begin
+    // X é usado como um workaround na busca
+    if Pos(LowerCase(edtPesquisaCampos.Text), LowerCase('X' + clCampos.Items[nContador])) > 0 then
+    begin
+      clCampos.ItemIndex := nContador;
+      Break;
+    end;
+  end;
+end;
+
+procedure TfVisualizadorDataSet.edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #32 then
+  begin
+    Key := #0;
+
+    if clCampos.ItemIndex < 0 then
+      Exit;
+
+    clCampos.Checked[clCampos.ItemIndex] := not clCampos.Checked[clCampos.ItemIndex];
+    ControlarVisibilidadeCampo;
+  end;
+end;
+
+procedure TfVisualizadorDataSet.ControlarVisibilidadeCampo;
+var
+  bHabilitar: boolean;
+  sNomeCampo: string;
+begin
+  bHabilitar := clCampos.Checked[clCampos.ItemIndex];
+  sNomeCampo := clCampos.Items[clCampos.ItemIndex];
+  ClientDataSet.FieldByName(sNomeCampo).Visible := bHabilitar;
+
+  if bHabilitar then
+    AjustarTamanhoColunas;
 end;
 
 end.

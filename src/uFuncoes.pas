@@ -6,7 +6,7 @@ uses
   ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uExpansorArquivoMVP;
 
 type
-  TTipoSistema = (tsPG, tsSG, tsPJ);
+  TTipoSistema = (tsPG, tsSG);
 
   TFuncoes = class
   private
@@ -16,7 +16,7 @@ type
 
     function PegarDiretorioBin: string;
     function PegarCriterioConsulta(var psTextoPadrao: string): string;
-    function SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
+    function SalvarArquivoDataSet(const psNomeDataSet, psNomeArquivo: string): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     function ValidarTextoSelecionado(const psTexto: string): boolean;
     function VerificarExisteThreadProcesso: boolean;
@@ -27,6 +27,8 @@ type
     function SalvarIndicesDataSet(const psNomeDataSet: string): string;
     function SalvarClasseDataSet(const psNomeDataSet: string): string;
     procedure AlterarConexaoNoArquivoCfg(const psServer: string);
+    function LerDoArquivoINI(const psSecao, psChave: string): string;
+    procedure GravarNoArquivoINI(const psSecao, psChave, psValor: string);
 
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
@@ -48,15 +50,18 @@ type
     procedure ConsultarDocDelphi(Sender: TObject);
     procedure ConsultarDocSP4(Sender: TObject);
     procedure ConsultarColabore(Sender: TObject);
-    procedure UsarBase175(Sender: TObject);
-    procedure UsarBase152(Sender: TObject);
-    procedure UsarBase202(Sender: TObject);
+    procedure SelecionarBase175(Sender: TObject);
+    procedure SelecionarBase152(Sender: TObject);
+    procedure SelecionarBase202(Sender: TObject);
     procedure FinalizarProcessos(Sender: TObject);
 
     // compilação
     procedure CompilarProjetosClientes(Sender: TObject);
     procedure CompilarProjetosServidores(Sender: TObject);
     procedure CompilarTodosProjetos(Sender: TObject);
+    procedure CompilacaoPersonalizada(Sender: TObject);
+    function PegarProjetosCarregados: string;
+    function PegarGrupoProjetos: IOTAProjectGroup;
 
     // ferramentas externas
     procedure AbrirVisualizaDTS(Sender: TObject);
@@ -74,6 +79,8 @@ type
     procedure TestarSpSelect(Sender: TObject);
     procedure GravarSistemaArquivoINI;
     procedure NaoFormatarCodigo(Sender: TObject);
+    procedure ExportarDadosDataSet(Sender: TObject);
+    procedure AbrirVisualizadorDataSets(Sender: TObject);
 
     // configurações
     procedure AbrirConfiguracoes;
@@ -89,7 +96,7 @@ implementation
 
 uses
   Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfiguracoes, JcfIdeRegister;
+  uStringList, uConfiguracoes, uCompilacao, JcfIdeRegister;
 
 { TFuncoes }
 
@@ -104,7 +111,6 @@ end;
 destructor TFuncoes.Destroy;
 begin
   FreeAndNil(FoToolsAPIUtils); //PC_OK
-
   inherited;
 end;
 
@@ -127,10 +133,10 @@ end;
 
 procedure TFuncoes.CarregarArquivoDataSet;
 begin
-  FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZADOR, EmptyStr);
+  FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZADOR_AUTO, EmptyStr);
 end;
 
-function TFuncoes.SalvarArquivoDataSet(const psNomeDataSet: string): boolean;
+function TFuncoes.SalvarArquivoDataSet(const psNomeDataSet, psNomeArquivo: string): boolean;
 var
   sExpressao: string;
   sResultado: string;
@@ -139,7 +145,7 @@ var
 begin
   oThread := FoToolsAPIUtils.PegarThreadAtual;
   try
-    sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, sPATH_ARQUIVO_DADOS]);
+    sExpressao := Format('%s.SaveToFile(''%s'')', [psNomeDataSet, psNomeArquivo]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
     result := oRetorno in [erOK, erDeferred];
   finally
@@ -176,11 +182,14 @@ procedure TFuncoes.VisualizarDataSetManual(Sender: TObject);
 var
   sNomeDataSet: string;
 begin
-  sNomeDataSet := 'Ex: fpgProcessoParte.esajParte';
+  sNomeDataSet := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimaVisualizacaoManual');
+  if sNomeDataSet = EmptyStr then
+    sNomeDataSet := 'Ex: fpgProcessoParte.esajParte';
 
   if not InputQuery('Informar o DataSet', 'Informe o nome do DataSet:', sNomeDataSet) then
     Exit;
 
+  GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimaVisualizacaoManual', sNomeDataSet);
   ProcessarDataSet(sNomeDataSet);
 end;
 
@@ -257,7 +266,7 @@ begin
     slPropriedades.Add(SalvarClasseDataSet(psNomeDataSet));
     slPropriedades.SaveToFile(sPATH_PROP_DATASET);
 
-    if SalvarArquivoDataSet(psNomeDataSet) then
+    if SalvarArquivoDataSet(psNomeDataSet, sPATH_ARQUIVO_DADOS) then
       CarregarArquivoDataSet;
   finally
     oFormAguarde.Close;
@@ -339,7 +348,6 @@ begin
   case FenTipoSistema of
     tsPG: sNomeServidor := sNOME_SERVIDOR_PG;
     tsSG: sNomeServidor := sNOME_SERVIDOR_SG;
-    tsPJ: sNomeServidor := sNOME_SERVIDOR_PJ;
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeServidor) then
@@ -355,7 +363,6 @@ begin
   case FenTipoSistema of
     tsPG: sNomeAplicacao := sNOME_APLICACAO_PG;
     tsSG: sNomeAplicacao := sNOME_APLICACAO_SG;
-    tsPJ: sNomeAplicacao := sNOME_APLICACAO_PJ;
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao) then
@@ -653,42 +660,51 @@ begin
 end;
 
 procedure TFuncoes.CompilarProjetosClientes(Sender: TObject);
+var
+  oGrupoProjetos: IOTAProjectGroup;
 begin
-  FoToolsAPIUtils.CompilarProjeto('prcImpl');
-  FoToolsAPIUtils.CompilarProjeto('prcCliente');
-  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo');
-  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
 end;
 
 procedure TFuncoes.CompilarProjetosServidores(Sender: TObject);
+var
+  oGrupoProjetos: IOTAProjectGroup;
 begin
-  FoToolsAPIUtils.CompilarProjeto('prcServidor');
-  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', True);
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos, True);
 end;
 
 procedure TFuncoes.CompilarTodosProjetos(Sender: TObject);
+var
+  oGrupoProjetos: IOTAProjectGroup;
 begin
-  FoToolsAPIUtils.CompilarProjeto('prcAPI');
-  FoToolsAPIUtils.CompilarProjeto('prcImpl');
-  FoToolsAPIUtils.CompilarProjeto('prcDT');
-  FoToolsAPIUtils.CompilarProjeto('prcCliente');
-  FoToolsAPIUtils.CompilarProjeto('prcServidor');
-  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo');
-  FoToolsAPIUtils.CompilarProjeto('pg5Servidor');
-  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', True);
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcAPI', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
 end;
 
-procedure TFuncoes.UsarBase152(Sender: TObject);
+procedure TFuncoes.SelecionarBase152(Sender: TObject);
 begin
   AlterarConexaoNoArquivoCfg('192.168.226.152\iSAJ01');
 end;
 
-procedure TFuncoes.UsarBase175(Sender: TObject);
+procedure TFuncoes.SelecionarBase175(Sender: TObject);
 begin
   AlterarConexaoNoArquivoCfg('192.168.225.175\iSAJ01');
 end;
 
-procedure TFuncoes.UsarBase202(Sender: TObject);
+procedure TFuncoes.SelecionarBase202(Sender: TObject);
 begin
   AlterarConexaoNoArquivoCfg('192.168.225.202\iSAJ01');
 end;
@@ -725,12 +741,6 @@ begin
       sNomeServidor := sNOME_SERVIDOR_SG;
       sNomeAplicacao := sNOME_APLICACAO_SG;
     end;
-
-    tsPJ:
-    begin
-      sNomeServidor := sNOME_SERVIDOR_PJ;
-      sNomeAplicacao := sNOME_APLICACAO_PJ;
-    end;
   end;
 
   FoToolsAPIUtils.FinalizarProcesso(sNomeServidor);
@@ -765,6 +775,134 @@ end;
 procedure TFuncoes.TestarSpSelect(Sender: TObject);
 begin
   FoToolsAPIUtils.AbrirArquivo(sPATH_TESTE_SPSELECT, EmptyStr);
+end;
+
+procedure TFuncoes.GravarNoArquivoINI(const psSecao, psChave, psValor: string);
+var
+  oArquivoINI: TIniFile;
+begin
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  try
+    oArquivoINI.WriteString(psSecao, psChave, psValor);
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
+function TFuncoes.LerDoArquivoINI(const psSecao, psChave: string): string;
+var
+  oArquivoINI: TIniFile;
+begin
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  try
+    result := oArquivoINI.ReadString(psSecao, psChave, EmptyStr);
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
+procedure TFuncoes.ExportarDadosDataSet(Sender: TObject);
+var
+  oSaveDialog: TSaveDialog;
+  oFormAguarde: TfAguarde;
+  sNomeDataSet: string;
+  sNomeArquivo: string;
+begin
+  sNomeDataSet := FoToolsAPIUtils.PegarTextoSelecionado;
+
+  if Trim(sNomeDataSet) = EmptyStr then
+    Exit;
+
+  sNomeArquivo := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao');
+  if sNomeArquivo = EmptyStr then
+    sNomeArquivo := sNomeDataSet;
+
+  oSaveDialog := TSaveDialog.Create(nil);
+  oFormAguarde := TfAguarde.Create(nil);
+  try
+    oSaveDialog.FileName := sNomeDataSet + '.xml';
+    oSaveDialog.InitialDir := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao');
+    oSaveDialog.DefaultExt := 'xml';
+    oSaveDialog.Filter := 'Arquivo XML|*.xml';
+
+    if not oSaveDialog.Execute then
+      Exit;
+
+    if not VerificarExisteThreadProcesso then
+      Exit;
+
+    VerificarDataSetEstaAssigned(sNomeDataSet);
+    VerificarDataSetEstaAtivo(sNomeDataSet);
+    VerificarDataSetEstaEmNavegacao(sNomeDataSet);
+
+    oFormAguarde.Show;
+    Application.ProcessMessages;
+
+    if SalvarArquivoDataSet(sNomeDataSet, oSaveDialog.FileName) then
+    begin
+      oFormAguarde.Close;
+      MessageDlg('Arquivo gerado com sucesso.', mtInformation, [mbOK], 0);
+
+      //jcf:format=off
+      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao', ExtractFileName(oSaveDialog.FileName));
+      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao', ExtractFilePath(oSaveDialog.FileName));
+      //jcf:format=on
+    end;
+  finally
+    FreeAndNil(oFormAguarde);
+    FreeAndNil(oSaveDialog);
+  end;
+end;
+
+procedure TFuncoes.AbrirVisualizadorDataSets(Sender: TObject);
+begin
+  FoToolsAPIUtils.AbrirArquivo(sPATH_VISUALIZADOR, EmptyStr);
+end;
+
+function TFuncoes.PegarProjetosCarregados: string;
+begin
+  result := FoToolsAPIUtils.PegarProjetosCarregados;
+end;
+
+function TFuncoes.PegarGrupoProjetos: IOTAProjectGroup;
+begin
+  result := FoToolsAPIUtils.PegarGrupoProjetos;
+end;
+
+procedure TFuncoes.CompilacaoPersonalizada(Sender: TObject);
+var
+  fCompilacao: TfCompilacao;
+  slProjetos: TStringList;
+  oGrupoProjetos: IOTAProjectGroup;
+  nContador: byte;
+  sUltimoProjetoSelecionado: string;
+  bEsperarPorOK: boolean;
+begin
+  fCompilacao := TfCompilacao.Create(nil);
+  slProjetos := TStringList.Create;
+  try
+    fCompilacao.Funcoes := Self;
+    fCompilacao.ShowModal;
+
+    if fCompilacao.ModalResult = idCancel then
+      Exit;
+
+    slProjetos.CommaText := fCompilacao.PegarProjetosSelecionados;
+    sUltimoProjetoSelecionado := fCompilacao.PegarUltimoProjetoMarcado;
+
+    if slProjetos.Count = 0 then
+      Exit;
+
+    oGrupoProjetos := PegarGrupoProjetos;
+    for nContador := 0 to Pred(slProjetos.Count) do
+    begin
+      bEsperarPorOK := slProjetos[nContador] = sUltimoProjetoSelecionado;
+      FoToolsAPIUtils.CompilarProjeto(slProjetos[nContador], oGrupoProjetos, bEsperarPorOK);
+    end;
+  finally
+    FreeAndNil(slProjetos);
+    FreeAndNil(fCompilacao);
+  end;
 end;
 
 end.

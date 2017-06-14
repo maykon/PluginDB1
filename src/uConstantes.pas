@@ -10,25 +10,24 @@ type
     taParamsBuild, taParamsBuildAPI);
 
 const
-  sNOME_SERVIDOR_PG      = 'pg5Servidor.exe';
-  sNOME_SERVIDOR_SG      = 'sg5Servidor.exe';
-  sNOME_SERVIDOR_PJ      = 'spjServidor.exe';
-  sNOME_APLICACAO_PG     = 'sajpg5app.exe';
-  sNOME_APLICACAO_SG     = 'sajsg5app.exe';
-  sNOME_APLICACAO_PJ     = 'spjClienteApp';
-  sNOME_ARQUIVO_CONFIG   = 'spCfg.ini';
-  sPATH_VISUALIZA_DTS    = 'C:\PluginDB1\Tools\VisualizaDTS\VisualizaDTS.exe';
-  sPATH_SP_MONITOR       = 'C:\PluginDB1\Tools\spMonitor\spMonitor.exe';
-  sPATH_SP_MONITOR3      = 'C:\PluginDB1\Tools\spMonitor3\spMonitor3.exe';
-  sPATH_SELECT_SQL       = 'C:\PluginDB1\Tools\SelectSQL\SelectSQL.exe';
-  sPATH_WINSPY           = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
-  sPATH_ARQUIVO_DADOS    = 'C:\PluginDB1\Visualizador\Dados.xml';
-  sPATH_PROP_DATASET     = 'C:\PluginDB1\Visualizador\Propriedades.txt';
-  sPATH_VISUALIZADOR     = 'C:\PluginDB1\Visualizador\Visualizador.exe';
-  sPATH_TESTE_SPSELECT   = 'C:\PluginDB1\TesteSpSelect\TesteSpSelect.exe';
-  sPATH_PARAMS_SELECT    = 'C:\PluginDB1\TesteSpSelect\Parametros.xml';
-  sPATH_ARQUIVO_INI      = 'C:\PluginDB1\Params.ini';
-  sPATH_IMAGENS          = 'C:\PluginDB1\Imagens\';
+  sNOME_SERVIDOR_PG       = 'pg5Servidor.exe';
+  sNOME_SERVIDOR_SG       = 'sg5Servidor.exe';
+  sNOME_APLICACAO_PG      = 'sajpg5app.exe';
+  sNOME_APLICACAO_SG      = 'sajsg5app.exe';
+  sNOME_ARQUIVO_CONFIG    = 'spCfg.ini';
+  sPATH_VISUALIZA_DTS     = 'C:\PluginDB1\Tools\VisualizaDTS\VisualizaDTS.exe';
+  sPATH_SP_MONITOR        = 'C:\PluginDB1\Tools\spMonitor\spMonitor.exe';
+  sPATH_SP_MONITOR3       = 'C:\PluginDB1\Tools\spMonitor3\spMonitor3.exe';
+  sPATH_SELECT_SQL        = 'C:\PluginDB1\Tools\SelectSQL\SelectSQL.exe';
+  sPATH_WINSPY            = 'C:\PluginDB1\Tools\WinSpy\WinSpy.exe';
+  sPATH_ARQUIVO_DADOS     = 'C:\PluginDB1\Visualizador\Dados.xml';
+  sPATH_PROP_DATASET      = 'C:\PluginDB1\Visualizador\Propriedades.txt';
+  sPATH_VISUALIZADOR      = 'C:\PluginDB1\Visualizador\Visualizador.exe';
+  sPATH_VISUALIZADOR_AUTO = 'C:\PluginDB1\Visualizador\Visualizador.exe /auto';
+  sPATH_TESTE_SPSELECT    = 'C:\PluginDB1\TesteSpSelect\TesteSpSelect.exe';
+  sPATH_PARAMS_SELECT     = 'C:\PluginDB1\TesteSpSelect\Parametros.xml';
+  sPATH_ARQUIVO_INI       = 'C:\PluginDB1\Params.ini';
+  sPATH_IMAGENS           = 'C:\PluginDB1\Imagens\';
 
   nNUMERO_TENTATIVAS_LEITURA = 20;
   nTENTATIVAS_PROCESSAMENTO = 10;
