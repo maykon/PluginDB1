@@ -92,6 +92,7 @@ object fCompilacao: TfCompilacao
       Height = 21
       TabOrder = 0
       OnChange = EditPesquisaChange
+      OnKeyPress = EditPesquisaKeyPress
     end
   end
 end

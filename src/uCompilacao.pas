@@ -16,6 +16,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure EditPesquisaChange(Sender: TObject);
+    procedure EditPesquisaKeyPress(Sender: TObject; var Key: char);
   private
     FoFuncoes: TFuncoes;
     procedure ExibirProjetosCarregados;
@@ -113,6 +114,20 @@ begin
       CheckListBoxProjetos.ItemIndex := nContador;
       Break;
     end;
+  end;
+end;
+
+procedure TfCompilacao.EditPesquisaKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #32 then
+  begin
+    Key := #0;
+
+    if CheckListBoxProjetos.ItemIndex < 0 then
+      Exit;
+
+    CheckListBoxProjetos.Checked[CheckListBoxProjetos.ItemIndex] :=
+      not CheckListBoxProjetos.Checked[CheckListBoxProjetos.ItemIndex];
   end;
 end;
 

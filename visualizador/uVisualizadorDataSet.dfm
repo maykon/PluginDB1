@@ -61,9 +61,9 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnTitleClick = grdDadosTitleClick
   end
   object edtFiltro: TEdit
-    Left = 59
+    Left = 54
     Top = 5
-    Width = 703
+    Width = 708
     Height = 21
     MaxLength = 200
     TabOrder = 0
@@ -120,9 +120,9 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     OnClick = chkAjustarTamanhoColunasClick
   end
   object edtIndices: TEdit
-    Left = 59
+    Left = 54
     Top = 28
-    Width = 703
+    Width = 708
     Height = 21
     MaxLength = 200
     TabOrder = 2
