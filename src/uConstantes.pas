@@ -12,8 +12,13 @@ type
 const
   sNOME_SERVIDOR_PG       = 'pg5Servidor.exe';
   sNOME_SERVIDOR_SG       = 'sg5Servidor.exe';
+  sNOME_SERVIDOR_MP       = 'sigServidor.exe';
   sNOME_APLICACAO_PG      = 'sajpg5app.exe';
   sNOME_APLICACAO_SG      = 'sajsg5app.exe';
+  sNOME_APLICACAO_MP      = 'sigapp.exe';
+  sNOME_ADM_PG            = 'pg5ADMApp.exe';
+  sNOME_ADM_SG            = 'sg5ADMApp.exe';
+  sNOME_ADM_MP            = 'sigADMApp.exe';
   sNOME_ARQUIVO_CONFIG    = 'spCfg.ini';
   sPATH_VISUALIZA_DTS     = 'C:\PluginDB1\Tools\VisualizaDTS\VisualizaDTS.exe';
   sPATH_SP_MONITOR        = 'C:\PluginDB1\Tools\spMonitor\spMonitor.exe';
@@ -40,7 +45,7 @@ const
   sINDEX_DESC = '_DESC';
   sNOME_PG = 'PG';
   sNOME_SG = 'SG';
-  sNOME_PJ = 'PJ';
+  sNOME_MP = 'MP';
   sSECAO_ATALHOS = 'Atalhos';
   sSECAO_PARAMETROS = 'Parametros';
   sMENSAGEM_ARQUIVO_NAO_ENCONTRADO = 'O arquivo %s não foi encontrado.';

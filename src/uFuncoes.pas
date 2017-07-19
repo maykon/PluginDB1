@@ -6,7 +6,7 @@ uses
   ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uExpansorArquivoMVP;
 
 type
-  TTipoSistema = (tsPG, tsSG);
+  TTipoSistema = (tsPG, tsSG, tsMP);
 
   TFuncoes = class
   private
@@ -43,6 +43,7 @@ type
     // ferramentas internas
     procedure AbrirServidor(Sender: TObject);
     procedure AbrirAplicacao(Sender: TObject);
+    procedure AbrirADM(Sender: TObject);
     procedure AbrirDiretorioBin(Sender: TObject);
     procedure AbrirSPCfg(Sender: TObject);
     procedure AbrirItemRTC(Sender: TObject);
@@ -348,6 +349,7 @@ begin
   case FenTipoSistema of
     tsPG: sNomeServidor := sNOME_SERVIDOR_PG;
     tsSG: sNomeServidor := sNOME_SERVIDOR_SG;
+    tsMP: sNomeServidor := sNOME_SERVIDOR_MP;
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeServidor) then
@@ -363,6 +365,7 @@ begin
   case FenTipoSistema of
     tsPG: sNomeAplicacao := sNOME_APLICACAO_PG;
     tsSG: sNomeAplicacao := sNOME_APLICACAO_SG;
+    tsMP: sNomeAplicacao := sNOME_APLICACAO_MP;
   end;
 
   if not VerificarArquivoExisteNoDiretorioBin(sNomeAplicacao) then
@@ -728,18 +731,28 @@ procedure TFuncoes.FinalizarProcessos(Sender: TObject);
 var
   sNomeServidor: string;
   sNomeAplicacao: string;
+  sNomeAdm: string;
 begin
   case FenTipoSistema of
     tsPG:
     begin
       sNomeServidor := sNOME_SERVIDOR_PG;
       sNomeAplicacao := sNOME_APLICACAO_PG;
+      sNomeAdm := sNOME_ADM_PG;
     end;
 
     tsSG:
     begin
       sNomeServidor := sNOME_SERVIDOR_SG;
       sNomeAplicacao := sNOME_APLICACAO_SG;
+      sNomeAdm := sNOME_ADM_SG;
+    end;
+
+    tsMP:
+    begin
+      sNomeServidor := sNOME_SERVIDOR_MP;
+      sNomeAplicacao := sNOME_APLICACAO_MP;
+      sNomeAdm := sNOME_ADM_MP;
     end;
   end;
 
@@ -903,6 +916,22 @@ begin
     FreeAndNil(slProjetos);
     FreeAndNil(fCompilacao);
   end;
+end;
+
+procedure TFuncoes.AbrirADM(Sender: TObject);
+var
+  sNomeADM: string;
+begin
+  case FenTipoSistema of
+    tsPG: sNomeADM := sNOME_ADM_PG;
+    tsSG: sNomeADM := sNOME_ADM_SG;
+    tsMP: sNomeADM := sNOME_ADM_MP;
+  end;
+
+  if not VerificarArquivoExisteNoDiretorioBin(sNomeADM) then
+    Exit;
+
+  FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeADM);
 end;
 
 end.

@@ -29,6 +29,7 @@ type
     procedure MarcarMenu;
     procedure SelecionarSistemaPG(Sender: TObject);
     procedure SelecionarSistemaSG(Sender: TObject);
+    procedure SelecionarSistemaMP(Sender: TObject);
     procedure AbrirConfiguracoes(Sender: TObject);
     procedure ProcessarArquivosMVP(Sender: TObject);
     function PegarAtalho(const psIdentificador: string): TShortCut;
@@ -210,6 +211,7 @@ begin
   case FoFuncoes.TipoSistema of
     tsPG: sNomeMenu := sNOME_PG;
     tsSG: sNomeMenu := sNOME_SG;
+    tsMP: sNomeMenu := sNOME_MP;
   end;
 
   for nCont := 0 to Pred(FActions.Count) do
@@ -230,6 +232,7 @@ procedure TWizard.AdicionarAcoesMenuPrincipal;
 begin
   CriarItemMenuPrincipal('Abrir Servidor', 'AbrirServidor', FoFuncoes.AbrirServidor);
   CriarItemMenuPrincipal('Abrir Aplicação', 'AbrirAplicacao', FoFuncoes.AbrirAplicacao);
+  CriarItemMenuPrincipal('Abrir ADM', 'AbrirADM', FoFuncoes.AbrirADM);
   CriarItemMenuPrincipal('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
   CriarItemMenuPrincipal('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
   CriarItemMenuPrincipal('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
@@ -284,6 +287,7 @@ begin
 
   CriarItemMenuPrincipal(sNOME_PG, 'SelecionarProjetoPG', SelecionarSistemaPG);
   CriarItemMenuPrincipal(sNOME_SG, 'SelecionarProjetoSG', SelecionarSistemaSG);
+  CriarItemMenuPrincipal(sNOME_MP, 'SelecionarProjetoMP', SelecionarSistemaMP);
 end;
 
 procedure TWizard.AbrirConfiguracoes(Sender: TObject);
@@ -446,6 +450,12 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure TWizard.SelecionarSistemaMP(Sender: TObject);
+begin
+  FoFuncoes.TipoSistema := tsMP;
+  MarcarMenu;
 end;
 
 initialization

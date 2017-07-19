@@ -267,6 +267,7 @@ var
   oProjeto: IOTAProject;
   nCont: integer;
   StringListProjetos: TStringList;
+  sNomeProjeto: string;
 begin
   oGrupo := PegarGrupoProjetos;
 
@@ -275,7 +276,14 @@ begin
     for nCont := 0 to Pred(oGrupo.ProjectCount) do
     begin
       oProjeto := oGrupo.GetProject(nCont);
-      StringListProjetos.Add(ExtractFileName(oProjeto.FileName));
+      sNomeProjeto := ExtractFileName(oProjeto.FileName);
+
+        //jcf:format=off
+      if (Pos('PRC', UpperCase(sNomeProjeto)) > 0) or
+         (Pos('PG5', UpperCase(sNomeProjeto)) > 0) or
+         (Pos('SAJ', UpperCase(sNomeProjeto)) > 0) then
+        //jcf:format=on                                     
+        StringListProjetos.Add(sNomeProjeto);
     end;
     result := StringListProjetos.CommaText;
   finally
