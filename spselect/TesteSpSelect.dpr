@@ -8,7 +8,7 @@ uses
 {$R *.RES}
 
 begin
-  Application.Initialize; 
+  Application.Initialize;
   Application.Title := 'Teste de spSelect';
   Application.CreateForm(TfTesteSpSelect, fTesteSpSelect);
   Application.Run;

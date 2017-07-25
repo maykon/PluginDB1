@@ -5,7 +5,7 @@ unit uMenu;
 interface
 
 uses
-  ToolsAPI, Classes, Menus, ActnList, Dialogs, Contnrs, ExtCtrls;
+  ToolsAPI, Classes, Menus, ActnList, Dialogs, Contnrs, ExtCtrls, uFuncoes;
 
 type
   TWizard = class(TInterfacedObject, IOTAWizard, IOTANotifier)
@@ -16,7 +16,7 @@ type
 
     procedure AbrirArquivoMVP(Sender: TObject);
     procedure CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
-      poEvento: TNotifyEvent; const psMenuPai: string = '');
+      poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsNenhum);
     procedure CriarItemMenuMVP(const psCaption, psIdentificador: string; const pnTag: integer = 0);
     procedure CriarMenuPrincipal;
     procedure CriarMenuMVP;
@@ -59,7 +59,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, ComCtrls, Graphics, IniFiles, FileCtrl, uFuncoes, uConstantes;
+  SysUtils, Forms, Windows, ComCtrls, Graphics, IniFiles, FileCtrl, uConstantes;
 
 var
   FoFuncoes: TFuncoes;
@@ -91,7 +91,7 @@ end;
 { TWizard }
 
 procedure TWizard.CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
-  poEvento: TNotifyEvent; const psMenuPai: string = '');
+  poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsNenhum);
 var
   oNTAS: INTAServices;
   oAction: TAction;
@@ -99,6 +99,9 @@ var
   oMenuItem: TMenuItem;
   oMenuPai: TMenuItem;
 begin
+  if (penTipoSistema <> tsNenhum) and (penTipoSistema <> FoFuncoes.TipoSistema) then
+    Exit;
+
   oAction := nil;
   oNTAS := (BorlandIDEServices as INTAServices);
   oMenuItem := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
@@ -138,8 +141,11 @@ end;
 
 constructor TWizard.Create;
 begin
-  CriarMenuMVP;
-  AdicionarAcoesMVP;
+  if FoFuncoes.TipoSistema = tsPG then
+  begin
+    CriarMenuMVP;
+    AdicionarAcoesMVP;
+  end;
 
   CriarMenuPrincipal;
   AdicionarAcoesMenuPrincipal;
@@ -235,26 +241,29 @@ begin
   CriarItemMenuPrincipal('Abrir ADM', 'AbrirADM', FoFuncoes.AbrirADM);
   CriarItemMenuPrincipal('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
   CriarItemMenuPrincipal('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
-  CriarItemMenuPrincipal('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC);
+  CriarItemMenuPrincipal('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC, EmptyStr, tsPG);
   CriarItemMenuPrincipal('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
   CriarItemMenuPrincipal('Finalizar Processos', 'FinalizarProcessos', FoFuncoes.FinalizarProcessos);
 
-  CriarItemMenuPrincipal(sSEPARADOR, 'Separador1', nil);
+  CriarItemMenuPrincipal(sSEPARADOR, 'Separador1', nil, EmptyStr, tsMP);
+
+  CriarItemMenuPrincipal('Check Out', 'CheckOut', FoFuncoes.CheckOut, EmptyStr, tsMP);
+
+  CriarItemMenuPrincipal(sSEPARADOR, 'Separador2', nil);
 
   CriarItemMenuPrincipal('Compilar Projetos Cliente', 'CompilarCliente', FoFuncoes.CompilarProjetosClientes);
   CriarItemMenuPrincipal('Compilar Projetos Servidor', 'CompilarServidor', FoFuncoes.CompilarProjetosServidores);
   CriarItemMenuPrincipal('Compilar Todos', 'CompilarTodos', FoFuncoes.CompilarTodosProjetos);
   CriarItemMenuPrincipal('Compilação Personalizada', 'CompilacaoPersonalizada', FoFuncoes.CompilacaoPersonalizada);
 
-  CriarItemMenuPrincipal(sSEPARADOR, 'Separador2', nil);
-
-  CriarItemMenuPrincipal('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS);
-  CriarItemMenuPrincipal('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor);
-  CriarItemMenuPrincipal('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3);
-  CriarItemMenuPrincipal('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL);
-  CriarItemMenuPrincipal('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy);
-
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador3', nil);
+
+  CriarItemMenuPrincipal('Ferramentas Externas', 'FerramentasExternas', nil);
+  CriarItemMenuPrincipal('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS, 'FerramentasExternas');
+  CriarItemMenuPrincipal('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor, 'FerramentasExternas');
+  CriarItemMenuPrincipal('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3, 'FerramentasExternas');
+  CriarItemMenuPrincipal('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL, 'FerramentasExternas');
+  CriarItemMenuPrincipal('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy, 'FerramentasExternas');
 
   CriarItemMenuPrincipal('Abrir Visualizador de DataSets', 'AbrirVisualizadorDataSets', FoFuncoes.AbrirVisualizadorDataSets);
   CriarItemMenuPrincipal('Exportar Dados do DataSet', 'ExportarDataSet', FoFuncoes.ExportarDadosDataSet);
@@ -265,17 +274,17 @@ begin
   CriarItemMenuPrincipal('Visualizar DataSet Manual', 'VisualizarDataSetManual', FoFuncoes.VisualizarDataSetManual);
   CriarItemMenuPrincipal('Ler TStringList', 'LerTStringList', FoFuncoes.LerStringList);
   CriarItemMenuPrincipal('Consultar no Ransack', 'ConsultarRansack', FoFuncoes.ConsultarRansack);
-  CriarItemMenuPrincipal('Testar SpSelect', 'TestarSpSelect', FoFuncoes.TestarSpSelect);
+
+  CriarItemMenuPrincipal('Testar SpSelect', 'TestarSpSelect', FoFuncoes.TestarSpSelect, EmptyStr, tsPG);
+
   CriarItemMenuPrincipal('Não Formatar Código', 'NaoFormatarCodigo', FoFuncoes.NaoFormatarCodigo);
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador5', nil);
 
-  CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil);
-  CriarItemMenuPrincipal('175 - Desenvolvimento', 'Base175', FoFuncoes.SelecionarBase175, 'SelecionarBaseDados');
-  CriarItemMenuPrincipal('152 - Testes', 'Base152', FoFuncoes.SelecionarBase152, 'SelecionarBaseDados');
-  CriarItemMenuPrincipal('202 - System Team', 'Base202', FoFuncoes.SelecionarBase202, 'SelecionarBaseDados');
-
-  //CriarItemMenuPrincipal(sSEPARADOR, 'Separador6', nil);
+  CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil, EmptyStr, tsPG);
+  CriarItemMenuPrincipal('175 - Desenvolvimento', 'Base175', FoFuncoes.SelecionarBase175, 'SelecionarBaseDados', tsPG);
+  CriarItemMenuPrincipal('152 - Testes', 'Base152', FoFuncoes.SelecionarBase152, 'SelecionarBaseDados', tsPG);
+  CriarItemMenuPrincipal('202 - System Team', 'Base202', FoFuncoes.SelecionarBase202, 'SelecionarBaseDados', tsPG);
 
   CriarItemMenuPrincipal('Documentação', 'Documentacao', nil);
   CriarItemMenuPrincipal('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi, 'Documentacao');
@@ -283,7 +292,7 @@ begin
   CriarItemMenuPrincipal('Consultar Colabore', 'ConsultarColabore', FoFuncoes.ConsultarColabore, 'Documentacao');
   CriarItemMenuPrincipal('Configurações...', 'Configuracoes', AbrirConfiguracoes);
 
-  CriarItemMenuPrincipal(sSEPARADOR, 'Separador7', nil);
+  CriarItemMenuPrincipal(sSEPARADOR, 'Separador6', nil);
 
   CriarItemMenuPrincipal(sNOME_PG, 'SelecionarProjetoPG', SelecionarSistemaPG);
   CriarItemMenuPrincipal(sNOME_SG, 'SelecionarProjetoSG', SelecionarSistemaSG);
@@ -365,7 +374,7 @@ begin
 
   CriarItemMenuMVP('Model API', 'MVPModelAPI', Ord(taModelAPI));
   CriarItemMenuMVP('Presenter API', 'MVPPresenterAPI', Ord(taPresenterAPI));
-  CriarItemMenuMVP('PresenteView API', 'MVPViewAPI', Ord(taViewAPI));
+  CriarItemMenuMVP('View API', 'MVPViewAPI', Ord(taViewAPI));
   CriarItemMenuMVP(sSEPARADOR, 'Separador9');
 
   CriarItemMenuMVP('Model', 'MVPModel', Ord(taModel));

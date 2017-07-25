@@ -6,7 +6,7 @@ uses
   ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uExpansorArquivoMVP;
 
 type
-  TTipoSistema = (tsPG, tsSG, tsMP);
+  TTipoSistema = (tsNenhum, tsPG, tsSG, tsMP);
 
   TFuncoes = class
   private
@@ -61,6 +61,12 @@ type
     procedure CompilarProjetosServidores(Sender: TObject);
     procedure CompilarTodosProjetos(Sender: TObject);
     procedure CompilacaoPersonalizada(Sender: TObject);
+    procedure CompilarProjetosClientesPG;
+    procedure CompilarProjetosClientesMP;
+    procedure CompilarProjetosServidoresPG;
+    procedure CompilarProjetosServidoresMP;
+    procedure CompilarTodosProjetosPG;
+    procedure CompilarTodosProjetosMP;
     function PegarProjetosCarregados: string;
     function PegarGrupoProjetos: IOTAProjectGroup;
 
@@ -82,6 +88,7 @@ type
     procedure NaoFormatarCodigo(Sender: TObject);
     procedure ExportarDadosDataSet(Sender: TObject);
     procedure AbrirVisualizadorDataSets(Sender: TObject);
+    procedure CheckOut(Sender: TObject);
 
     // configurações
     procedure AbrirConfiguracoes;
@@ -663,38 +670,27 @@ begin
 end;
 
 procedure TFuncoes.CompilarProjetosClientes(Sender: TObject);
-var
-  oGrupoProjetos: IOTAProjectGroup;
 begin
-  oGrupoProjetos := PegarGrupoProjetos;
-  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
+  case FenTipoSistema of
+    tsPG: CompilarProjetosClientesPG;
+    tsMP: CompilarProjetosClientesMP;
+  end;
 end;
 
 procedure TFuncoes.CompilarProjetosServidores(Sender: TObject);
-var
-  oGrupoProjetos: IOTAProjectGroup;
 begin
-  oGrupoProjetos := PegarGrupoProjetos;
-  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos, True);
+  case FenTipoSistema of
+    tsPG: CompilarProjetosServidoresPG;
+    tsMP: CompilarProjetosServidoresMP;
+  end;
 end;
 
 procedure TFuncoes.CompilarTodosProjetos(Sender: TObject);
-var
-  oGrupoProjetos: IOTAProjectGroup;
 begin
-  oGrupoProjetos := PegarGrupoProjetos;
-  FoToolsAPIUtils.CompilarProjeto('prcAPI', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('prcDT', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos);
-  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
+  case FenTipoSistema of
+    tsPG: CompilarTodosProjetosPG;
+    tsMP: CompilarTodosProjetosMP;
+  end;
 end;
 
 procedure TFuncoes.SelecionarBase152(Sender: TObject);
@@ -932,6 +928,80 @@ begin
     Exit;
 
   FoToolsAPIUtils.AbrirArquivo(PegarDiretorioBin, sNomeADM);
+end;
+
+procedure TFuncoes.CheckOut(Sender: TObject);
+var
+  sLinhaComandoTFS: string;
+begin
+  sLinhaComandoTFS := Format(sCOMANDO_TFS_CHECKOUT, [FoToolsAPIUtils.PegarNomeArquivoAtual]);
+  WinExec(PAnsiChar(ansistring(sLinhaComandoTFS)), 0);
+end;
+
+procedure TFuncoes.CompilarProjetosClientesMP;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('fmpCompleto', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sigapp', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosClientesPG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosServidoresMP;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('fmpCompleto', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sigServidor', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosServidoresPG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarTodosProjetosMP;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('fmpCompleto', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sigServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sigapp', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarTodosProjetosPG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('prcAPI', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcImpl', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcCliente', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('prcServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
 end;
 
 end.

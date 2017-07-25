@@ -53,6 +53,20 @@ var
 
 procedure TToolsAPIUtils.AbrirArquivo(const psDiretorio, psArquivo: string);
 var
+  Execucao: TShellExecuteInfo;
+begin
+  FillChar(Execucao, SizeOf(Execucao), 0);
+  Execucao.cbSize := SizeOf(Execucao);
+  Execucao.fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+  Execucao.lpVerb := PChar('runas');
+  Execucao.lpFile := PChar(psArquivo);
+  Execucao.lpDirectory := PChar(psDiretorio);
+  Execucao.lpParameters := PChar(EmptyStr);
+  Execucao.nShow := SW_SHOWNORMAL;
+  ShellExecuteEx(@Execucao);
+end;
+
+{var
   oInfoProcesso: TProcessInformation;
   oParamsExecucao: TStartupInfo;
   sArquivo: string;
@@ -66,7 +80,7 @@ begin
 
   CloseHandle(oInfoProcesso.hProcess);
   CloseHandle(oInfoProcesso.hThread);
-end;
+end;}
 
 procedure TToolsAPIUtils.AbrirURL(const psURL: string);
 begin
@@ -281,6 +295,8 @@ begin
         //jcf:format=off
       if (Pos('PRC', UpperCase(sNomeProjeto)) > 0) or
          (Pos('PG5', UpperCase(sNomeProjeto)) > 0) or
+         (Pos('FMP', UpperCase(sNomeProjeto)) > 0) or
+         (Pos('SIG', UpperCase(sNomeProjeto)) > 0) or
          (Pos('SAJ', UpperCase(sNomeProjeto)) > 0) then
         //jcf:format=on                                     
         StringListProjetos.Add(sNomeProjeto);
