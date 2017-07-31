@@ -53,20 +53,6 @@ var
 
 procedure TToolsAPIUtils.AbrirArquivo(const psDiretorio, psArquivo: string);
 var
-  Execucao: TShellExecuteInfo;
-begin
-  FillChar(Execucao, SizeOf(Execucao), 0);
-  Execucao.cbSize := SizeOf(Execucao);
-  Execucao.fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
-  Execucao.lpVerb := PChar('runas');
-  Execucao.lpFile := PChar(psArquivo);
-  Execucao.lpDirectory := PChar(psDiretorio);
-  Execucao.lpParameters := PChar(EmptyStr);
-  Execucao.nShow := SW_SHOWNORMAL;
-  ShellExecuteEx(@Execucao);
-end;
-
-{var
   oInfoProcesso: TProcessInformation;
   oParamsExecucao: TStartupInfo;
   sArquivo: string;
@@ -80,6 +66,21 @@ begin
 
   CloseHandle(oInfoProcesso.hProcess);
   CloseHandle(oInfoProcesso.hThread);
+end;
+
+{var
+  Execucao: TShellExecuteInfo;
+begin
+  ShowMessage(psDiretorio + psArquivo);
+  FillChar(Execucao, SizeOf(Execucao), 0);
+  Execucao.cbSize := SizeOf(Execucao);
+  Execucao.fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+  Execucao.lpVerb := PChar('runas');
+  Execucao.lpFile := PChar(psArquivo);
+  Execucao.lpDirectory := PChar(psDiretorio);
+  Execucao.lpParameters := PChar(EmptyStr);
+  Execucao.nShow := SW_SHOWNORMAL;
+  ShellExecuteEx(@Execucao);
 end;}
 
 procedure TToolsAPIUtils.AbrirURL(const psURL: string);

@@ -3,11 +3,9 @@ unit uFuncoes;
 interface
 
 uses
-  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uExpansorArquivoMVP;
+  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uConstantes, uExpansorArquivoMVP;
 
 type
-  TTipoSistema = (tsNenhum, tsPG, tsSG, tsMP);
-
   TFuncoes = class
   private
     FoToolsAPIUtils: TToolsAPIUTils;
@@ -29,7 +27,6 @@ type
     procedure AlterarConexaoNoArquivoCfg(const psServer: string);
     function LerDoArquivoINI(const psSecao, psChave: string): string;
     procedure GravarNoArquivoINI(const psSecao, psChave, psValor: string);
-
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
     procedure VerificarDataSetEstaEmNavegacao(const psNomeDataSet: string);
@@ -103,8 +100,8 @@ type
 implementation
 
 uses
-  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uConstantes,
-  uStringList, uConfiguracoes, uCompilacao, JcfIdeRegister;
+  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uStringList,
+  uConfiguracoes, uCompilacao, JcfIdeRegister;
 
 { TFuncoes }
 
@@ -727,28 +724,24 @@ procedure TFuncoes.FinalizarProcessos(Sender: TObject);
 var
   sNomeServidor: string;
   sNomeAplicacao: string;
-  sNomeAdm: string;
 begin
   case FenTipoSistema of
     tsPG:
     begin
       sNomeServidor := sNOME_SERVIDOR_PG;
       sNomeAplicacao := sNOME_APLICACAO_PG;
-      sNomeAdm := sNOME_ADM_PG;
     end;
 
     tsSG:
     begin
       sNomeServidor := sNOME_SERVIDOR_SG;
       sNomeAplicacao := sNOME_APLICACAO_SG;
-      sNomeAdm := sNOME_ADM_SG;
     end;
 
     tsMP:
     begin
       sNomeServidor := sNOME_SERVIDOR_MP;
       sNomeAplicacao := sNOME_APLICACAO_MP;
-      sNomeAdm := sNOME_ADM_MP;
     end;
   end;
 
@@ -932,10 +925,23 @@ end;
 
 procedure TFuncoes.CheckOut(Sender: TObject);
 var
-  sLinhaComandoTFS: string;
+  sNomeArquivoAtual: string;
+  slLinhaComando: TStringList;
 begin
-  sLinhaComandoTFS := Format(sCOMANDO_TFS_CHECKOUT, [FoToolsAPIUtils.PegarNomeArquivoAtual]);
-  WinExec(PAnsiChar(ansistring(sLinhaComandoTFS)), 0);
+  sNomeArquivoAtual := FoToolsAPIUtils.PegarNomeArquivoAtual;
+
+  if MessageDlg(Format('Confirma o checkout do arquivo "%s"?', [sNomeArquivoAtual]),
+    mtConfirmation, [mbYes, mbNo], 0) = idNo then
+    Exit;
+
+  slLinhaComando := TStringList.Create;
+  try
+    slLinhaComando.Add(Format(sCOMANDO_TFS_CHECKOUT, [FoToolsAPIUtils.PegarNomeArquivoAtual]));
+    slLinhaComando.SaveToFile('C:\PluginDB1\Checkout.txt');
+    WinExec(PAnsiChar(ansistring(slLinhaComando[0])), 0);
+  finally
+    FreeAndNil(slLinhaComando);
+  end;
 end;
 
 procedure TFuncoes.CompilarProjetosClientesMP;

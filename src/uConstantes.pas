@@ -5,6 +5,8 @@ unit uConstantes;
 interface
 
 type
+  TTipoSistema = (tsNenhum, tsPG, tsSG, tsMP);
+
   TenTipoArquivoMVP = (taNaoMVP, taModelAPI, taPresenterAPI, taViewAPI, taModel,
     taPresenter, taViewFrame, taViewPanel, taViewForm, taView, taBuilder,
     taParamsBuild, taParamsBuildAPI);
@@ -65,7 +67,7 @@ const
   sCOMANDO_RANSACK =
     '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "\"%s"\" -d "%s" -r -s';
   sCOMANDO_TFS_CHECKOUT =
-  '"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\tf.exe checkout %s"';
+  '"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\tf.exe" checkout "%s"';
 
 implementation
 

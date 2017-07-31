@@ -5,7 +5,7 @@ unit uMenu;
 interface
 
 uses
-  ToolsAPI, Classes, Menus, ActnList, Dialogs, Contnrs, ExtCtrls, uFuncoes;
+  ToolsAPI, Classes, Menus, ActnList, Dialogs, Contnrs, ExtCtrls, uConstantes;
 
 type
   TWizard = class(TInterfacedObject, IOTAWizard, IOTANotifier)
@@ -59,7 +59,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Forms, Windows, ComCtrls, Graphics, IniFiles, FileCtrl, uConstantes;
+  SysUtils, Forms, Windows, ComCtrls, Graphics, IniFiles, FileCtrl, uFuncoes;
 
 var
   FoFuncoes: TFuncoes;
