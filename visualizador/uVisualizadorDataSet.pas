@@ -47,6 +47,7 @@ type
     procedure btnCarregarClick(Sender: TObject);
     procedure edtPesquisaCamposChange(Sender: TObject);
     procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
+    procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -451,6 +452,10 @@ begin
     if Pos(LowerCase(edtPesquisaCampos.Text), LowerCase('X' + clCampos.Items[nContador])) > 0 then
     begin
       clCampos.ItemIndex := nContador;
+
+      if clCampos.Checked[nContador] then
+        grdDados.SelectedField := ClientDataSet.FieldByName(clCampos.Items[nContador]);
+
       Break;
     end;
   end;
@@ -481,6 +486,12 @@ begin
 
   if bHabilitar then
     AjustarTamanhoColunas;
+end;
+
+procedure TfVisualizadorDataSet.ClientDataSetBeforeDelete(DataSet: TDataSet);
+begin
+  if ClientDataSet.IsEmpty then
+    Abort;
 end;
 
 end.

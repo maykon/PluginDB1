@@ -168,6 +168,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Aggregates = <>
     Params = <>
     BeforeInsert = ClientDataSetBeforeInsert
+    BeforeDelete = ClientDataSetBeforeDelete
     AfterScroll = ClientDataSetAfterScroll
     Left = 12
     Top = 494
