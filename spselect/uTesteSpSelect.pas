@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, DB, DBClient, Grids, DBGrids, ComCtrls, SConnect, Menus;
+  StdCtrls, Buttons, DB, DBClient, DBGrids, ComCtrls, SConnect, Menus,
+  Grids;
 
 type
   TfTesteSpSelect = class(TForm)

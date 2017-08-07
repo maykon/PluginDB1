@@ -12,21 +12,21 @@ type
     FoExpansorArquivoMVP: TExpansorArquivoMVP;
     FenTipoSistema: TTipoSistema;
 
+    function LerDoArquivoINI(const psSecao, psChave: string): string;
     function PegarDiretorioBin: string;
     function PegarCriterioConsulta(var psTextoPadrao: string): string;
     function SalvarArquivoDataSet(const psNomeDataSet, psNomeArquivo: string): boolean;
-    function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
-    function ValidarTextoSelecionado(const psTexto: string): boolean;
-    function VerificarExisteThreadProcesso: boolean;
-    procedure CarregarArquivoDataSet;
-    procedure ExcluirArquivo(const psNomeArquivo: string);
-    procedure PegarSistemaPadrao;
     function SalvarFiltroDataSet(const psNomeDataSet: string): string;
     function SalvarIndicesDataSet(const psNomeDataSet: string): string;
     function SalvarClasseDataSet(const psNomeDataSet: string): string;
+    function ValidarTextoSelecionado(const psTexto: string): boolean;
+    function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
+    function VerificarExisteThreadProcesso: boolean;
     procedure AlterarConexaoNoArquivoCfg(const psServer: string);
-    function LerDoArquivoINI(const psSecao, psChave: string): string;
+    procedure CarregarArquivoDataSet;
+    procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure GravarNoArquivoINI(const psSecao, psChave, psValor: string);
+    procedure PegarSistemaPadrao;
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
     procedure VerificarDataSetEstaEmNavegacao(const psNomeDataSet: string);
@@ -308,19 +308,19 @@ begin
   try
     sExpressao := Format('%s.Text', [sTextoSelecionado]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
-
-    if not (oRetorno in [erOK, erDeferred]) then
-      Exit;
-
-    fStringList := TfStringList.Create(nil);
-    try
-      fStringList.TextoLista := sResultado;
-      fStringList.ShowModal;
-    finally
-      FreeAndNil(fStringList);
-    end;
   finally
     FreeAndNil(oThread); //PC_OK
+  end;
+
+  if not (oRetorno in [erOK, erDeferred]) then
+    Exit;
+
+  fStringList := TfStringList.Create(nil);
+  try
+    fStringList.TextoLista := sResultado;
+    fStringList.ShowModal;
+  finally
+    FreeAndNil(fStringList);
   end;
 end;
 
