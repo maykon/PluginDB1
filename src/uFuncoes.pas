@@ -43,11 +43,12 @@ type
     procedure AbrirADM(Sender: TObject);
     procedure AbrirDiretorioBin(Sender: TObject);
     procedure AbrirSPCfg(Sender: TObject);
-    procedure AbrirItemRTC(Sender: TObject);
     procedure ExcluirCache(Sender: TObject);
+    procedure ConsultarWorkItem(Sender: TObject);
     procedure ConsultarDocDelphi(Sender: TObject);
     procedure ConsultarDocSP4(Sender: TObject);
     procedure ConsultarColabore(Sender: TObject);
+    procedure SelecionarBaseLocal(Sender: TObject);
     procedure SelecionarBase175(Sender: TObject);
     procedure SelecionarBase152(Sender: TObject);
     procedure SelecionarBase202(Sender: TObject);
@@ -86,6 +87,7 @@ type
     procedure ExportarDadosDataSet(Sender: TObject);
     procedure AbrirVisualizadorDataSets(Sender: TObject);
     procedure CheckOut(Sender: TObject);
+    procedure RemoverReadOnly(const psNomeArquivo: string);
 
     // configurações
     procedure AbrirConfiguracoes;
@@ -391,7 +393,7 @@ begin
   ShellExecute(0, 'open', PChar(sArquivo), '', '', SW_SHOWNORMAL);
 end;
 
-procedure TFuncoes.AbrirItemRTC(Sender: TObject);
+procedure TFuncoes.ConsultarWorkItem(Sender: TObject);
 var
   sTexto: string;
   sURL: string;
@@ -690,14 +692,19 @@ begin
   end;
 end;
 
-procedure TFuncoes.SelecionarBase152(Sender: TObject);
+procedure TFuncoes.SelecionarBaseLocal(Sender: TObject);
 begin
-  AlterarConexaoNoArquivoCfg('192.168.226.152\iSAJ01');
+  AlterarConexaoNoArquivoCfg('192.168.208.27\iSAJ01');
 end;
 
 procedure TFuncoes.SelecionarBase175(Sender: TObject);
 begin
   AlterarConexaoNoArquivoCfg('192.168.225.175\iSAJ01');
+end;
+
+procedure TFuncoes.SelecionarBase152(Sender: TObject);
+begin
+  AlterarConexaoNoArquivoCfg('192.168.226.152\iSAJ01');
 end;
 
 procedure TFuncoes.SelecionarBase202(Sender: TObject);
@@ -936,9 +943,10 @@ begin
 
   slLinhaComando := TStringList.Create;
   try
-    slLinhaComando.Add(Format(sCOMANDO_TFS_CHECKOUT, [FoToolsAPIUtils.PegarNomeArquivoAtual]));
+    slLinhaComando.Add(Format(sCOMANDO_TFS_CHECKOUT, [sNomeArquivoAtual]));
     slLinhaComando.SaveToFile('C:\PluginDB1\Checkout.txt');
     WinExec(PAnsiChar(ansistring(slLinhaComando[0])), 0);
+    RemoverReadOnly(sNomeArquivoAtual);
   finally
     FreeAndNil(slLinhaComando);
   end;
@@ -1008,6 +1016,33 @@ begin
   FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('pg5Servidor', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('SAJPG5app', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.RemoverReadOnly(const psNomeArquivo: string);
+var
+  oodule: IOTAModule;
+  oBuffer: IOTAEditBuffer;
+  nQtdeArquivos: integer;
+  nContador: integer;
+begin
+  oBuffer := nil;
+  if BorlandIDEServices = nil then
+    Exit;
+
+  oodule := (BorlandIDEServices as IOTAModuleServices).FindModule(psNomeArquivo);
+  if not Assigned(oodule) then
+    Exit;
+
+  with oodule do
+  begin
+    nQtdeArquivos := GetModuleFileCount;
+    for nContador := 0 to Pred(nQtdeArquivos) do
+      if GetModuleFileEditor(nContador).QueryInterface(IOTAEditBuffer, oBuffer) = S_OK then
+        Break;
+  end;
+
+  if Assigned(oBuffer) then
+    oBuffer.SetIsReadOnly(False);
 end;
 
 end.

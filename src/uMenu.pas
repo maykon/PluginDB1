@@ -241,7 +241,7 @@ begin
   CriarItemMenuPrincipal('Abrir ADM', 'AbrirADM', FoFuncoes.AbrirADM);
   CriarItemMenuPrincipal('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
   CriarItemMenuPrincipal('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
-  CriarItemMenuPrincipal('Abrir Item no RTC', 'AbrirItemRTC', FoFuncoes.AbrirItemRTC, EmptyStr, tsPG);
+  CriarItemMenuPrincipal('Consultar Work Item', 'ConsultarWorkItem', FoFuncoes.ConsultarWorkItem, EmptyStr, tsPG);
   CriarItemMenuPrincipal('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
   CriarItemMenuPrincipal('Finalizar Processos', 'FinalizarProcessos', FoFuncoes.FinalizarProcessos);
 
@@ -282,6 +282,7 @@ begin
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador5', nil);
 
   CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil, EmptyStr, tsPG);
+  CriarItemMenuPrincipal('Local - Desenvolvimento', 'BaseLocal', FoFuncoes.SelecionarBaseLocal, 'SelecionarBaseDados', tsPG);
   CriarItemMenuPrincipal('175 - Desenvolvimento', 'Base175', FoFuncoes.SelecionarBase175, 'SelecionarBaseDados', tsPG);
   CriarItemMenuPrincipal('152 - Testes', 'Base152', FoFuncoes.SelecionarBase152, 'SelecionarBaseDados', tsPG);
   CriarItemMenuPrincipal('202 - System Team', 'Base202', FoFuncoes.SelecionarBase202, 'SelecionarBaseDados', tsPG);
