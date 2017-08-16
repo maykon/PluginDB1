@@ -48,6 +48,7 @@ type
     procedure edtPesquisaCamposChange(Sender: TObject);
     procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
     procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
+    procedure edtPesquisaCamposKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -492,6 +493,26 @@ procedure TfVisualizadorDataSet.ClientDataSetBeforeDelete(DataSet: TDataSet);
 begin
   if ClientDataSet.IsEmpty then
     Abort;
+end;
+
+procedure TfVisualizadorDataSet.edtPesquisaCamposKeyDown(Sender: TObject;
+  var Key: word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+    Key := 0;
+
+    if clCampos.ItemIndex < Pred(clCampos.Items.Count) then
+      clCampos.ItemIndex := clCampos.ItemIndex + 1;
+  end;
+
+  if Key = VK_UP then
+  begin
+    Key := 0;
+
+    if clCampos.ItemIndex > 0 then
+      clCampos.ItemIndex := clCampos.ItemIndex - 1;
+  end;
 end;
 
 end.

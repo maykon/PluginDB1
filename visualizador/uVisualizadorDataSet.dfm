@@ -10,6 +10,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -18,7 +19,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   TextHeight = 13
   object lbQuantidade: TLabel
     Left = 6
-    Top = 552
+    Top = 549
     Width = 511
     Height = 19
     Anchors = [akLeft, akBottom]
@@ -48,7 +49,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Left = 5
     Top = 53
     Width = 831
-    Height = 493
+    Height = 490
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = DataSource
     PopupMenu = PopupMenu
@@ -140,7 +141,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
   end
   object btnCarregar: TBitBtn
     Left = 736
-    Top = 550
+    Top = 547
     Width = 100
     Height = 25
     Anchors = [akRight, akBottom]
@@ -156,6 +157,7 @@ object fVisualizadorDataSet: TfVisualizadorDataSet
     Anchors = [akTop, akRight]
     TabOrder = 6
     OnChange = edtPesquisaCamposChange
+    OnKeyDown = edtPesquisaCamposKeyDown
     OnKeyPress = edtPesquisaCamposKeyPress
   end
   object DataSource: TDataSource

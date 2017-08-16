@@ -482,7 +482,10 @@ begin
     sExpressao := Format('Assigned(%s)', [psNomeDataSet]);
     oRetorno := FoToolsAPIUtils.ExecutarEvaluate(oThread, sExpressao, sResultado);
 
-    if (oRetorno <> erOK) or (sResultado <> 'True') then
+    if not (oRetorno in [erOK, erDeferred]) then
+      Abort;
+
+    if sResultado <> 'True' then
     begin
       FoToolsAPIUtils.Aviso('O DataSet está nil.');
       Abort;

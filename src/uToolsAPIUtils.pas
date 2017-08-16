@@ -168,7 +168,7 @@ begin
       bVariavelInacessivel := Pos('inacessible', sResultado) > 0;
       if (result = erError) or bVariavelInacessivel then
       begin
-        Aviso('O objeto selecionado está inacessível no breakpoint atual.');
+        Aviso('O objeto selecionado está inacessível.');
         result := erError;
         Exit;
       end;
