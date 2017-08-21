@@ -57,14 +57,21 @@ type
     // compilação
     procedure CompilarProjetosClientes(Sender: TObject);
     procedure CompilarProjetosServidores(Sender: TObject);
+    procedure CompilarProjetosComponentes(Sender: TObject);
     procedure CompilarTodosProjetos(Sender: TObject);
     procedure CompilacaoPersonalizada(Sender: TObject);
+    procedure CompilarProjetosComponentesPG;
+    procedure CompilarProjetosComponentesMP;
+    procedure CompilarProjetosComponentesSG;
     procedure CompilarProjetosClientesPG;
     procedure CompilarProjetosClientesMP;
+    procedure CompilarProjetosClientesSG;
     procedure CompilarProjetosServidoresPG;
     procedure CompilarProjetosServidoresMP;
+    procedure CompilarProjetosServidoresSG;
     procedure CompilarTodosProjetosPG;
     procedure CompilarTodosProjetosMP;
+    procedure CompilarTodosProjetosSG;
     function PegarProjetosCarregados: string;
     function PegarGrupoProjetos: IOTAProjectGroup;
 
@@ -676,6 +683,7 @@ begin
   case FenTipoSistema of
     tsPG: CompilarProjetosClientesPG;
     tsMP: CompilarProjetosClientesMP;
+    tsSG: CompilarProjetosClientesSG;
   end;
 end;
 
@@ -684,6 +692,16 @@ begin
   case FenTipoSistema of
     tsPG: CompilarProjetosServidoresPG;
     tsMP: CompilarProjetosServidoresMP;
+    tsSG: CompilarProjetosServidoresSG;
+  end;
+end;
+
+procedure TFuncoes.CompilarProjetosComponentes(Sender: TObject);
+begin
+  case FenTipoSistema of
+    tsPG: CompilarProjetosComponentesPG;
+    tsMP: CompilarProjetosComponentesMP;
+    tsSG: CompilarProjetosComponentesSG;
   end;
 end;
 
@@ -692,6 +710,7 @@ begin
   case FenTipoSistema of
     tsPG: CompilarTodosProjetosPG;
     tsMP: CompilarTodosProjetosMP;
+    tsSG: CompilarTodosProjetosSG;
   end;
 end;
 
@@ -955,6 +974,34 @@ begin
   end;
 end;
 
+procedure TFuncoes.CompilarProjetosComponentesPG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('pg5D5Completo', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosComponentesMP;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('fmpCompleto', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosComponentesSG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('SajSG5cComponentes', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5cComponentesDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5Componentes', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5ComponentesDT', oGrupoProjetos, True);
+end;
+
 procedure TFuncoes.CompilarProjetosClientesMP;
 var
   oGrupoProjetos: IOTAProjectGroup;
@@ -963,6 +1010,14 @@ begin
   FoToolsAPIUtils.CompilarProjeto('fmpCompleto', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('sigapp', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarProjetosClientesSG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('SajSG5APP', oGrupoProjetos, True);
 end;
 
 procedure TFuncoes.CompilarProjetosClientesPG;
@@ -986,6 +1041,15 @@ begin
   FoToolsAPIUtils.CompilarProjeto('sigServidor', oGrupoProjetos, True);
 end;
 
+procedure TFuncoes.CompilarProjetosServidoresSG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('sg5cServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sg5Servidor', oGrupoProjetos, True);
+end;
+
 procedure TFuncoes.CompilarProjetosServidoresPG;
 var
   oGrupoProjetos: IOTAProjectGroup;
@@ -1004,6 +1068,20 @@ begin
   FoToolsAPIUtils.CompilarProjeto('fmpCompletoDT', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('sigServidor', oGrupoProjetos);
   FoToolsAPIUtils.CompilarProjeto('sigapp', oGrupoProjetos, True);
+end;
+
+procedure TFuncoes.CompilarTodosProjetosSG;
+var
+  oGrupoProjetos: IOTAProjectGroup;
+begin
+  oGrupoProjetos := PegarGrupoProjetos;
+  FoToolsAPIUtils.CompilarProjeto('SajSG5cComponentes', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5cComponentesDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5Componentes', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5ComponentesDT', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sg5cServidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('sg5Servidor', oGrupoProjetos);
+  FoToolsAPIUtils.CompilarProjeto('SajSG5APP', oGrupoProjetos, True);
 end;
 
 procedure TFuncoes.CompilarTodosProjetosPG;

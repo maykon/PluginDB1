@@ -298,7 +298,8 @@ begin
          (Pos('PG5', UpperCase(sNomeProjeto)) > 0) or
          (Pos('FMP', UpperCase(sNomeProjeto)) > 0) or
          (Pos('SIG', UpperCase(sNomeProjeto)) > 0) or
-         (Pos('SAJ', UpperCase(sNomeProjeto)) > 0) then
+         (Pos('SAJ', UpperCase(sNomeProjeto)) > 0) or
+         (Pos('SG5', UpperCase(sNomeProjeto)) > 0) then
         //jcf:format=on                                     
         StringListProjetos.Add(sNomeProjeto);
     end;

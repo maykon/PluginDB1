@@ -241,7 +241,7 @@ begin
   CriarItemMenuPrincipal('Abrir ADM', 'AbrirADM', FoFuncoes.AbrirADM);
   CriarItemMenuPrincipal('Abrir Diretório Bin', 'AbrirDiretorioBin', FoFuncoes.AbrirDiretorioBin);
   CriarItemMenuPrincipal('Abrir spCfg.ini', 'AbrirSpCfg', FoFuncoes.AbrirSPCfg);
-  CriarItemMenuPrincipal('Consultar Work Item', 'ConsultarWorkItem', FoFuncoes.ConsultarWorkItem, EmptyStr, tsPG);
+  CriarItemMenuPrincipal('Consultar Work Item', 'ConsultarWorkItem', FoFuncoes.ConsultarWorkItem);
   CriarItemMenuPrincipal('Excluir Cache', 'ExcluirCache', FoFuncoes.ExcluirCache);
   CriarItemMenuPrincipal('Finalizar Processos', 'FinalizarProcessos', FoFuncoes.FinalizarProcessos);
 
@@ -251,6 +251,7 @@ begin
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador2', nil);
 
+  CriarItemMenuPrincipal('Compilar Projetos Componentes', 'CompilarComponente', FoFuncoes.CompilarProjetosComponentes);
   CriarItemMenuPrincipal('Compilar Projetos Cliente', 'CompilarCliente', FoFuncoes.CompilarProjetosClientes);
   CriarItemMenuPrincipal('Compilar Projetos Servidor', 'CompilarServidor', FoFuncoes.CompilarProjetosServidores);
   CriarItemMenuPrincipal('Compilar Todos', 'CompilarTodos', FoFuncoes.CompilarTodosProjetos);
@@ -262,7 +263,7 @@ begin
   CriarItemMenuPrincipal('Abrir VisualizaDTS', 'AbrirVisualizaDTS', FoFuncoes.AbrirVisualizaDTS, 'FerramentasExternas');
   CriarItemMenuPrincipal('Abrir spMonitor', 'AbrirSpMonitor', FoFuncoes.AbrirSPMonitor, 'FerramentasExternas');
   CriarItemMenuPrincipal('Abrir spMonitor3', 'AbrirSpMonitor3', FoFuncoes.AbrirSPMonitor3, 'FerramentasExternas');
-  CriarItemMenuPrincipal('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL, 'FerramentasExternas');
+  CriarItemMenuPrincipal('Abrir SelectSQL', 'AbrirSelectSQL', FoFuncoes.AbrirSelectSQL, 'FerramentasExternas', tsPG);
   CriarItemMenuPrincipal('Abrir WinSpy', 'AbrirWinSpy', FoFuncoes.AbrirWinSpy, 'FerramentasExternas');
 
   CriarItemMenuPrincipal('Abrir Visualizador de DataSets', 'AbrirVisualizadorDataSets', FoFuncoes.AbrirVisualizadorDataSets);
