@@ -5,22 +5,28 @@ unit uConstantes;
 interface
 
 type
-  TTipoSistema = (tsNenhum, tsPG, tsSG, tsMP);
+  TTipoSistema = (tsTodos, tsPG, tsSG, tsMP);
 
   TenTipoArquivoMVP = (taNaoMVP, taModelAPI, taPresenterAPI, taViewAPI, taModel,
     taPresenter, taViewFrame, taViewPanel, taViewForm, taView, taBuilder,
     taParamsBuild, taParamsBuildAPI);
 
 const
+  // Servidor
   sNOME_SERVIDOR_PG       = 'pg5Servidor.exe';
   sNOME_SERVIDOR_SG       = 'sg5Servidor.exe';
   sNOME_SERVIDOR_MP       = 'sigServidor.exe';
+
+  // Aplicação
   sNOME_APLICACAO_PG      = 'sajpg5app.exe';
   sNOME_APLICACAO_SG      = 'sajsg5app.exe';
   sNOME_APLICACAO_MP      = 'sigapp.exe';
+
+  // ADM
   sNOME_ADM_PG            = 'pg5ADMApp.exe';
   sNOME_ADM_SG            = 'sg5ADMApp.exe';
   sNOME_ADM_MP            = 'sigADMApp.exe';
+
   sNOME_ARQUIVO_CONFIG    = 'spCfg.ini';
   sPATH_VISUALIZA_DTS     = 'C:\PluginDB1\Tools\VisualizaDTS\VisualizaDTS.exe';
   sPATH_SP_MONITOR        = 'C:\PluginDB1\Tools\spMonitor\spMonitor.exe';
@@ -56,18 +62,24 @@ const
 
   sURL_ITEM_RTC =
     'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.viewWorkItem&id=%s';
+
   sURL_SALT_RTC =
     'https://clm.unj.softplan.com.br/ccm/web/projects/Tribunais#action=com.ibm.team.workitem.search&q=%s';
+
   sURL_DOCUMENTACAO_DELPHI =
     'http://docwiki.embarcadero.com/RADStudio/Berlin/e/index.php?search=%s';
+
   sURL_DOCUMENTACAO_SP4 =
     'http://jenkins/view/Suporte%%20Interno/view/3%%20-%%20Noturno/job/SIU_DEVELOPMENT_NOTURNO_METRICAS/lastSuccessfulBuild/artifact/Artifacts/NOTURNO/Metrics/pasdoc/_tipue_results.html?q=%s';
+
   sURL_COLABORE =
     'https://colabore.softplan.com.br/dosearchsite.action?queryString=%s';
+
   sCOMANDO_RANSACK =
     '"C:\Program Files\Mythicsoft\Agent Ransack\AgentRansack.exe" -c "\"%s"\" -d "%s" -r -s';
+
   sCOMANDO_TFS_CHECKOUT =
-  '"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\tf.exe" checkout "%s"';
+    '"C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\tf.exe" checkout "%s"';
 
 implementation
 

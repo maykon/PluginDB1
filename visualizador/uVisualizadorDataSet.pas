@@ -8,46 +8,47 @@ uses
 
 type
   TfVisualizadorDataSet = class(TForm)
-    grdDados: TDBGrid;
-    DataSource: TDataSource;
-    ClientDataSet: TClientDataSet;
-    edtFiltro: TEdit;
-    chkFiltroAtivado: TCheckBox;
-    lbQuantidade: TLabel;
-    clCampos: TCheckListBox;
-    btnTodos: TBitBtn;
+    btnCarregar: TBitBtn;
     btnNenhum: TBitBtn;
+    btnTodos: TBitBtn;
+    chkAjustarTamanhoColunas: TCheckBox;
+    chkFiltroAtivado: TCheckBox;
+    chkIndicesAtivado: TCheckBox;
+    clCampos: TCheckListBox;
+    ClientDataSet: TClientDataSet;
+    DataSource: TDataSource;
+    edtFiltro: TEdit;
+    edtIndices: TEdit;
+    edtPesquisaCampos: TEdit;
+    grdDados: TDBGrid;
+    lbFiltro: TLabel;
+    lbIndices: TLabel;
+    lbQuantidade: TLabel;
     PopupMenu: TPopupMenu;
     PopupMenuCopiar: TMenuItem;
     PopupMenuExcluir: TMenuItem;
-    lbFiltro: TLabel;
-    chkAjustarTamanhoColunas: TCheckBox;
-    lbIndices: TLabel;
-    edtIndices: TEdit;
-    chkIndicesAtivado: TCheckBox;
-    btnCarregar: TBitBtn;
-    edtPesquisaCampos: TEdit;
-    procedure FormCreate(Sender: TObject);
-    procedure chkFiltroAtivadoClick(Sender: TObject);
-    procedure clCamposClickCheck(Sender: TObject);
-    procedure edtFiltroChange(Sender: TObject);
-    procedure edtFiltroKeyPress(Sender: TObject; var Key: char);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure grdDadosTitleClick(Column: TColumn);
+    procedure btnCarregarClick(Sender: TObject);
     procedure btnNenhumClick(Sender: TObject);
     procedure btnTodosClick(Sender: TObject);
+    procedure chkAjustarTamanhoColunasClick(Sender: TObject);
+    procedure chkFiltroAtivadoClick(Sender: TObject);
+    procedure chkIndicesAtivadoClick(Sender: TObject);
+    procedure clCamposClickCheck(Sender: TObject);
+    procedure ClientDataSetAfterScroll(DataSet: TDataSet);
+    procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
+    procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
+    procedure edtFiltroChange(Sender: TObject);
+    procedure edtFiltroKeyPress(Sender: TObject; var Key: char);
+    procedure edtIndicesChange(Sender: TObject);
+    procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
+    procedure edtPesquisaCamposChange(Sender: TObject);
+    procedure edtPesquisaCamposKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
+    procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure grdDadosTitleClick(Column: TColumn);
     procedure PopupMenuCopiarClick(Sender: TObject);
     procedure PopupMenuExcluirClick(Sender: TObject);
-    procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
-    procedure chkAjustarTamanhoColunasClick(Sender: TObject);
-    procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
-    procedure edtIndicesChange(Sender: TObject);
-    procedure chkIndicesAtivadoClick(Sender: TObject);
-    procedure ClientDataSetAfterScroll(DataSet: TDataSet);
-    procedure btnCarregarClick(Sender: TObject);
-    procedure edtPesquisaCamposChange(Sender: TObject);
-    procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
-    procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -59,6 +60,8 @@ type
     procedure ControlarVisibilidadeCampo;
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
+    procedure Aviso(const psMensagem: string);
+    function TentarCarregarArquivoDados(const psNomeArquivo: string): boolean;
   public
     procedure CarregarDadosDataSet;
   end;
@@ -135,20 +138,12 @@ begin
 end;
 
 procedure TfVisualizadorDataSet.CarregarArquivoDados(const psNomeArquivo: string);
-var
-  nTentativas: smallint;
 begin
   //jcf:format=off
-  nTentativas := 0;
-  repeat
-    Sleep(150);
-    Inc(nTentativas);
-  until FileExists(psNomeArquivo) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
 
-  if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
+  if not TentarCarregarArquivoDados(psNomeArquivo) then
   begin
-    MessageDlg('Não foi possível carregar os dados. Tente novamente!', mtWarning, [mbOK], 0);
-    Application.Terminate;
+    Close;
     Exit;
   end;
 
@@ -160,8 +155,8 @@ begin
     On E:Exception do
     begin
       ClientDataSet.Close;
-      MessageDlg('Não foi possível carregar os dados. Erro: ' + E.Message, mtWarning, [mbOK], 0);
-      Application.Terminate;
+      Aviso('Não foi possível carregar os dados. Erro: ' + E.Message);
+      Close;
     end;
   end;
   //jcf:format=on                                 
@@ -182,7 +177,6 @@ procedure TfVisualizadorDataSet.CarregarDadosDataSet;
 begin
   CarregarArquivoDados(sPATH_ARQUIVO_DADOS);
   CarregarCampos;
-
   CarregarParametrosDataSet;
 end;
 
@@ -196,7 +190,7 @@ begin
 
     ClientDataSet.Filtered := chkFiltroAtivado.Checked;
   except
-    MessageDlg('Filtro inválido!', mtWarning, [mbOK], 0);
+    Aviso('Filtro inválido!');
 
     if edtFiltro.CanFocus then
       edtFiltro.SetFocus;
@@ -352,13 +346,14 @@ begin
   try
     ClientDataSet.IndexFieldNames := EmptyStr;
     chkIndicesAtivado.Font.Style := [];
+
     if chkIndicesAtivado.Checked then
     begin
       chkIndicesAtivado.Font.Style := [fsBold];
       ClientDataSet.IndexFieldNames := Trim(edtIndices.Text);
     end;
   except
-    MessageDlg('Índice inválido!', mtWarning, [mbOK], 0);
+    Aviso('Índice inválido!');
 
     if edtIndices.CanFocus then
       edtIndices.SetFocus;
@@ -492,6 +487,47 @@ procedure TfVisualizadorDataSet.ClientDataSetBeforeDelete(DataSet: TDataSet);
 begin
   if ClientDataSet.IsEmpty then
     Abort;
+end;
+
+procedure TfVisualizadorDataSet.edtPesquisaCamposKeyDown(Sender: TObject;
+  var Key: word; Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+    Key := 0;
+
+    if clCampos.ItemIndex < Pred(clCampos.Items.Count) then
+      clCampos.ItemIndex := clCampos.ItemIndex + 1;
+  end;
+
+  if Key = VK_UP then
+  begin
+    Key := 0;
+
+    if clCampos.ItemIndex > 0 then
+      clCampos.ItemIndex := clCampos.ItemIndex - 1;
+  end;
+end;
+
+procedure TfVisualizadorDataSet.Aviso(const psMensagem: string);
+begin
+  MessageDlg(psMensagem, mtWarning, [mbOK], 0);
+end;
+
+function TfVisualizadorDataSet.TentarCarregarArquivoDados(const psNomeArquivo: string): boolean;
+var
+  nTentativas: byte;
+begin
+  nTentativas := 0;
+  repeat
+    Sleep(150);
+    Inc(nTentativas);
+  until FileExists(psNomeArquivo) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
+
+  result := nTentativas <> nNUMERO_TENTATIVAS_LEITURA;
+
+  if not result then
+    Aviso('Não foi possível carregar os dados. Tente novamente!');
 end;
 
 end.

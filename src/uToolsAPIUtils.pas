@@ -97,7 +97,7 @@ begin
   repeat
     begin
       Inc(nTentativas);
-      Sleep(500);
+      Sleep(400);
       Application.ProcessMessages;
     end;
   until FbProcessado or (FnErroProcessamento <> 0) or (nTentativas = nTENTATIVAS_PROCESSAMENTO);
@@ -122,17 +122,17 @@ begin
   begin
     oProjeto := poGrupoProjetos.GetProject(nCont);
     sNomeProjeto := ExtractFileName(oProjeto.FileName);
-    if Pos(psNomeProjeto, sNomeProjeto) > 0 then
-    begin
-      if not oProjeto.ProjectBuilder.BuildProject(cmOTAMake, pbEsperarPorOK) then
-      begin
-        MessageDlg(Format('Erro ao compilar o projeto: %s.', [sNomeProjeto]),
-          mtWarning, [mbOK], 0);
-        Abort;
-      end;
 
-      Break;
+    if Pos(psNomeProjeto, sNomeProjeto) <= 0 then
+      Continue;
+
+    if not oProjeto.ProjectBuilder.BuildProject(cmOTAMake, pbEsperarPorOK) then
+    begin
+      Aviso(Format('Erro ao compilar o projeto: %s.', [sNomeProjeto]));
+      Abort;
     end;
+
+    Break;
   end;
 end;
 
@@ -168,7 +168,7 @@ begin
       bVariavelInacessivel := Pos('inacessible', sResultado) > 0;
       if (result = erError) or bVariavelInacessivel then
       begin
-        Aviso('O objeto selecionado está inacessível no breakpoint atual.');
+        Aviso('O objeto selecionado está inacessível.');
         result := erError;
         Exit;
       end;
@@ -228,6 +228,8 @@ var
   oModulo: IOTAModule;
   nCont: integer;
 begin
+  result := EmptyStr;
+
   oModuleServices := (BorlandIDEServices as IOTAModuleServices);
   for nCont := 0 to Pred(oModuleServices.ModuleCount) do
   begin
@@ -236,13 +238,12 @@ begin
       Break;
   end;
 
-  result := EmptyStr;
-  if Assigned(oGrupo) then
-  begin
-    oProjeto := oGrupo.ActiveProject;
-    if Assigned(oProjeto) then
-      result := oProjeto.FileName;
-  end;
+  if not Assigned(oGrupo) then
+    Exit;
+
+  oProjeto := oGrupo.ActiveProject;
+  if Assigned(oProjeto) then
+    result := oProjeto.FileName;
 end;
 
 function TToolsAPIUtils.PegarGrupoProjetos: IOTAProjectGroup;
@@ -279,7 +280,6 @@ end;
 function TToolsAPIUtils.PegarProjetosCarregados: string;
 var
   oGrupo: IOTAProjectGroup;
-  oProjeto: IOTAProject;
   nCont: integer;
   StringListProjetos: TStringList;
   sNomeProjeto: string;
@@ -290,8 +290,7 @@ begin
   try
     for nCont := 0 to Pred(oGrupo.ProjectCount) do
     begin
-      oProjeto := oGrupo.GetProject(nCont);
-      sNomeProjeto := ExtractFileName(oProjeto.FileName);
+      sNomeProjeto := ExtractFileName(oGrupo.GetProject(nCont).FileName);
 
         //jcf:format=off
       if (Pos('PRC', UpperCase(sNomeProjeto)) > 0) or
@@ -303,6 +302,7 @@ begin
         //jcf:format=on                                     
         StringListProjetos.Add(sNomeProjeto);
     end;
+
     result := StringListProjetos.CommaText;
   finally
     FreeAndNil(StringListProjetos);
@@ -312,37 +312,33 @@ end;
 function TToolsAPIUtils.PegarTextoSelecionado: string;
 var
   oViewer: IOTAEditView;
-  oBloco: IOTAEditBlock;
 begin
-  result := EmptyStr;
   oViewer := (BorlandIDEServices as IOTAEditorServices).TopView;
-  oBloco := oViewer.GetBlock;
-  result := oBloco.Text;
+  result := oViewer.GetBlock.Text;
 end;
 
 function TToolsAPIUtils.PegarThreadAtual: IOTAThread;
 var
   oProcesso: IOTAProcess;
-  oServicoDebug: IOTADebuggerServices;
 begin
   result := nil;
   try
-    oServicoDebug := (BorlandIDEServices as IOTADebuggerServices);
-    oProcesso := oServicoDebug.CurrentProcess;
+    oProcesso := (BorlandIDEServices as IOTADebuggerServices).CurrentProcess;
 
     if not Assigned(oProcesso) then
-      Exit;
+      Abort;
+
+    if not Assigned(oProcesso.CurrentThread) then
+      Abort;
 
     result := oProcesso.CurrentThread;
   finally
     FreeAndNil(oProcesso); //PC_OK
-    FreeAndNil(oServicoDebug); //PC_OK
   end;
 end;
 
 function TToolsAPIUtils.SourceEditor(Module: IOTAMOdule): IOTASourceEditor;
 var
-  nQtdeArquivos: integer;
   nContador: integer;
 begin
   result := nil;
@@ -350,8 +346,7 @@ begin
   if not Assigned(Module) then
     Exit;
 
-  nQtdeArquivos := Module.GetModuleFileCount;
-  for nContador := 0 to Pred(nQtdeArquivos) do
+  for nContador := 0 to Pred(Module.GetModuleFileCount) do
     if Module.GetModuleFileEditor(nContador).QueryInterface(IOTASourceEditor, result) = S_OK then
       Break;
 end;

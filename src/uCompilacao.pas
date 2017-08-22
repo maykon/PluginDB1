@@ -11,7 +11,7 @@ type
     CheckListBoxProjetos: TCheckListBox;
     PanelBotoes: TPanel;
     BitBtnCompilar: TBitBtn;
-    Panel1: TPanel;
+    PanelPesquisa: TPanel;
     EditPesquisa: TEdit;
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
@@ -52,9 +52,7 @@ begin
     slProjetos.CommaText := FoFuncoes.PegarProjetosCarregados;
 
     for nContador := 0 to Pred(slProjetos.Count) do
-    begin
       CheckListBoxProjetos.Items.Add(slProjetos[nContador]);
-    end;
   finally
     FreeAndNil(slProjetos);
   end;
