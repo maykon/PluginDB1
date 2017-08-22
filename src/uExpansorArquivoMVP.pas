@@ -128,7 +128,7 @@ constructor TArquivoMVP.Create(const psRaizArquivo: string;
   const penTipoArquivo: TenTipoArquivoMVP);
 begin
   FenTipoArquivo := penTipoArquivo;
-  FsArquivo := psRaizArquivo + PegarDescricaoDoTipoDeArquivo(FenTipoArquivo) + '.pas';
+  FsArquivo := Format('%s%s.pas', [psRaizArquivo, PegarDescricaoDoTipoDeArquivo(FenTipoArquivo)]);
 end;
 
 constructor TArquivoMVP.Create(const psDiretorio, psRaizArquivo: string;
@@ -304,16 +304,13 @@ begin
   end;
 
   if TipoArquivo = taNaoMVP then
-  begin
     FsRaizArquivoSemExtensao := FsArquivo;
-  end;
 end;
 
 
 procedure TExpansorArquivoMVP.SetDiretorioBase(const Value: string);
 begin
   FsDiretorioBase := Value;
-  FsDiretorioBase := RemoverUmSubDiretorio(FsDiretorioBase);
   FsDiretorioBase := RemoverUmSubDiretorio(FsDiretorioBase);
 end;
 

@@ -61,6 +61,7 @@ type
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
     procedure Aviso(const psMensagem: string);
+    function TentarCarregarArquivoDados(const psNomeArquivo: string): boolean;
   public
     procedure CarregarDadosDataSet;
   end;
@@ -137,19 +138,11 @@ begin
 end;
 
 procedure TfVisualizadorDataSet.CarregarArquivoDados(const psNomeArquivo: string);
-var
-  nTentativas: smallint;
 begin
   //jcf:format=off
-  nTentativas := 0;
-  repeat
-    Sleep(150);
-    Inc(nTentativas);
-  until FileExists(psNomeArquivo) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
 
-  if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
+  if not TentarCarregarArquivoDados(psNomeArquivo) then
   begin
-    Aviso('Não foi possível carregar os dados. Tente novamente!');
     Close;
     Exit;
   end;
@@ -163,7 +156,7 @@ begin
     begin
       ClientDataSet.Close;
       Aviso('Não foi possível carregar os dados. Erro: ' + E.Message);
-      Application.Terminate;
+      Close;
     end;
   end;
   //jcf:format=on                                 
@@ -184,7 +177,6 @@ procedure TfVisualizadorDataSet.CarregarDadosDataSet;
 begin
   CarregarArquivoDados(sPATH_ARQUIVO_DADOS);
   CarregarCampos;
-
   CarregarParametrosDataSet;
 end;
 
@@ -354,6 +346,7 @@ begin
   try
     ClientDataSet.IndexFieldNames := EmptyStr;
     chkIndicesAtivado.Font.Style := [];
+
     if chkIndicesAtivado.Checked then
     begin
       chkIndicesAtivado.Font.Style := [fsBold];
@@ -519,6 +512,22 @@ end;
 procedure TfVisualizadorDataSet.Aviso(const psMensagem: string);
 begin
   MessageDlg(psMensagem, mtWarning, [mbOK], 0);
+end;
+
+function TfVisualizadorDataSet.TentarCarregarArquivoDados(const psNomeArquivo: string): boolean;
+var
+  nTentativas: byte;
+begin
+  nTentativas := 0;
+  repeat
+    Sleep(150);
+    Inc(nTentativas);
+  until FileExists(psNomeArquivo) or (nTentativas = nNUMERO_TENTATIVAS_LEITURA);
+
+  result := nTentativas <> nNUMERO_TENTATIVAS_LEITURA;
+
+  if not result then
+    Aviso('Não foi possível carregar os dados. Tente novamente!');
 end;
 
 end.

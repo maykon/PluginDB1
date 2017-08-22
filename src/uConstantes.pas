@@ -5,7 +5,7 @@ unit uConstantes;
 interface
 
 type
-  TTipoSistema = (tsNenhum, tsPG, tsSG, tsMP);
+  TTipoSistema = (tsTodos, tsPG, tsSG, tsMP);
 
   TenTipoArquivoMVP = (taNaoMVP, taModelAPI, taPresenterAPI, taViewAPI, taModel,
     taPresenter, taViewFrame, taViewPanel, taViewForm, taView, taBuilder,

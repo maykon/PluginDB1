@@ -78,7 +78,7 @@ object fCompilacao: TfCompilacao
         9696979696979696FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
     end
   end
-  object Panel1: TPanel
+  object PanelPesquisa: TPanel
     Left = 0
     Top = 0
     Width = 281

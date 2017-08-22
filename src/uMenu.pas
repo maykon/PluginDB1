@@ -10,17 +10,16 @@ uses
 type
   TWizard = class(TInterfacedObject, IOTAWizard, IOTANotifier)
   private
-    FoTimerAtalhos: TTimer;
     FoMenuPrincipal: TMenuItem;
     FoMenuMVP: TMenuItem;
+    FbAtribuiuAtalhos: boolean;
 
     procedure AbrirArquivoMVP(Sender: TObject);
     procedure CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
-      poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsNenhum);
+      poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsTodos);
     procedure CriarItemMenuMVP(const psCaption, psIdentificador: string; const pnTag: integer = 0);
     procedure CriarMenuPrincipal;
     procedure CriarMenuMVP;
-    procedure CriarTemporizadorAtalhos;
     procedure CriarPastaOutput;
     procedure AdicionarAcoesMenuPrincipal;
     procedure AdicionarAcoesMVP;
@@ -91,25 +90,25 @@ end;
 { TWizard }
 
 procedure TWizard.CriarItemMenuPrincipal(const psCaption, psIdentificador: string;
-  poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsNenhum);
+  poEvento: TNotifyEvent; const psMenuPai: string = ''; const penTipoSistema: TTipoSistema = tsTodos);
 var
-  oNTAS: INTAServices;
+  oNTAServices: INTAServices;
   oAction: TAction;
   oBitmap: TBitmap;
   oMenuItem: TMenuItem;
   oMenuPai: TMenuItem;
 begin
-  if (penTipoSistema <> tsNenhum) and (penTipoSistema <> FoFuncoes.TipoSistema) then
+  if (penTipoSistema <> tsTodos) and (penTipoSistema <> FoFuncoes.TipoSistema) then
     Exit;
 
   oAction := nil;
-  oNTAS := (BorlandIDEServices as INTAServices);
-  oMenuItem := TMenuItem.Create(oNTAS.MainMenu); //PC_OK
+  oNTAServices := (BorlandIDEServices as INTAServices);
+  oMenuItem := TMenuItem.Create(oNTAServices.MainMenu); //PC_OK
 
   if Assigned(poEvento) then
   begin
-    oAction := TAction.Create(oNTAS.ActionList); //PC_OK
-    oAction.ActionList := oNTAS.ActionList;
+    oAction := TAction.Create(oNTAServices.ActionList); //PC_OK
+    oAction.ActionList := oNTAServices.ActionList;
     oAction.Name := psIdentificador;
     oAction.Caption := psCaption;
     oAction.OnExecute := poEvento;
@@ -120,7 +119,7 @@ begin
     begin
       oBitmap := TBitmap.Create;
       oBitmap.LoadFromFile(Format('%s%s.bmp', [sPATH_IMAGENS, psIdentificador]));
-      oAction.ImageIndex := oNTAS.AddMasked(oBitmap, clFuchsia);
+      oAction.ImageIndex := oNTAServices.AddMasked(oBitmap, clFuchsia);
       oBitmap.Free;
     end;
 
@@ -147,12 +146,13 @@ begin
     AdicionarAcoesMVP;
   end;
 
+  FbAtribuiuAtalhos := False;
+
   CriarMenuPrincipal;
   AdicionarAcoesMenuPrincipal;
 
   CarregarAtalhos;
   MarcarMenu;
-  CriarTemporizadorAtalhos;
   CriarPastaOutput;
 end;
 
@@ -171,16 +171,14 @@ var
   nCont: integer;
   oAction: TAction;
 begin
+  if FbAtribuiuAtalhos then
+    Exit;
+
   for nCont := 0 to Pred(FActions.Count) do
   begin
     oAction := FActions[nCont] as TAction;
     oAction.ShortCut := PegarAtalho(oAction.Name);
-  end;
-
-  if Assigned(FoTimerAtalhos) then
-  begin
-    FoTimerAtalhos.Enabled := False;
-    FreeAndNil(FoTimerAtalhos); //PC_OK
+    FbAtribuiuAtalhos := True;
   end;
 end;
 
@@ -225,13 +223,6 @@ begin
     oAction := FActions[nCont] as TAction;
     oAction.Checked := oAction.Caption = sNomeMenu;
   end;
-end;
-
-procedure TWizard.CriarTemporizadorAtalhos;
-begin
-  FoTimerAtalhos := TTimer.Create(nil); //PC_OK
-  FoTimerAtalhos.Interval := 20000;
-  FoTimerAtalhos.OnTimer := AtribuirAtalhos;
 end;
 
 procedure TWizard.AdicionarAcoesMenuPrincipal;

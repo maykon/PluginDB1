@@ -11,7 +11,7 @@ type
     CheckListBoxProjetos: TCheckListBox;
     PanelBotoes: TPanel;
     BitBtnCompilar: TBitBtn;
-    Panel1: TPanel;
+    PanelPesquisa: TPanel;
     EditPesquisa: TEdit;
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
