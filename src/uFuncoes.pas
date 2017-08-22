@@ -13,8 +13,10 @@ type
     FenTipoSistema: TTipoSistema;
 
     function LerDoArquivoINI(const psSecao, psChave: string): string;
+    function PegarNomeSistemaSelecionado: string;
     function PegarDiretorioBin: string;
     function PegarCriterioConsulta(var psTextoPadrao: string): string;
+    function PegarNomeParaExportacao(const psNomeDataSet: string): string;
     function SalvarArquivoDataSet(const psNomeDataSet, psNomeArquivo: string): boolean;
     function SalvarFiltroDataSet(const psNomeDataSet: string): string;
     function SalvarIndicesDataSet(const psNomeDataSet: string): string;
@@ -89,7 +91,6 @@ type
     procedure VisualizarDataSetManual(Sender: TObject);
     procedure LerStringList(Sender: TObject);
     procedure TestarSpSelect(Sender: TObject);
-    procedure GravarSistemaArquivoINI;
     procedure NaoFormatarCodigo(Sender: TObject);
     procedure ExportarDadosDataSet(Sender: TObject);
     procedure AbrirVisualizadorDataSets(Sender: TObject);
@@ -207,20 +208,6 @@ begin
   ProcessarDataSet(sNomeDataSet);
 end;
 
-procedure TFuncoes.GravarSistemaArquivoINI;
-var
-  oArquivoINI: TIniFile;
-  sValor: string;
-begin
-  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
-  try
-    sValor := GetEnumName(TypeInfo(TTipoSistema), integer(FenTipoSistema));
-    oArquivoINI.WriteString(sSECAO_PARAMETROS, 'Sistema', sValor);
-  finally
-    FreeAndNil(oArquivoINI);
-  end;
-end;
-
 procedure TFuncoes.PegarSistemaPadrao;
 var
   oArquivoINI: TIniFile;
@@ -233,7 +220,7 @@ begin
     if Trim(sNomeSistema) = EmptyStr then
     begin
       FenTipoSistema := tsPG;
-      GravarSistemaArquivoINI;
+      GravarNoArquivoINI(sSECAO_PARAMETROS, 'Sistema', PegarNomeSistemaSelecionado);
       Exit;
     end;
 
@@ -292,7 +279,7 @@ end;
 procedure TFuncoes.SetTipoSistema(Value: TTipoSistema);
 begin
   FenTipoSistema := Value;
-  GravarSistemaArquivoINI;
+  GravarNoArquivoINI(sSECAO_PARAMETROS, 'Sistema', PegarNomeSistemaSelecionado);
 end;
 
 procedure TFuncoes.LerStringList(Sender: TObject);
@@ -834,7 +821,6 @@ end;
 
 procedure TFuncoes.ExportarDadosDataSet(Sender: TObject);
 var
-  oSaveDialog: TSaveDialog;
   oFormAguarde: TfAguarde;
   sNomeDataSet: string;
   sNomeArquivo: string;
@@ -844,21 +830,13 @@ begin
   if Trim(sNomeDataSet) = EmptyStr then
     Exit;
 
-  sNomeArquivo := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao');
-  if sNomeArquivo = EmptyStr then
-    sNomeArquivo := sNomeDataSet;
+  sNomeArquivo := PegarNomeParaExportacao(sNomeDataSet);
 
-  oSaveDialog := TSaveDialog.Create(nil);
+  if Trim(sNomeArquivo) = EmptyStr then
+    Exit;
+
   oFormAguarde := TfAguarde.Create(nil);
   try
-    oSaveDialog.FileName := sNomeDataSet + '.xml';
-    oSaveDialog.InitialDir := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao');
-    oSaveDialog.DefaultExt := 'xml';
-    oSaveDialog.Filter := 'Arquivo XML|*.xml';
-
-    if not oSaveDialog.Execute then
-      Exit;
-
     if not VerificarExisteThreadProcesso then
       Exit;
 
@@ -869,19 +847,18 @@ begin
     oFormAguarde.Show;
     Application.ProcessMessages;
 
-    if SalvarArquivoDataSet(sNomeDataSet, oSaveDialog.FileName) then
+    if SalvarArquivoDataSet(sNomeDataSet, sNomeArquivo) then
     begin
       oFormAguarde.Close;
       MessageDlg('Arquivo gerado com sucesso.', mtInformation, [mbOK], 0);
 
       //jcf:format=off
-      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao', ExtractFileName(oSaveDialog.FileName));
-      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao', ExtractFilePath(oSaveDialog.FileName));
+      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao', ExtractFileName(sNomeArquivo));
+      GravarNoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao', ExtractFilePath(sNomeArquivo));
       //jcf:format=on
     end;
   finally
     FreeAndNil(oFormAguarde);
-    FreeAndNil(oSaveDialog);
   end;
 end;
 
@@ -1101,29 +1078,52 @@ end;
 
 procedure TFuncoes.RemoverReadOnly(const psNomeArquivo: string);
 var
-  oodule: IOTAModule;
+  oModule: IOTAModule;
   oBuffer: IOTAEditBuffer;
-  nQtdeArquivos: integer;
   nContador: integer;
 begin
-  oBuffer := nil;
-  if BorlandIDEServices = nil then
+  oModule := (BorlandIDEServices as IOTAModuleServices).FindModule(psNomeArquivo);
+  if not Assigned(oModule) then
     Exit;
 
-  oodule := (BorlandIDEServices as IOTAModuleServices).FindModule(psNomeArquivo);
-  if not Assigned(oodule) then
-    Exit;
-
-  with oodule do
-  begin
-    nQtdeArquivos := GetModuleFileCount;
-    for nContador := 0 to Pred(nQtdeArquivos) do
-      if GetModuleFileEditor(nContador).QueryInterface(IOTAEditBuffer, oBuffer) = S_OK then
-        Break;
-  end;
+  for nContador := 0 to Pred(oModule.GetModuleFileCount) do
+    if oModule.GetModuleFileEditor(nContador).QueryInterface(IOTAEditBuffer, oBuffer) = S_OK then
+      Break;
 
   if Assigned(oBuffer) then
     oBuffer.SetIsReadOnly(False);
+end;
+
+function TFuncoes.PegarNomeSistemaSelecionado: string;
+begin
+  result := GetEnumName(TypeInfo(TTipoSistema), integer(FenTipoSistema));
+end;
+
+function TFuncoes.PegarNomeParaExportacao(const psNomeDataSet: string): string;
+var
+  oSaveDialog: TSaveDialog;
+begin
+  result := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoNomeExportacao');
+  if result = EmptyStr then
+    result := psNomeDataSet;
+
+  oSaveDialog := TSaveDialog.Create(nil);
+  try
+    oSaveDialog.FileName := psNomeDataSet + '.xml';
+    oSaveDialog.InitialDir := LerDoArquivoINI(sSECAO_PARAMETROS, 'UltimoCaminhoExportacao');
+    oSaveDialog.DefaultExt := 'xml';
+    oSaveDialog.Filter := 'Arquivo XML|*.xml';
+
+    if not oSaveDialog.Execute then
+    begin
+      result := EmptyStr;
+      Exit;
+    end;
+
+    result := oSaveDialog.FileName;
+  finally
+    FreeAndNil(oSaveDialog);
+  end;
 end;
 
 end.

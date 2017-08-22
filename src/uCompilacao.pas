@@ -52,9 +52,7 @@ begin
     slProjetos.CommaText := FoFuncoes.PegarProjetosCarregados;
 
     for nContador := 0 to Pred(slProjetos.Count) do
-    begin
       CheckListBoxProjetos.Items.Add(slProjetos[nContador]);
-    end;
   finally
     FreeAndNil(slProjetos);
   end;

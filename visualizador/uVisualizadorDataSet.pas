@@ -8,47 +8,47 @@ uses
 
 type
   TfVisualizadorDataSet = class(TForm)
-    grdDados: TDBGrid;
-    DataSource: TDataSource;
-    ClientDataSet: TClientDataSet;
-    edtFiltro: TEdit;
-    chkFiltroAtivado: TCheckBox;
-    lbQuantidade: TLabel;
-    clCampos: TCheckListBox;
-    btnTodos: TBitBtn;
+    btnCarregar: TBitBtn;
     btnNenhum: TBitBtn;
+    btnTodos: TBitBtn;
+    chkAjustarTamanhoColunas: TCheckBox;
+    chkFiltroAtivado: TCheckBox;
+    chkIndicesAtivado: TCheckBox;
+    clCampos: TCheckListBox;
+    ClientDataSet: TClientDataSet;
+    DataSource: TDataSource;
+    edtFiltro: TEdit;
+    edtIndices: TEdit;
+    edtPesquisaCampos: TEdit;
+    grdDados: TDBGrid;
+    lbFiltro: TLabel;
+    lbIndices: TLabel;
+    lbQuantidade: TLabel;
     PopupMenu: TPopupMenu;
     PopupMenuCopiar: TMenuItem;
     PopupMenuExcluir: TMenuItem;
-    lbFiltro: TLabel;
-    chkAjustarTamanhoColunas: TCheckBox;
-    lbIndices: TLabel;
-    edtIndices: TEdit;
-    chkIndicesAtivado: TCheckBox;
-    btnCarregar: TBitBtn;
-    edtPesquisaCampos: TEdit;
-    procedure FormCreate(Sender: TObject);
-    procedure chkFiltroAtivadoClick(Sender: TObject);
-    procedure clCamposClickCheck(Sender: TObject);
-    procedure edtFiltroChange(Sender: TObject);
-    procedure edtFiltroKeyPress(Sender: TObject; var Key: char);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure grdDadosTitleClick(Column: TColumn);
+    procedure btnCarregarClick(Sender: TObject);
     procedure btnNenhumClick(Sender: TObject);
     procedure btnTodosClick(Sender: TObject);
+    procedure chkAjustarTamanhoColunasClick(Sender: TObject);
+    procedure chkFiltroAtivadoClick(Sender: TObject);
+    procedure chkIndicesAtivadoClick(Sender: TObject);
+    procedure clCamposClickCheck(Sender: TObject);
+    procedure ClientDataSetAfterScroll(DataSet: TDataSet);
+    procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
+    procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
+    procedure edtFiltroChange(Sender: TObject);
+    procedure edtFiltroKeyPress(Sender: TObject; var Key: char);
+    procedure edtIndicesChange(Sender: TObject);
+    procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
+    procedure edtPesquisaCamposChange(Sender: TObject);
+    procedure edtPesquisaCamposKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
+    procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure grdDadosTitleClick(Column: TColumn);
     procedure PopupMenuCopiarClick(Sender: TObject);
     procedure PopupMenuExcluirClick(Sender: TObject);
-    procedure ClientDataSetBeforeInsert(DataSet: TDataSet);
-    procedure chkAjustarTamanhoColunasClick(Sender: TObject);
-    procedure edtIndicesKeyPress(Sender: TObject; var Key: char);
-    procedure edtIndicesChange(Sender: TObject);
-    procedure chkIndicesAtivadoClick(Sender: TObject);
-    procedure ClientDataSetAfterScroll(DataSet: TDataSet);
-    procedure btnCarregarClick(Sender: TObject);
-    procedure edtPesquisaCamposChange(Sender: TObject);
-    procedure edtPesquisaCamposKeyPress(Sender: TObject; var Key: char);
-    procedure ClientDataSetBeforeDelete(DataSet: TDataSet);
-    procedure edtPesquisaCamposKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
   private
     FaTamanhoMaximo: array of smallint;
 
@@ -60,6 +60,7 @@ type
     procedure ControlarVisibilidadeCampo;
     procedure AtualizarContadorRegistros;
     procedure MarcarTodosRegistros(const pbMarcar: boolean);
+    procedure Aviso(const psMensagem: string);
   public
     procedure CarregarDadosDataSet;
   end;
@@ -148,8 +149,8 @@ begin
 
   if nTentativas = nNUMERO_TENTATIVAS_LEITURA then
   begin
-    MessageDlg('Não foi possível carregar os dados. Tente novamente!', mtWarning, [mbOK], 0);
-    Application.Terminate;
+    Aviso('Não foi possível carregar os dados. Tente novamente!');
+    Close;
     Exit;
   end;
 
@@ -161,7 +162,7 @@ begin
     On E:Exception do
     begin
       ClientDataSet.Close;
-      MessageDlg('Não foi possível carregar os dados. Erro: ' + E.Message, mtWarning, [mbOK], 0);
+      Aviso('Não foi possível carregar os dados. Erro: ' + E.Message);
       Application.Terminate;
     end;
   end;
@@ -197,7 +198,7 @@ begin
 
     ClientDataSet.Filtered := chkFiltroAtivado.Checked;
   except
-    MessageDlg('Filtro inválido!', mtWarning, [mbOK], 0);
+    Aviso('Filtro inválido!');
 
     if edtFiltro.CanFocus then
       edtFiltro.SetFocus;
@@ -359,7 +360,7 @@ begin
       ClientDataSet.IndexFieldNames := Trim(edtIndices.Text);
     end;
   except
-    MessageDlg('Índice inválido!', mtWarning, [mbOK], 0);
+    Aviso('Índice inválido!');
 
     if edtIndices.CanFocus then
       edtIndices.SetFocus;
@@ -513,6 +514,11 @@ begin
     if clCampos.ItemIndex > 0 then
       clCampos.ItemIndex := clCampos.ItemIndex - 1;
   end;
+end;
+
+procedure TfVisualizadorDataSet.Aviso(const psMensagem: string);
+begin
+  MessageDlg(psMensagem, mtWarning, [mbOK], 0);
 end;
 
 end.
