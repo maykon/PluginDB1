@@ -34,6 +34,7 @@ type
     function PegarAtalho(const psIdentificador: string): TShortCut;
     function PegarNomeMenuPrincipal: string;
     function ProcurarMenu(const psNomeMenu: string): TMenuItem;
+    procedure AdicionarMenusBasesDadosConfiguradas;
   public
     constructor Create;
 
@@ -135,7 +136,8 @@ begin
   else
     oMenuPai := ProcurarMenu(psMenuPai);
 
-  oMenuPai.Add(oMenuItem);
+  if Assigned(oMenuPai) then
+    oMenuPai.Add(oMenuItem);
 end;
 
 constructor TWizard.Create;
@@ -273,12 +275,8 @@ begin
 
   CriarItemMenuPrincipal(sSEPARADOR, 'Separador5', nil);
 
-  CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil, EmptyStr, tsPG);
-  CriarItemMenuPrincipal('Local - Desenvolvimento', 'BaseLocal', FoFuncoes.SelecionarBaseLocal, 'SelecionarBaseDados', tsPG);
-  CriarItemMenuPrincipal('175 - Desenvolvimento', 'Base175', FoFuncoes.SelecionarBase175, 'SelecionarBaseDados', tsPG);
-  CriarItemMenuPrincipal('152 - Testes', 'Base152', FoFuncoes.SelecionarBase152, 'SelecionarBaseDados', tsPG);
-  CriarItemMenuPrincipal('202 - System Team', 'Base202', FoFuncoes.SelecionarBase202, 'SelecionarBaseDados', tsPG);
-
+  AdicionarMenusBasesDadosConfiguradas;
+  
   CriarItemMenuPrincipal('Documentação', 'Documentacao', nil);
   CriarItemMenuPrincipal('Consultar Documentação Delphi', 'ConsultarDocDelphi', FoFuncoes.ConsultarDocDelphi, 'Documentacao');
   CriarItemMenuPrincipal('Consultar Documentação SP4', 'ConsultarDocSP4', FoFuncoes.ConsultarDocSP4, 'Documentacao');
@@ -458,6 +456,30 @@ procedure TWizard.SelecionarSistemaMP(Sender: TObject);
 begin
   FoFuncoes.TipoSistema := tsMP;
   MarcarMenu;
+end;
+
+procedure TWizard.AdicionarMenusBasesDadosConfiguradas;
+var
+  slBases: TStringList;
+  nBase: integer;
+  sNomeBase: string;
+begin
+  slBases := TStringList.Create;
+  try
+    if not FoFuncoes.TestarPossuiBasesConfiguradas(slBases) then
+      Exit;
+
+    CriarItemMenuPrincipal('Selecionar Base de Dados', 'SelecionarBaseDados', nil);
+    for nBase := 0 to Pred(slBases.Count) do
+    begin
+      sNomeBase := slBases.Strings[nBase];
+      if sNomeBase = EmptyStr then
+        Continue;
+      CriarItemMenuPrincipal('Base - ' + sNomeBase, sNOME_BASE_MENU + sNomeBase, FoFuncoes.SelecionarBase, 'SelecionarBaseDados');
+    end;
+  finally
+    FreeAndNil(slBases);
+  end;
 end;
 
 initialization

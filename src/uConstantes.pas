@@ -6,6 +6,7 @@ interface
 
 type
   TTipoSistema = (tsTodos, tsPG, tsSG, tsMP);
+  TTipoSistemaDesc = (Nenhum, PG5, SG5, SIG);
 
   TenTipoArquivoMVP = (taNaoMVP, taModelAPI, taPresenterAPI, taViewAPI, taModel,
     taPresenter, taViewFrame, taViewPanel, taViewForm, taView, taBuilder,
@@ -41,7 +42,11 @@ const
   sPATH_PARAMS_SELECT     = 'C:\PluginDB1\TesteSpSelect\Parametros.xml';
   sPATH_ARQUIVO_INI       = 'C:\PluginDB1\Params.ini';
   sPATH_IMAGENS           = 'C:\PluginDB1\Imagens\';
-
+  sNOME_BASE_MENU         = 'Base';
+  sTIPO_BANCO_DB2         = 'DB2';
+  sTIPO_BANCO_ORACLE      = 'ORACLE';
+  sTIPO_BANCO_SQLSERVER   = 'SQLSERVER';
+  
   nNUMERO_TENTATIVAS_LEITURA = 20;
   nTENTATIVAS_PROCESSAMENTO = 10;
   nBORDA_DBGRID = 12;

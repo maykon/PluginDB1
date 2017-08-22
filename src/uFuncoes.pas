@@ -3,7 +3,7 @@ unit uFuncoes;
 interface
 
 uses
-  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uConstantes, uExpansorArquivoMVP;
+  ToolsAPI, uAguarde, Classes, Menus, uToolsAPIUtils, uConstantes, uExpansorArquivoMVP, SysUtils;
 
 type
   TFuncoes = class
@@ -24,7 +24,8 @@ type
     function ValidarTextoSelecionado(const psTexto: string): boolean;
     function VerificarArquivoExisteNoDiretorioBin(const psNomeArquivo: string): boolean;
     function VerificarExisteThreadProcesso: boolean;
-    procedure AlterarConexaoNoArquivoCfg(const psServer: string);
+    procedure AlterarConexaoNoArquivoCfg(const psTipoBanco, psAlias: string;
+      const psServer: string = '');
     procedure CarregarArquivoDataSet;
     procedure ExcluirArquivo(const psNomeArquivo: string);
     procedure GravarNoArquivoINI(const psSecao, psChave, psValor: string);
@@ -32,6 +33,12 @@ type
     procedure VerificarDataSetEstaAtivo(const psNomeDataSet: string);
     procedure VerificarDataSetEstaAssigned(const psNomeDataSet: string);
     procedure VerificarDataSetEstaEmNavegacao(const psNomeDataSet: string);
+    function RetornarSecaoBaseConfigurada: string;
+    procedure ConfigurarBaseOracle(const pslBase: TStringList);
+    procedure ConfigurarBaseSqlServer(const pslBase: TStringList);
+    procedure ConfigurarBaseDB2(const pslBase: TStringList);
+    procedure ExecutarNieuport(const psTipoBanco, psAlias, psIp: string);
+    function PegarDescricaoSistema: string;
   public
     constructor Create;
     destructor Destroy; override;
@@ -50,10 +57,7 @@ type
     procedure ConsultarDocDelphi(Sender: TObject);
     procedure ConsultarDocSP4(Sender: TObject);
     procedure ConsultarColabore(Sender: TObject);
-    procedure SelecionarBaseLocal(Sender: TObject);
-    procedure SelecionarBase175(Sender: TObject);
-    procedure SelecionarBase152(Sender: TObject);
-    procedure SelecionarBase202(Sender: TObject);
+    procedure SelecionarBase(Sender: TObject);
     procedure FinalizarProcessos(Sender: TObject);
 
     // compilação
@@ -103,6 +107,7 @@ type
     // MVP
     procedure CriarExpansorArquivoMVP;
     procedure AbrirArquivoMVP(const pnIndiceMenu: integer);
+    function TestarPossuiBasesConfiguradas(const pslBases: TStringList): boolean;
 
     property TipoSistema: TTipoSistema read FenTipoSistema write SetTipoSistema;
   end;
@@ -110,8 +115,8 @@ type
 implementation
 
 uses
-  Forms, IniFiles, TypInfo, SysUtils, ShellAPI, Windows, Dialogs, uStringList,
-  uConfiguracoes, uCompilacao, JcfIdeRegister;
+  Forms, IniFiles, TypInfo, ShellAPI, Windows, Dialogs, uStringList, uConfiguracoes,
+  uCompilacao, JcfIdeRegister, ActnList;
 
 { TFuncoes }
 
@@ -701,33 +706,18 @@ begin
   end;
 end;
 
-procedure TFuncoes.SelecionarBaseLocal(Sender: TObject);
-begin
-  AlterarConexaoNoArquivoCfg('192.168.208.27\iSAJ01');
-end;
-
-procedure TFuncoes.SelecionarBase175(Sender: TObject);
-begin
-  AlterarConexaoNoArquivoCfg('192.168.225.175\iSAJ01');
-end;
-
-procedure TFuncoes.SelecionarBase152(Sender: TObject);
-begin
-  AlterarConexaoNoArquivoCfg('192.168.226.152\iSAJ01');
-end;
-
-procedure TFuncoes.SelecionarBase202(Sender: TObject);
-begin
-  AlterarConexaoNoArquivoCfg('192.168.225.202\iSAJ01');
-end;
-
-procedure TFuncoes.AlterarConexaoNoArquivoCfg(const psServer: string);
+procedure TFuncoes.AlterarConexaoNoArquivoCfg(const psTipoBanco, psAlias, psServer: string);
 var
   oArquivoINI: TIniFile;
 begin
   oArquivoINI := TIniFile.Create(Format('%s%s', [PegarDiretorioBin, sNOME_ARQUIVO_CONFIG]));
   try
-    oArquivoINI.WriteString('Database', 'Server', psServer);
+    oArquivoINI.WriteString('Database', 'TipoBanco', psTipoBanco);
+    oArquivoINI.WriteString('Database', 'Alias', psAlias);
+    if psServer <> EmptyStr then
+      oArquivoINI.WriteString('Database', 'Server', psServer)
+    else
+      oArquivoINI.DeleteKey('Database', 'Server');
   finally
     FreeAndNil(oArquivoINI);
   end;
@@ -1124,6 +1114,105 @@ begin
   finally
     FreeAndNil(oSaveDialog);
   end;
+end;
+
+function TFuncoes.TestarPossuiBasesConfiguradas(const pslBases: TStringList): boolean;
+var
+  oArquivoINI: TIniFile;
+  sSessao: string;
+begin
+  result := False;
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  try
+    pslBases.Clear;
+    sSessao := RetornarSecaoBaseConfigurada;
+    if not oArquivoINI.SectionExists(sSessao) then
+      Exit;
+
+    oArquivoINI.ReadSection(sSessao, pslBases);
+    result := pslBases.Count > 0;
+  finally
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
+procedure TFuncoes.SelecionarBase(Sender: TObject);
+var
+  oAction: TAction;
+  oArquivoINI: TIniFile;
+  sSessao: string;
+  slConfig: TStringList;
+  sChaveBase: string;
+begin
+  if not (Sender is TAction) then
+    Exit;
+
+  oAction := Sender as TAction;
+  oArquivoINI := TIniFile.Create(sPATH_ARQUIVO_INI);
+  slConfig := TStringList.Create;
+  try
+    sSessao := RetornarSecaoBaseConfigurada;
+    if not oArquivoINI.SectionExists(sSessao) then
+      Exit;
+
+    sChaveBase := StringReplace(oAction.Name, sNOME_BASE_MENU, EmptyStr, []);
+    slConfig.CommaText := oArquivoINI.ReadString(sSessao, sChaveBase, EmptyStr);
+    if slConfig.Count <> 3 then
+      Exit;
+
+    ConfigurarBaseOracle(slConfig);
+    ConfigurarBaseSqlServer(slConfig);
+    ConfigurarBaseDB2(slConfig);
+  finally
+    FreeAndNil(slConfig);
+    FreeAndNil(oArquivoINI);
+  end;
+end;
+
+function TFuncoes.RetornarSecaoBaseConfigurada: string;
+begin
+  result := Format('Bases%s', [PegarDescricaoSistema]);
+end;
+
+procedure TFuncoes.ConfigurarBaseDB2(const pslBase: TStringList);
+begin
+  if pslBase.Strings[0] <> sTIPO_BANCO_DB2 then
+    Exit;
+
+  ExecutarNieuport(pslBase.Strings[0], pslBase.Strings[1], pslBase.Strings[2]);
+  AlterarConexaoNoArquivoCfg(pslBase.Strings[0], pslBase.Strings[1]);
+end;
+
+procedure TFuncoes.ConfigurarBaseOracle(const pslBase: TStringList);
+begin
+  if pslBase.Strings[0] <> sTIPO_BANCO_ORACLE then
+    Exit;
+
+  ExecutarNieuport(pslBase.Strings[0], pslBase.Strings[1], pslBase.Strings[2]);
+  AlterarConexaoNoArquivoCfg(pslBase.Strings[0], pslBase.Strings[1]);
+end;
+
+procedure TFuncoes.ConfigurarBaseSqlServer(const pslBase: TStringList);
+begin
+  if pslBase.Strings[0] <> sTIPO_BANCO_SQLSERVER then
+    Exit;
+
+  AlterarConexaoNoArquivoCfg(pslBase.Strings[0], pslBase.Strings[1], pslBase.Strings[2]);
+end;
+
+procedure TFuncoes.ExecutarNieuport(const psTipoBanco, psAlias, psIp: string);
+var
+  sParams: string;
+  sAlias: string;
+begin
+  sAlias := StringReplace(psAlias, PegarDescricaoSistema, EmptyStr, [rfReplaceAll]);
+  sParams := Format('%s %s %s %s NOREPL', [PegarDescricaoSistema, psIp, sAlias, psTipoBanco]);
+  ShellExecute(Application.Handle, 'open', PChar('nieuport.bat'), PChar(sParams), nil, SW_SHOW);
+end;
+
+function TFuncoes.PegarDescricaoSistema: string;
+begin
+  result := GetEnumName(TypeInfo(TTipoSistemaDesc), Ord(FenTipoSistema));
 end;
 
 end.
