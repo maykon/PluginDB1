@@ -25,6 +25,7 @@ Source: "C:\Git\PluginDB1\bin\Visualizador.exe"; DestDir: "{app}\Visualizador"; 
 Source: "C:\Git\PluginDB1\bin\TesteSpSelect.exe"; DestDir: "{app}\TesteSpSelect"; Flags: ignoreversion
 Source: "C:\Git\PluginDB1\bin\midas.dll"; DestDir: "{app}\Visualizador"; Flags: ignoreversion
 Source: "C:\Git\PluginDB1\imagens\*.*"; DestDir: "{app}\Imagens"; Flags: ignoreversion
+Source: "C:\Git\PluginDB1\config\*.*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\spMonitor\*.*"; DestDir: "{app}\Tools\spMonitor"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\spMonitor3\*.*"; DestDir: "{app}\Tools\spMonitor3"; Flags: ignoreversion
 Source: "C:\OneDrive\DevTools\DevTools\SelectSQL\*.*"; DestDir: "{app}\Tools\SelectSQL"; Flags: ignoreversion
